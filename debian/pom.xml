@@ -211,6 +211,11 @@
             <artifactId>uv-t-zipper</artifactId>
             <version>2.1.4-SNAPSHOT</version>
         </dependency>
+	<dependency>
+            <groupId>${plugins.uv.groupid}</groupId>
+            <artifactId>uv-q-sparqlAsk</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <repositories>
