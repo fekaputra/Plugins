@@ -1,6 +1,11 @@
 T-Tabular
 ----------
 
+v2.3.3
+---
+* Added support for [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation)
+* Update to helpers 2.1.7
+
 v2.3.2
 ---
 * Added copy and paste
