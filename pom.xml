@@ -50,6 +50,9 @@
         <module>l-filesUpload</module>
         <module>l-rdfToVirtuoso</module>
         <module>l-relationalToSql</module>
+
+        <!-- QUALITY CONTROL -->
+        <module>q-sparqlAsk</module>
     </modules>
 
     <profiles>
