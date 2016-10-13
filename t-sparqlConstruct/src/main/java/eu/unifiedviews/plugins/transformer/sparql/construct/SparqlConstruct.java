@@ -37,6 +37,8 @@ import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.plugins.transformer.sparql.SPARQLConfig_V1;
+import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
+
 
 /*
  *
@@ -54,6 +56,9 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
 
     @DataUnit.AsOutput(name = "output")
     public WritableRDFDataUnit rdfOutput;
+
+    @ExtensionInitializer.Init
+    public RdfValidation rdfValidation;
 
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;

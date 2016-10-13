@@ -1,6 +1,9 @@
 ### Popis
 
-Transformuje vstupné dáta pomocou konštrukčného SPARQL dotazu
+Transformuje vstupné dáta pomocou konštrukčného SPARQL dotazu.
+
+Podporuje [RDF validáciu](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
+
 
 ### Konfiguračné parametre
 
