@@ -5,6 +5,8 @@ v2.2.1
 ---
 * Added support for [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
 * Update to helpers 2.1.7
+* Possibility to attach Virtual Graph metadata to processed entries (https://github.com/UnifiedViews/Plugins/issues/392)
+
 
 v2.2.0
 ---

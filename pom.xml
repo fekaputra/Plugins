@@ -19,6 +19,7 @@
         <module>e-executeShellScript</module>
 
         <!-- TRANSFORMERS -->
+        <module>t-excelToCsv</module>
         <module>t-filesFilter</module>
         <module>t-filesFindAndReplace</module>
         <module>t-filesMerger</module>

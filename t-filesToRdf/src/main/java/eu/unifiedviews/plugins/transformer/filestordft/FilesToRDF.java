@@ -1,11 +1,29 @@
 package eu.unifiedviews.plugins.transformer.filestordft;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import eu.unifiedviews.dataunit.DataUnit;
+import eu.unifiedviews.dataunit.DataUnitException;
+import eu.unifiedviews.dataunit.MetadataDataUnit;
+import eu.unifiedviews.dataunit.files.FilesDataUnit;
+import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
+import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
+import eu.unifiedviews.dpu.DPU;
+import eu.unifiedviews.dpu.DPUException;
+import eu.unifiedviews.helpers.dataunit.copy.CopyHelpers;
+import eu.unifiedviews.helpers.dataunit.dataset.DatasetBuilder;
+import eu.unifiedviews.helpers.dataunit.files.FilesVocabulary;
+import eu.unifiedviews.helpers.dataunit.metadata.MetadataUtils;
+import eu.unifiedviews.helpers.dataunit.resource.Resource;
+import eu.unifiedviews.helpers.dataunit.resource.ResourceHelpers;
+import eu.unifiedviews.helpers.dataunit.virtualgraph.VirtualGraphHelper;
+import eu.unifiedviews.helpers.dataunit.virtualgraph.VirtualGraphHelpers;
+import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
+import eu.unifiedviews.helpers.dpu.config.migration.ConfigurationUpdate;
+import eu.unifiedviews.helpers.dpu.context.ContextUtils;
+import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
+import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
+import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
+import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
+import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -27,28 +45,11 @@ import org.openrdf.rio.helpers.ParseErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.unifiedviews.dataunit.DataUnit;
-import eu.unifiedviews.dataunit.DataUnitException;
-import eu.unifiedviews.dataunit.MetadataDataUnit;
-import eu.unifiedviews.dataunit.files.FilesDataUnit;
-import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
-import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
-import eu.unifiedviews.dpu.DPU;
-import eu.unifiedviews.dpu.DPUException;
-import eu.unifiedviews.helpers.dataunit.copy.CopyHelpers;
-import eu.unifiedviews.helpers.dataunit.dataset.DatasetBuilder;
-import eu.unifiedviews.helpers.dataunit.files.FilesVocabulary;
-import eu.unifiedviews.helpers.dataunit.metadata.MetadataUtils;
-import eu.unifiedviews.helpers.dataunit.resource.Resource;
-import eu.unifiedviews.helpers.dataunit.resource.ResourceHelpers;
-import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
-import eu.unifiedviews.helpers.dpu.config.migration.ConfigurationUpdate;
-import eu.unifiedviews.helpers.dpu.context.ContextUtils;
-import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
-import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
-import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
-import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
-import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @DPU.AsTransformer
 public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
@@ -145,6 +146,12 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
         // Load files.
         final List<FilesDataUnit.Entry> files = FaultToleranceUtils.getEntries(faultTolerance, filesInput, FilesDataUnit.Entry.class);
 
+        //prepare VirtualGraph helper, may be needed
+        VirtualGraphHelper helper = null;
+        if (config.isUseEntryNameAsVirtualGraph()) {
+            helper = VirtualGraphHelpers.create(rdfOutput);
+        }
+
         // If true then next file is processed.
         int index = 1;
         for (final FilesDataUnit.Entry entry : files) {
@@ -163,6 +170,16 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
                         CopyHelpers.copyMetadata(entry.getSymbolicName(), filesInput, rdfOutput);
                     }
                 });
+
+                //define VirtualGraph - if configured so:
+                if (config.isUseEntryNameAsVirtualGraph()) {
+                    try {
+                        helper.setVirtualGraph(entry.getSymbolicName(), entry.getSymbolicName());
+                    } catch (DataUnitException e) {
+                        ContextUtils.sendWarn(ctx, "Skipping entry, cannot parse symbolic name", e, "");
+                        continue;
+                    }
+                }
 
                 outputGraphUri = faultTolerance.execute(new FaultTolerance.ActionReturn<URI>() {
 
@@ -265,6 +282,9 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
         // Publish messsage.
         if (fileSkipped) {
             ContextUtils.sendWarn(ctx, "FilesToRDF.execute.skipped", "");
+        }
+        if (config.isUseEntryNameAsVirtualGraph()) {
+            helper.close();
         }
     }
 

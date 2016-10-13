@@ -13,6 +13,8 @@ Individual files and also whole directories may be downloaded. If directory is p
 | Name | Description |
 |:----|:----|
 |**List of files and directories to download** | List of files and directories to be downloaded. Each entry contains location from which the file should be optained and optionally the internal file name.  |
+|**Soft failure** | In case the soft failure is checked in the configuration dialog, when there is a problem processing certain VFS entry or file, warning is shown but the execution of the DPU continues. If unchecked (default), in case of problem processing any VFS entry/file, the execution fails.  |
+|**Skip redundant input file entries** | If checked, the DPU checks whether it is not trying to process certain file URIs more times (this may happen when the DPU is configured dynamically). If yes, it just skips processing of redundant entries and logs info message.  |
 
 ### Inputs and outputs
 

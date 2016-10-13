@@ -16,6 +16,8 @@ It supports [RDF Validation extension](https://grips.semantic-web.at/display/UDD
 |**What to do if the RDF extraction from certain file fails** | Stop execution (default) OR Skip that file and continue |
 |**Policy for creation of the output RDF graphs** | One output RDF graph for each processed input file (default) OR Single output RDF graph for all processed input files |
 |**Symbolic name of the single output RDF graph** | The desired symbolic name of the single output RDF graph may be specified here (applicable only if the policy for the creation of output RDF graphs is 'Single output RDF graph'. |
+|**Use file entry name as virtual graph** | When checked, the DPU also automatically generates Virtual Graph metadata, which are set to be equal to the symbolic name of the file (it is expected that symbolic name is e.g. HTTP URL). |
+
 
 ### Inputs and outputs
 

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>eu.unifiedviews</groupId>
+        <artifactId>uv-pom-dpu</artifactId>
+        <version>2.1.6</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.opendatanode.plugins</groupId>
+    <artifactId>uv-t-excelToCsv</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+    <name>T-ExcelToCsv</name>
+    <description>Transformer for Excel files (.XLS, .XLSX) which will extract selected sheet (or sheets) into CSV file</description>
+
+    <properties>
+        <dpu.package>org.opendatanode.plugins.transformer.exceltocsv</dpu.package>
+        <dpu.mainClass>ExcelToCsv</dpu.mainClass>
+    </properties>
+
+    <dependencies>
+        <!-- UnifiedViews helpers. -->
+        <dependency>
+            <groupId>eu.unifiedviews</groupId>
+            <artifactId>uv-dataunit-helpers</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.unifiedviews</groupId>
+            <artifactId>uv-dpu-helpers</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.14</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>3.2</version>
+        </dependency>
+    </dependencies>
+    
+    <repositories>
+	    <repository>
+		    <id>uv-releases-public</id>
+		    <url>https://repository.unifiedviews.eu/nexus/content/repositories/releases</url>
+	    </repository>
+	    <repository>
+		    <id>uv-snapshots-public</id>
+		    <url>https://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
+	    </repository>
+        <repository>
+            <id>maven.eea.sk</id>
+            <name>maven.eea.sk-public</name>
+            <url>http://maven.eea.sk/artifactory/public/</url>
+        </repository>
+    </repositories>
+
+</project>
