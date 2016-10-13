@@ -4,6 +4,8 @@ Validates RDF data.
 
 Supports ASK or SELECT validation queries. In case of ASK query, if the evaluation of such query returns true, validation fails. In case of SELECT query, if the evaluation of such query returns non-zero tuples, validation fails. 
 
+**Deprecated from UnifiedViews Plugins v2.2.3, please use q-sparqlAsk instead.**
+
 ### Configuration parameters
 
 | Name | Description |
