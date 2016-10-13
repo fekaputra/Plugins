@@ -4,6 +4,8 @@ Získa RDF dáta zo súborov ľubovoľného RDF formátu. Výstupná dátová je
 
 Pri predvolenom nastavení je RDF formát detekovaný automaticky na základe prípony vstupného súboru. V prípade, že detekcia bude nesprávna, špecifikujte prosím RDF formát vstupných súborov manuálne.
 
+Podporuje [RDF validáciu](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
+
 ### Konfiguračné parametre
 
 | Meno | Popis |

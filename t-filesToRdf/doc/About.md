@@ -6,6 +6,8 @@ By default, RDF format of the input files is estimated automatically based on th
 
 Based on the selected policy for creation of the output RDF graphs, output RDF data unit contains either 1) one output RDF graph for each processed input file (by default) OR 2) single output RDF graph for all processed input files. In the former case, the symbolic names for output RDF graphs are created based on the symbolic names of input files; in the latter case, the symbolic name of the single output RDF graph may be specified in the configuration.
 
+It supports [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
+
 ### Configuration parameters
 
 | Name | Description |

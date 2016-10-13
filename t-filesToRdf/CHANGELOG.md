@@ -1,6 +1,11 @@
 T-FilesToRdf
 ----------
 
+v2.2.1
+---
+* Added support for [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
+* Update to helpers 2.1.7
+
 v2.2.0
 ---
 * Manual RDF mimetype selection allowed
