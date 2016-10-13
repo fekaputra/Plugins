@@ -1,6 +1,8 @@
 ### Popis
 
-Zvaliduje RDF dáta
+Zvaliduje RDF dáta.
+
+Zastarané od verzie UnifiedViews Plugins v2.2.3, použite q-sparqlAsk.
 
 ### Konfiguračné parametre
 
