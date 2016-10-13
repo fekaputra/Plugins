@@ -1,6 +1,8 @@
 ### Description
 
-Converts tabular data into RDF data
+Converts tabular data into RDF data.
+
+It supports [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
 
 ### Configuration parameters
 

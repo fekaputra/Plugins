@@ -2,6 +2,9 @@
 
 Converts database tables (SQL) into RDF data
 
+It supports [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
+
+
 ### Configuration parameters
 
 | Name | Description |

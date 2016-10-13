@@ -23,6 +23,7 @@ import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
+import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -60,6 +61,9 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
 
     @DataUnit.AsOutput(name = "rdfOutput")
     public WritableRDFDataUnit rdfOutput;
+
+    @ExtensionInitializer.Init
+    public RdfValidation rdfValidation;
 
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;

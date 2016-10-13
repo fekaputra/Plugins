@@ -1,6 +1,8 @@
 ### Popis
 
-Konvertuje tabulárne dáta na RDF dáta
+Konvertuje tabulárne dáta na RDF dáta.
+
+Podporuje [RDF validáciu](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
 
 ### Konfiguračné parametre
 

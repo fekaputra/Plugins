@@ -1,6 +1,8 @@
 ### Description
 
-Transforms input using SPARQL construct
+Transforms input using SPARQL construct.
+
+It supports [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
 
 ### Configuration parameters
 

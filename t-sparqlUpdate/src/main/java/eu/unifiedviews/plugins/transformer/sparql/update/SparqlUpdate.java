@@ -37,10 +37,10 @@ import eu.unifiedviews.helpers.dpu.context.ContextUtils;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
+import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
 import eu.unifiedviews.plugins.transformer.sparql.SPARQLConfig_V1;
 
 /**
- * 
  * @author Škoda Petr
  */
 @DPU.AsTransformer
@@ -52,7 +52,6 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
     /**
      * Query used to copy all data from input to output graph.
-     *
      * We could use ADD here, but in this way copy query is executed by the same procedure as a user query.
      */
     private static final String QUERY_COPY = "INSERT {?s ?p ?o} WHERE {?s ?p ?o}";
@@ -64,13 +63,16 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     public WritableRDFDataUnit rdfOutput;
 
     @ExtensionInitializer.Init
+    public RdfValidation rdfValidation;
+
+    @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;
 
     @ExtensionInitializer.Init(param = "eu.unifiedviews.plugins.transformer.sparql.SPARQLConfig__V1")
     public ConfigurationUpdate _ConfigurationUpdate;
 
     public SparqlUpdate() {
-        super(SparqlUpdateVaadinDialog.class, 
+        super(SparqlUpdateVaadinDialog.class,
                 ConfigHistory.history(SPARQLConfig_V1.class).addCurrent(SparqlUpdateConfig_V1.class));
     }
 
@@ -141,7 +143,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
             public URI[] action() throws Exception {
                 return RdfDataUnitUtils.asGraphs(sourceEntries);
             }
-        }) );
+        }));
         long outputSize = getTriplesCount(rdfOutput, outputGraphs.toArray(new URI[0]));
 
         ContextUtils.sendShortInfo(ctx, "sparqlUpdate.dpu.msg.report", inputSize, outputSize);
@@ -150,7 +152,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     /**
      * Get connection and use it to execute given query. Based on user option the query is executed over one
      * or over updateQuery graphs.
-     *
+     * 
      * @param updateQuery
      * @param sourceEntries
      * @param targetgraph
@@ -180,10 +182,12 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
     /**
      * Execute given query.
-     *
+     * 
      * @param query
-     * @param sourceGraphs USING graphs.
-     * @param targetGraph  WITH graphs.
+     * @param sourceGraphs
+     *            USING graphs.
+     * @param targetGraph
+     *            WITH graphs.
      * @param connection
      * @throws eu.unifiedviews.dpu.DPUException
      */
@@ -220,7 +224,6 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     }
 
     /**
-     *
      * @return New output graph.
      * @throws DPUException
      */
@@ -236,7 +239,6 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     }
 
     /**
-     *
      * @param symbolicName
      * @return New output graph.
      * @throws DPUException
@@ -252,7 +254,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
     /**
      * Register new output graph and return WITH clause for SPARQL insert.
-     *
+     * 
      * @param graph
      * @return
      */
@@ -266,7 +268,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
     /**
      * Get graph URIs from entry list.
-     *
+     * 
      * @param entries
      * @return
      * @throws DPUException
@@ -291,7 +293,6 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     }
 
     /**
-     *
      * @param uris
      * @return Using clause for SPARQL insert, based on input graphs.
      * @throws DPUException
@@ -307,7 +308,6 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     }
 
     /**
-     *
      * @param dataUnit
      * @return Data graphs in given DataUnit.
      * @throws DPUException
@@ -328,7 +328,6 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     }
 
     /**
-     *
      * @param dataUnit
      * @param entries
      * @return Number of triples in given entries.
