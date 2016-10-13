@@ -60,3 +60,4 @@ install_dpu "/usr/share/unifiedviews/dist/plugins/uv-t-tabularToRelational-*.jar
 install_dpu "/usr/share/unifiedviews/dist/plugins/uv-t-unzipper-*.jar"
 install_dpu "/usr/share/unifiedviews/dist/plugins/uv-t-xslt-*.jar"
 install_dpu "/usr/share/unifiedviews/dist/plugins/uv-t-zipper-*.jar"
+install_dpu "/usr/share/unifiedviews/dist/plugins/uv-q-sparqlAsk-*.jar"

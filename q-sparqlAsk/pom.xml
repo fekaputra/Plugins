@@ -9,9 +9,9 @@
     </parent>
     
     <groupId>eu.unifiedviews.plugins</groupId>
-    <artifactId>uv-q-SparqlAsk</artifactId>
+    <artifactId>uv-q-sparqlAsk</artifactId>
     <name>Q-SparqlAsk</name>
-    <description>Executes SPARQL ask query</description>
+    <description>Executes SPARQL Ask query</description>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
    
