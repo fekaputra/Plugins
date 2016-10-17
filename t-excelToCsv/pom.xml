@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>org.opendatanode.plugins</groupId>
+    <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-t-excelToCsv</artifactId>
     <version>1.0.0</version>
     <packaging>bundle</packaging>
