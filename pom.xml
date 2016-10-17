@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-plugin-dpus</artifactId>
-    <version>2.2.3-SNAPSHOT</version>
+    <version>2.2.3</version>
     <packaging>pom</packaging>
     <description>Maven aggregation project for general purpose DPU implementations.</description>
 
