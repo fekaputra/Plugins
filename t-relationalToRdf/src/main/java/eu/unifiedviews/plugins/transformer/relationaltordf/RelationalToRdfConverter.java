@@ -35,28 +35,21 @@ public class RelationalToRdfConverter {
         try {
             tableName = sqlTable.getTableName();
             header = getHeaderForTable(sqlTable, conn);
-            stmnt = conn.createStatement();
+            stmnt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = stmnt.executeQuery("SELECT * FROM " + tableName);
 
             int rowNumPerFile = 0;
             List<Object> dataRow = null;
             if (rs.next()) {
                 dataRow = getRow(rs, header);
+                rs.beforeFirst();
             }
             if (dataRow == null) {
                 LOG.warn("No data found");
                 return;
             }
-            else{
-                TableToRdfConfigurator.configure(this.tableToRdf, header, dataRow, 0);
-                this.tableToRdf.paserRow(dataRow, this.rowNumber);
-                this.rowNumber++;
-                rowNumPerFile++;
-                if ((rowNumPerFile % 1000) == 0) {
-                    LOG.debug("Row number {} processed.", rowNumPerFile);
-                }
-            }
 
+            TableToRdfConfigurator.configure(this.tableToRdf, header, dataRow, 0);
             while (rs.next() && (dataRow=getRow(rs, header)) != null && !this.context.canceled()) {
                 this.tableToRdf.paserRow(dataRow, this.rowNumber);
                 this.rowNumber++;
