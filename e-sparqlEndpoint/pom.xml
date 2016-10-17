@@ -10,7 +10,7 @@
 
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-e-sparqlEndpoint</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.0</version>
     <packaging>bundle</packaging>
     <name>E-SparqlEndpoint</name>
     <description>Extract RDF data from remote SPARQL.</description>
