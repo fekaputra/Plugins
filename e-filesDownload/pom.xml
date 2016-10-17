@@ -123,6 +123,15 @@
     </dependencies>
 
     <repositories>
+        
+        <repository>
+            <id>uv-releases</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases</url>
+       	</repository>
+	<repository>
+            <id>uv-snapshots</id>
+	    <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
+	</repository>
         <repository>
             <id>maven.eea.sk</id>
             <name>maven.eea.sk-public</name>
