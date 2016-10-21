@@ -135,9 +135,10 @@ public class SparqlEndpoint extends AbstractDpu<SparqlEndpointConfig_V1> {
                 }
             }
         });
-        // Flush buffre.
+        LOG.info("Flushing buffers.");
         output.flushBuffer();
-        // Get and print size.
+
+        LOG.info("Get size of the extracted data");
         faultTolerance.execute(rdfOutput, new FaultTolerance.ConnectionAction() {
 
             @Override
