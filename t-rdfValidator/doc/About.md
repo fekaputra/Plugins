@@ -1,13 +1,17 @@
 ### Description
 
-Validates RDF data
+Validates RDF data. 
+
+Supports ASK or SELECT validation queries. In case of ASK query, if the evaluation of such query returns true, validation fails. In case of SELECT query, if the evaluation of such query returns non-zero tuples, validation fails. 
+
+**Deprecated from UnifiedViews Plugins v2.2.3, please use q-sparqlAsk instead.**
 
 ### Configuration parameters
 
 | Name | Description |
 |:----|:----|
-|**Validation query** | ASK or SELECT SPARQL query.<br>ASK returning True = validation fails,<br>SELECT returning non-zero tuples = validation fails  |
-|**Fail execution when validation produce any error** | When checked, DPU will throw an exception when validation fails, causing pipeline to fail.<br>Otherwise, the DPU will just log results and return successfully |
+|**Validation query** | ASK or SELECT SPARQL query. |
+|**Fail execution when validation produce any error** | When checked, DPU will throw an exception when validation fails, causing pipeline to fail.<br>Otherwise, the DPU will just log warning (default).|
 
 ### Inputs and outputs
 

@@ -1,10 +1,10 @@
 package eu.unifiedviews.plugins.extractor.filesdownload;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import eu.unifiedviews.helpers.dpu.config.VersionedConfig;
 import eu.unifiedviews.helpers.dpu.ontology.EntityDescription;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @EntityDescription.Entity(type = FilesDownloadVocabulary.STR_CONFIG_CLASS)
 public class FilesDownloadConfig_V1 implements VersionedConfig<FilesDownloadConfig_V1> {
@@ -17,6 +17,8 @@ public class FilesDownloadConfig_V1 implements VersionedConfig<FilesDownloadConf
     private int defaultTimeout = 20000;
     
     private boolean ignoreTlsErrors = false;
+
+    private boolean checkForDuplicatedInputFiles = false;
 
     public List<VfsFile> getVfsFiles() {
         return vfsFiles;
@@ -48,6 +50,14 @@ public class FilesDownloadConfig_V1 implements VersionedConfig<FilesDownloadConf
 
     public void setIgnoreTlsErrors(boolean ignoreTlsErrors) {
         this.ignoreTlsErrors = ignoreTlsErrors;
+    }
+
+    public boolean isCheckForDuplicatedInputFiles() {
+        return checkForDuplicatedInputFiles;
+    }
+
+    public void setCheckForDuplicatedInputFiles(boolean checkForDuplicatedInputFiles) {
+        this.checkForDuplicatedInputFiles = checkForDuplicatedInputFiles;
     }
 
     @Override

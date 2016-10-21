@@ -24,6 +24,8 @@ import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
 import eu.unifiedviews.helpers.dpu.extension.rdf.simple.WritableSimpleRdf;
 import eu.unifiedviews.plugins.transformer.relationaltordf.mapper.TableToRdf;
+import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
+
 
 @DPU.AsTransformer
 public class RelationalToRdf extends AbstractDpu<RelationalToRdfConfig_V1> {
@@ -38,6 +40,9 @@ public class RelationalToRdf extends AbstractDpu<RelationalToRdfConfig_V1> {
 
     @ExtensionInitializer.Init(param = "rdfOutput")
     public WritableSimpleRdf rdfTableWrap;
+
+    @ExtensionInitializer.Init
+    public RdfValidation rdfValidation;
 
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;

@@ -1,21 +1,16 @@
 package eu.unifiedviews.plugins.transformer.relationaltordf;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.relational.RelationalDataUnit;
 import eu.unifiedviews.helpers.dpu.exec.UserExecContext;
 import eu.unifiedviews.plugins.transformer.relationaltordf.mapper.TableToRdf;
 import eu.unifiedviews.plugins.transformer.relationaltordf.mapper.TableToRdfConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RelationalToRdfConverter {
 
@@ -40,13 +35,14 @@ public class RelationalToRdfConverter {
         try {
             tableName = sqlTable.getTableName();
             header = getHeaderForTable(sqlTable, conn);
-            stmnt = conn.createStatement();
+            stmnt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = stmnt.executeQuery("SELECT * FROM " + tableName);
 
             int rowNumPerFile = 0;
             List<Object> dataRow = null;
             if (rs.next()) {
                 dataRow = getRow(rs, header);
+                rs.beforeFirst();
             }
             if (dataRow == null) {
                 LOG.warn("No data found");
@@ -54,11 +50,10 @@ public class RelationalToRdfConverter {
             }
 
             TableToRdfConfigurator.configure(this.tableToRdf, header, dataRow, 0);
-            while (rs.next() && dataRow != null && !this.context.canceled()) {
+            while (rs.next() && (dataRow=getRow(rs, header)) != null && !this.context.canceled()) {
                 this.tableToRdf.paserRow(dataRow, this.rowNumber);
                 this.rowNumber++;
                 rowNumPerFile++;
-                dataRow = getRow(rs, header);
 
                 if ((rowNumPerFile % 1000) == 0) {
                     LOG.debug("Row number {} processed.", rowNumPerFile);

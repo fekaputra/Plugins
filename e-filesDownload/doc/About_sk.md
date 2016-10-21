@@ -17,6 +17,8 @@ v prípadoch keď potrebujete iba prechádzať stiahnuté súbory v pokračovan�
 |:--------|:------:|:------:|:-------------|:---------------------:|
 |config |vstup| RdfDataUnit | Dynamická RDF konfigurácia, pozri Pokročilá konfigurácia | |
 |output |výstup| FilesDataUnit | Stiahnuté súbory |áno|
+|**Mäkké zlyhanie** | Ak je zaškrtnuté a nastane nejaká chyba v spracovaní VFS položky alebo súboru, tak sa zobrazí varovanie a extrakcia v DPU pokračuje ďalej. Ak zaškrtnuté nie je (default), tak v prípade chyby pri spracovaní ktorejkoľvek VFS položky alebo súboru je extrakcia prerušená a končí chybou.  |
+|**Vynechať duplicitné vstupné súborové položky** | Ak je zaškrtnuté, DPU skontroluje či sa niektoré súborové URI nespracúvajú viacnásobne (môže sa stať keď je DPU konfigurované dynamicky). A ak áno, duplicitné spracovanie je vynechané a do logu je pridaná informácia o tomto vynechaní.  |
 
 
 ### Pokročilá konfigurácia

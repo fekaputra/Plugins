@@ -1,13 +1,10 @@
 package eu.unifiedviews.plugins.transformer.filestordft;
 
+import com.vaadin.ui.*;
 import org.openrdf.rio.RDFFormat;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 
 import eu.unifiedviews.dpu.config.DPUConfigException;
 import eu.unifiedviews.helpers.dpu.vaadin.dialog.AbstractDialog;
@@ -29,6 +26,8 @@ public class FilesToRDFVaadinDialog extends AbstractDialog<FilesToRDFConfig_V1> 
     private ComboBox comboTypeOfGraph;
 
     private TextField txtSymbolicName;
+
+    private CheckBox chkVirtualGraph;
 
     public FilesToRDFVaadinDialog() {
         super(FilesToRDF.class);
@@ -92,11 +91,16 @@ public class FilesToRDFVaadinDialog extends AbstractDialog<FilesToRDFConfig_V1> 
         mainLayout.addComponent(comboOutputGraph);
         mainLayout.addComponent(txtSymbolicName);
 
+        chkVirtualGraph = new CheckBox(ctx.tr("FilesToRDFVaadinDialog.chkVirtualGraph.caption"));
+        chkVirtualGraph.setDescription(ctx.tr("FilesToRDFVaadinDialog.chkVirtualGraph.description"));
+        mainLayout.addComponent(chkVirtualGraph);
+
         comboOutputGraph.addValueChangeListener(new Property.ValueChangeListener() {
 
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 txtSymbolicName.setEnabled(FilesToRDFConfig_V1.USE_FIXED_SYMBOLIC_NAME.equals(event.getProperty().getValue()));
+                chkVirtualGraph.setEnabled(!FilesToRDFConfig_V1.USE_FIXED_SYMBOLIC_NAME.equals(event.getProperty().getValue()));
             }
         });
 
@@ -112,6 +116,8 @@ public class FilesToRDFVaadinDialog extends AbstractDialog<FilesToRDFConfig_V1> 
         comboTypeOfGraph.setValue(conf.getOutputType());
         txtSymbolicName.setValue(conf.getOutputSymbolicName());
         txtSymbolicName.setEnabled(FilesToRDFConfig_V1.USE_FIXED_SYMBOLIC_NAME.equals(comboOutputGraph.getValue()));
+        chkVirtualGraph.setValue(conf.isUseEntryNameAsVirtualGraph());
+        chkVirtualGraph.setEnabled(!FilesToRDFConfig_V1.USE_FIXED_SYMBOLIC_NAME.equals(comboOutputGraph.getValue()));
     }
 
     @Override
@@ -122,6 +128,7 @@ public class FilesToRDFVaadinDialog extends AbstractDialog<FilesToRDFConfig_V1> 
         conf.setOutputNaming(comboOutputGraph.getValue().toString());
         conf.setOutputType(comboTypeOfGraph.getValue().toString());
         conf.setOutputSymbolicName(txtSymbolicName.getValue());
+        conf.setUseEntryNameAsVirtualGraph(chkVirtualGraph.getValue());
         return conf;
     }
 

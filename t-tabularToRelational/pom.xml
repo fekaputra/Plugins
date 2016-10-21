@@ -43,13 +43,13 @@
         <dependency> <!-- Xls. -->
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.11</version>
+            <version>3.14</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.11</version>
+            <version>3.14</version>
             <scope>provided</scope>
         </dependency>
         <!-- Dependency for parsing DBF file -->

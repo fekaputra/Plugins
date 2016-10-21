@@ -1,6 +1,8 @@
 ### Popis
 
-Konvertuje tabuľkové dáta (SQL databázové tabuľky) na RDF dáta
+Konvertuje tabuľkové dáta (SQL databázové tabuľky) na RDF dáta.
+
+Podporuje [RDF validáciu](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).
 
 ### Konfiguračné parametre
 

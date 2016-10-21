@@ -1,6 +1,12 @@
 E-FilesDownload
 ----------
 
+v2.1.6
+---
+* Added support for soft failure when downloading files - so in case the soft failure is checked in the configuration dialog, when there is a problem processing certain VFS entry or file, warning is shown but the execution of the DPU continues. If unchecked (default), in case of problem processing any VFS entry/file, the execution fails.
+* Added support for optional check for duplicated entries to be downloaded
+* Corrected bug https://github.com/UnifiedViews/Plugins/issues/383, so that directories as entries are properly processed
+
 v2.1.5
 ---
 * Adjusted layout of the DPU

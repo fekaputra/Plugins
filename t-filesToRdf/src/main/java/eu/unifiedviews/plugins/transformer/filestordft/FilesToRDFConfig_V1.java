@@ -59,6 +59,16 @@ public class FilesToRDFConfig_V1 {
      */
     private String outputSymbolicName = null;
 
+    private boolean useEntryNameAsVirtualGraph = false;
+
+    public boolean isUseEntryNameAsVirtualGraph() {
+        return useEntryNameAsVirtualGraph;
+    }
+
+    public void setUseEntryNameAsVirtualGraph(boolean useEntryNameAsVirtualGraph) {
+        this.useEntryNameAsVirtualGraph = useEntryNameAsVirtualGraph;
+    }
+
     public FilesToRDFConfig_V1() {
         this.symbolicNameToBaseURIMap = new LinkedHashMap<>();
         this.symbolicNameToFormatMap = new LinkedHashMap<>();

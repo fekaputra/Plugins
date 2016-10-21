@@ -6,7 +6,7 @@
     	<parent>
 		<groupId>eu.unifiedviews</groupId>
 		<artifactId>uv-pom-dpu</artifactId>
-		<version>2.1.5</version>
+		<version>2.1.7</version>
 		<relativePath />
 	</parent>
 
@@ -28,43 +28,6 @@
         <!--<sesame.version>2.7.13</sesame.version>  -->
 
     </properties>
-
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>odcs-libs-release</id>
-            <name>libs-release</name>
-            <url>http://odcs.xrg.cz:8080/artifactory/libs-release-local</url>
-        </repository>
-        <repository>
-            <snapshots/>
-            <id>odcs-libs-snapshot</id>
-            <name>libs-snapshot</name>
-            <url>http://odcs.xrg.cz:8080/artifactory/libs-snapshot-local</url>
-        </repository>
-
-        <repository>
-            <id>maven.eea.sk</id>
-            <name>maven.eea.sk-public</name>
-            <url>http://maven.eea.sk/artifactory/public/</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>odcs.xrg.cz</id>
-            <name>odcs.xrg.cz-releases</name>
-            <url>http://odcs.xrg.cz:8080/artifactory/libs-release-local</url>
-        </repository>
-
-        <snapshotRepository>
-            <id>odcs.xrg.cz</id>
-            <name>odcs.xrg.cz-snapshots</name>
-            <url>http://odcs.xrg.cz:8080/artifactory/libs-snapshot-local</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <dependencies>
         
@@ -260,5 +223,21 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+	
+    <repositories>
+	<repository>
+		<id>uv-releases</id>
+		<url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+	</repository>
+	<repository>
+		<id>uv-snapshots</id>
+		<url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
+	</repository>
+        <repository>
+            <id>maven.eea.sk</id>
+            <name>maven.eea.sk-public</name>
+            <url>http://maven.eea.sk/artifactory/public/</url>
+        </repository>
+    </repositories>
 
 </project>

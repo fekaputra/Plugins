@@ -1,11 +1,5 @@
 package cz.cuni.mff.xrg.uv.transformer.tabular;
 
-import java.util.List;
-
-import org.openrdf.model.URI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import cz.cuni.mff.xrg.uv.transformer.tabular.mapper.TableToRdf;
 import cz.cuni.mff.xrg.uv.transformer.tabular.parser.ParserCsv;
 import cz.cuni.mff.xrg.uv.transformer.tabular.parser.ParserDbf;
@@ -27,10 +21,14 @@ import eu.unifiedviews.helpers.dpu.extension.rdf.simple.WritableSimpleRdf;
 import eu.unifiedviews.plugins.transformer.tabular.TabularVaadinDialog;
 import eu.unifiedviews.plugins.transformer.tabular.parser.ParseFailed;
 import eu.unifiedviews.plugins.transformer.tabular.parser.Parser;
+import org.openrdf.model.URI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
 
-/**
- * @author Škoda Petr
- */
+
+import java.util.List;
+
 @DPU.AsTransformer
 public class Tabular extends AbstractDpu<TabularConfig_V2> {
 
@@ -44,6 +42,9 @@ public class Tabular extends AbstractDpu<TabularConfig_V2> {
 
     @ExtensionInitializer.Init(param = "outRdfTables")
     public WritableSimpleRdf rdfTableWrap;
+
+    @ExtensionInitializer.Init
+    public RdfValidation rdfValidation;
 
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;
