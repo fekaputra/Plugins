@@ -12,7 +12,7 @@
     <artifactId>uv-t-rdfToFiles</artifactId>
     <name>T-RdfToFiles</name>
     <description>Transform RDF graphs into files.</description>
-    <version>2.1.5</version>
+    <version>2.1.6-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>

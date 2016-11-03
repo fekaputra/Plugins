@@ -12,7 +12,7 @@
 	<artifactId>uv-l-filesToParliament</artifactId>
 	<name>L-FilesToParliament</name>
 	<description>Uploads files to Parliament.</description>
-	<version>1.0.4</version>
+	<version>1.0.5-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<properties>

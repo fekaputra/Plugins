@@ -12,7 +12,7 @@
     <artifactId>uv-l-rdfToVirtuoso</artifactId>
     <name>L-RdfToVirtuoso</name>
     <description>Loads RDF data to Virtuoso using OpenRDF Repository API (VirtuosoRepository).</description>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>

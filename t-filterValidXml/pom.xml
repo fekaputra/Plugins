@@ -12,7 +12,7 @@
 	<artifactId>uv-t-filterValidXml</artifactId>
 	<description>Validates XML inputs in 3 ways: checks if the XML is well formed, checks if it conforms to a specified XSD scheme and validates using specified XSLT template</description>
 	<packaging>bundle</packaging>
-	<version>2.1.3</version>
+	<version>2.1.4-SNAPSHOT</version>
 	<name> T-FilterValidXml</name>
 
 	<properties>

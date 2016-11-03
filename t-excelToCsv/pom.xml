@@ -10,7 +10,7 @@
 
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-t-excelToCsv</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>T-ExcelToCsv</name>
     <description>Transformer for Excel files (.XLS, .XLSX) which will extract selected sheet (or sheets) into CSV file</description>

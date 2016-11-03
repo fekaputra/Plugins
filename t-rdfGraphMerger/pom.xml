@@ -10,7 +10,7 @@
 	<groupId>eu.unifiedviews.plugins</groupId>
 
     <artifactId>uv-t-rdfGraphMerger</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>T-RdfGraphMerger</name>
     <description>Merge multiple input graphs into one new graph.</description>

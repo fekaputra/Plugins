@@ -12,7 +12,7 @@
     <artifactId>uv-t-relationalToRdf</artifactId>
     <name>T-RelationalToRdf</name>
     <description>Converts relational data (tables) to RDF</description>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
