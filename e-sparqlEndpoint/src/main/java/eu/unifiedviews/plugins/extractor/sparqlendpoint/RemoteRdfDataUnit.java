@@ -1,18 +1,5 @@
 package eu.unifiedviews.plugins.extractor.sparqlendpoint;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-
-import org.openrdf.model.URI;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sparql.SPARQLRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
 import eu.unifiedviews.dpu.DPUException;
@@ -21,6 +8,14 @@ import eu.unifiedviews.helpers.dpu.context.Context;
 import eu.unifiedviews.helpers.dpu.exec.ExecContext;
 import eu.unifiedviews.helpers.dpu.extension.Extension;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionException;
+import org.openrdf.model.URI;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.sparql.SPARQLRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * Represents remote RDF repository in form of {@link RDFDataUnit}.
@@ -126,6 +121,7 @@ public class RemoteRdfDataUnit implements RDFDataUnit, AutoCloseable, Extension,
         if (execPoint == ExecutionPoint.POST_EXECUTE) {
             // If RdfDataUnit is not closed then call close.
             if (!closed) {
+                LOG.debug("RdfDatunit not closed, calling close()");
                 try {
                     close();
                 } catch (Exception ex) {
