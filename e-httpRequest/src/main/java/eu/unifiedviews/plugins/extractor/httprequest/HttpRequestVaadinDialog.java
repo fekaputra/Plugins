@@ -1,22 +1,20 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-
 import eu.unifiedviews.dpu.config.DPUConfigException;
 import eu.unifiedviews.helpers.dpu.vaadin.dialog.AbstractDialog;
 import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.DataType;
 import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.RequestType;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Main DPU configuration dialog
@@ -257,7 +255,7 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
                         fileNameField.setDescription(ctx.tr("dialog.file.name.description"));
                         break;
                     case FILE:
-                        hideComponents(contentTypeSelect, charsetSelect, formDataLayout, rawDataArea, testButton);
+                        hideComponents(formDataLayout, rawDataArea, testButton);
                         fileNameField.setCaption(ctx.tr("dialog.file.name.file"));
                         fileNameField.setDescription(ctx.tr("dialog.file.name.file.description"));
                     default:
@@ -376,6 +374,9 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
                 this.contentTypeSelect.select(config.getContentType());
                 this.charsetSelect.select(config.getCharset());
                 this.rawDataArea.setValue(config.getRawRequestBody());
+            } else if (config.getPostRequestDataType() == DataType.FILE) {
+                this.contentTypeSelect.select(config.getContentType());
+                this.charsetSelect.select(config.getCharset());
             } else if (config.getPostRequestDataType() == DataType.FORM_DATA) {
                 for (String key : config.getFormDataRequestBody().keySet()) {
                     this.formDataTable.addItem(new Object[] { key, config.getFormDataRequestBody().get(key) }, null);
@@ -405,6 +406,9 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
                 config.setCharset((String) this.charsetSelect.getValue());
                 config.setContentType((RequestContentType) this.contentTypeSelect.getValue());
                 config.setRawRequestBody(this.rawDataArea.getValue());
+            } else if (config.getPostRequestDataType() == DataType.FILE) {
+                config.setCharset((String) this.charsetSelect.getValue());
+                config.setContentType((RequestContentType) this.contentTypeSelect.getValue());
             } else if (config.getPostRequestDataType() == DataType.FORM_DATA) {
                 checkFormDataConfiguration();
                 Map<String, String> formData = new HashMap<>();

@@ -78,7 +78,10 @@ public class HttpRequestExecutor {
             }
 
             EntityBuilder builder = EntityBuilder.create();
-            ContentType contentType = ContentType.DEFAULT_BINARY;
+            builder.setContentEncoding(config.getCharset());
+
+            //ContentType contentType = ContentType.DEFAULT_BINARY;
+            ContentType contentType = ContentType.create(config.getContentType().getDescription()).withCharset(config.getCharset());
             builder.setFile(file);
             builder.setContentType(contentType);
 
@@ -95,6 +98,7 @@ public class HttpRequestExecutor {
             throw new Exception(errorMsg, ex);
         }
         return response;
+
     }
 
     /**

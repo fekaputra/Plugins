@@ -1,8 +1,11 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
+import eu.unifiedviews.helpers.dpu.ontology.EntityDescription;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@EntityDescription.Entity(type = HttpRequestVocabulary.STR_CONFIG_CLASS)
 public class HttpRequestConfig_V1 {
 
     public enum DataType {
@@ -23,6 +26,7 @@ public class HttpRequestConfig_V1 {
 
     private String requestURL = "";
 
+    @EntityDescription.Property(uri = HttpRequestVocabulary.STR_RAW_REQUEST_BODY)
     private String rawRequestBody = "";
 
     private String userName;
@@ -33,9 +37,7 @@ public class HttpRequestConfig_V1 {
 
     private Map<String, String> formDataRequestBody = new HashMap<>();
 
-    private static final String FILE_NAME_DEFAULT = "http_response";
-
-    private String fileName = FILE_NAME_DEFAULT;
+    private String fileName = "http_response";
 
     public DataType getPostRequestDataType() {
         return this.postRequestDataType;
