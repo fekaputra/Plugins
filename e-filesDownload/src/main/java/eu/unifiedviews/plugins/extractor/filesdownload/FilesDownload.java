@@ -209,6 +209,14 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
             boolean errorInFileForVfsEntry = false;
             for (FileObject fileObject : fileObjects) {
 
+                if (config.getWaitBetweenCallsMs() > 0) {
+                    try {
+                        Thread.sleep(config.getWaitBetweenCallsMs());
+                    } catch (InterruptedException e) {
+                        LOG.warn(e.getLocalizedMessage(),e);
+                    }
+                }
+
                 boolean isFile = false;
                 try {
                     isFile = FileType.FILE.equals(fileObject.getType());
