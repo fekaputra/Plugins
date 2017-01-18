@@ -12,6 +12,7 @@ virtuálnej cesty (cieľové umiestnenie súboru pri nahrávaní mimo UnifiedVie
 v prípadoch keď potrebujete iba prechádzať stiahnuté súbory v pokračovaní procesu tým istým spôsobom, nie je potrebné špecifikovať meno súboru.
 |**Mäkké zlyhanie** | Ak je zaškrtnuté a nastane nejaká chyba v spracovaní VFS položky alebo súboru, tak sa zobrazí varovanie a extrakcia v DPU pokračuje ďalej. Ak zaškrtnuté nie je (default), tak v prípade chyby pri spracovaní ktorejkoľvek VFS položky alebo súboru je extrakcia prerušená a končí chybou.  |
 |**Vynechať duplicitné vstupné súborové položky** | Ak je zaškrtnuté, DPU skontroluje či sa niektoré súborové URI nespracúvajú viacnásobne (môže sa stať keď je DPU konfigurované dynamicky). A ak áno, duplicitné spracovanie je vynechané a do logu je pridaná informácia o tomto vynechaní.  |
+|**Čakať medzi volaniami (ms)**| Čas v milisekundách, ktorý má DPU stráviť čakaním medzi dvoma HTTP volaniami (default je 0, čo znamená medzi volaniami nečakať) |
 
 ### Vstupy a výstupy
 
