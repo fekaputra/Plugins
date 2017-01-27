@@ -9,6 +9,8 @@ import eu.unifiedviews.dpu.DPU;
 import eu.unifiedviews.dpu.DPUContext;
 import eu.unifiedviews.dpu.DPUException;
 import eu.unifiedviews.helpers.dataunit.DataUnitUtils;
+import eu.unifiedviews.helpers.dataunit.copy.CopyHelper;
+import eu.unifiedviews.helpers.dataunit.copy.CopyHelpers;
 import eu.unifiedviews.helpers.dataunit.metadata.MetadataUtilsInstance;
 import eu.unifiedviews.helpers.dataunit.rdf.RdfDataUnitUtils;
 import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
@@ -23,6 +25,7 @@ import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.Update;
 import org.openrdf.query.UpdateExecutionException;
+import org.openrdf.query.impl.DatasetImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
@@ -67,10 +70,13 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     @Override
     protected void innerExecute() throws DPUException {
 
+        boolean optimalized = true;
+
         if (useDataset()) {
-            ContextUtils.sendShortInfo(ctx, "sparqlUpdate.dpu.mode.openRdf");
+            //default and usual choice
+            LOG.debug("Dataset clause is used"); //ContextUtils.sendShortInfo(ctx, "sparqlUpdate.dpu.mode.openRdf");
         } else {
-            ContextUtils.sendShortInfo(ctx, "sparqlUpdate.dpu.mode.virtuoso");
+            LOG.debug("Dataset clause is NOT used"); //ContextUtils.sendShortInfo(ctx, "sparqlUpdate.dpu.mode.virtuoso");
         }
         // Get update query.
         final String query = config.getQuery();
@@ -80,51 +86,89 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
         final List<URI> outputGraphs = new LinkedList<>();
         // Get graphs.
         final List<RDFDataUnit.Entry> sourceEntries = getInputEntries(rdfInput);
-        // Copy data into a new graph.
+
+        //calculate input size (before executing changes)
+        long inputSize = 0;
+        try {
+            inputSize = getTriplesCount(rdfInput, RdfDataUnitUtils.asGraphs(sourceEntries));
+        } catch (DataUnitException e) {
+            LOG.error(e.getLocalizedMessage(), e.getStackTrace());
+        }
+
+        int numberOfGraphs = sourceEntries.size();
+        LOG.info("{} graph(s) in the input data unit", numberOfGraphs);
+
+
         if (config.isPerGraph()) {
             ContextUtils.sendMessage(ctx, DPUContext.MessageType.INFO, "sparqlUpdate.dpu.info.perGraph",
                     "sparqlUpdate.dpu.info.perGraph.body", sourceEntries.size());
-            // Execute on per-graph basis.
+            // Execute on per-graph basis. So if optimalized, it just copies the graph entries to the output data unit (with the original graphs),
+            // instead of producing new data graphs and copying content, and then executes on per-graph basis
             int counter = 1;
             for (final RDFDataUnit.Entry sourceEntry : sourceEntries) {
                 LOG.info("Executing {}/{}", counter++, sourceEntries.size());
-                // For each input graph prepare output graph.
-                final URI targetGraph = createOutputGraph(sourceEntry);
+
+                String sourceSymbolicName;
+                URI sourceDataGraphURI;
                 try {
-                    LOG.info("   {} -> {}", sourceEntry.getDataGraphURI(), targetGraph);
+                    sourceSymbolicName = sourceEntry.getSymbolicName();
+                    sourceDataGraphURI = sourceEntry.getDataGraphURI();
                 } catch (DataUnitException e) {
                     throw new DPUException(e);
                 }
 
+                //get target entries graph URL
+                URI targetGraph;
+                if (optimalized) {
+                    CopyHelper copyHelper = CopyHelpers.create(rdfInput, rdfOutput);
+                    try {
+                        copyHelper.copyMetadata(sourceSymbolicName);
+                    } catch (DataUnitException e) {
+                        LOG.error(e.getLocalizedMessage(), e);
+                    }
+                    //target graph is the same as source graph
+                    try {
+                        targetGraph = sourceEntry.getDataGraphURI();
+                    } catch (DataUnitException e) {
+                        throw new DPUException(e);
+                    }
+
+                }
+                else {
+                    // For each input graph create new output graph
+                    targetGraph = createOutputGraph(sourceEntry);
+                }
+
+                LOG.info("Source: {}, graph {} is copied to graph {}", sourceSymbolicName, sourceDataGraphURI, targetGraph);
 
                 // Execute query 1 -> 1.
-                updateEntries(query, Arrays.asList(sourceEntry), targetGraph);
+                updateEntries(query, getGraphUriList(Arrays.asList(sourceEntry)), targetGraph, optimalized);
                 outputGraphs.add(targetGraph);
                 if (ctx.canceled()) {
                     throw ContextUtils.dpuExceptionCancelled(ctx);
                 }
             }
         } else {
-            // All graph at once, just check size.
-            if (sourceEntries.size() > MAX_GRAPH_COUNT) {
+            // Execute query on top of all graphs at once.
+            // In case of NON-optimalized approach (the original one) it creates only one OUTPUT graph, but in case of optimalized version it produces more graphs!
+            // For Optimized mode, this mode is not available!
+            ContextUtils.sendInfo(ctx, "sparqlUpdate.dpu.info.singleOutput", "sparqlUpdate.dpu.info.singleOutput.detailed");
+            if (optimalized) ContextUtils.sendInfo(ctx,"sparqlUpdate.dpu.opt.all.warn","sparqlUpdate.dpu.opt.all.warn.detailed");
+
+            if (numberOfGraphs > MAX_GRAPH_COUNT) {
                 throw ContextUtils.dpuException(ctx, "sparqlUpdate.dpu.error.tooManyGraphs",
                         MAX_GRAPH_COUNT, sourceEntries.size());
             }
-            // Prepare single output graph.
+
             final URI targetGraph = createOutputGraph();
+            LOG.info("All source graphs are copied to target graph {}", targetGraph);
 
             // Execute over all intpu graph ie. m -> 1
-            ContextUtils.sendShortInfo(ctx, "sparqlUpdate.dpu.info.singleOutput");
-            updateEntries(query, sourceEntries, targetGraph);
+            updateEntries(query, getGraphUriList(sourceEntries), targetGraph, false);
             outputGraphs.add(targetGraph);
         }
-        // Summmary message.
-        long inputSize = 0;
-        try {
-            inputSize = getTriplesCount(rdfOutput, RdfDataUnitUtils.asGraphs(sourceEntries));
-        } catch (DataUnitException e) {
-            LOG.error(e.getLocalizedMessage(), e.getStackTrace());
-        }
+
+        // Calculate output size
         long outputSize = getTriplesCount(rdfOutput, outputGraphs.toArray(new URI[0]));
 
         ContextUtils.sendShortInfo(ctx, "sparqlUpdate.dpu.msg.report", inputSize, outputSize);
@@ -135,22 +179,31 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
      * or over updateQuery graphs.
      * 
      * @param updateQuery
-     * @param sourceEntries
+     * @param sourceGraphs
      * @param targetgraph
+     * @param optimalized
      * @throws DPUException
      */
-    protected void updateEntries(final String updateQuery, final List<RDFDataUnit.Entry> sourceEntries,
-            final URI targetgraph) throws DPUException {
+    protected void updateEntries(final String updateQuery, final List<URI> sourceGraphs,
+                                 final URI targetgraph, boolean optimalized) throws DPUException {
         RepositoryConnection connection = null;
         try {
             connection = rdfInput.getConnection();
         } catch (DataUnitException e) {
             LOG.error(e.getLocalizedMessage(), e.getStackTrace());
         }
-        //copy data
-        executeUpdateQuery(QUERY_COPY, toUriList(sourceEntries), targetgraph, connection);
-        // Execute user query over new graph.
-        executeUpdateQuery(updateQuery, Arrays.asList(targetgraph), targetgraph, connection);
+
+        if (optimalized) {
+            // Execute user query
+            executeUpdateQuery(updateQuery, sourceGraphs, targetgraph, connection);
+        }
+        else {
+            //copy the data before
+            executeUpdateQuery(QUERY_COPY, sourceGraphs, targetgraph, connection);
+            // Execute user query over new graph.
+            executeUpdateQuery(updateQuery, Arrays.asList(targetgraph), targetgraph, connection);
+        }
+
 
     }
 
@@ -168,27 +221,27 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     protected void executeUpdateQuery(String query, List<URI> sourceGraphs, URI targetGraph,
             RepositoryConnection connection) throws DPUException {
         // Prepare query.
-//        if (!useDataset()) {
+        if (!useDataset()) {
             if (Pattern.compile(Pattern.quote("DELETE"), Pattern.CASE_INSENSITIVE).matcher(query).find()) {
                 query = query.replaceFirst("(?i)DELETE", prepareWithClause(targetGraph) + " DELETE");
             } else {
                 query = query.replaceFirst("(?i)INSERT", prepareWithClause(targetGraph) + " INSERT");
             }
             query = query.replaceFirst("(?i)WHERE", prepareUsingClause(sourceGraphs) + "WHERE");
-//        }
+        }
         LOG.info("Query to execute: {}", query);
         try {
             // Execute query.
             final Update update = connection.prepareUpdate(QueryLanguage.SPARQL, query);
-//            if (useDataset()) {
-//                final DatasetImpl dataset = new DatasetImpl();
-//                for (URI graph : sourceGraphs) {
-//                    dataset.addDefaultGraph(graph);
-//                }
-//                dataset.addDefaultRemoveGraph(targetGraph);
-//                dataset.setDefaultInsertGraph(targetGraph);
-//                update.setDataset(dataset);
-//            }
+            if (useDataset()) {
+                final DatasetImpl dataset = new DatasetImpl();
+                for (URI graph : sourceGraphs) {
+                    dataset.addDefaultGraph(graph);
+                }
+                dataset.addDefaultRemoveGraph(targetGraph);
+                dataset.setDefaultInsertGraph(targetGraph);
+                update.setDataset(dataset);
+            }
             update.execute();
         } catch (MalformedQueryException | UpdateExecutionException ex) {
             throw ContextUtils.dpuException(ctx, ex, "sparqlUpdate.dpu.error.query");
@@ -198,6 +251,8 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     }
 
     /**
+     * Creates new output graph. Symbolic name is completely new (using time stamp in suffix).
+     * Data graph URI is generated.
      * @return New output graph.
      * @throws DPUException
      */
@@ -213,6 +268,8 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     }
 
     /**
+     * Creates new output graph. Symbolic name is based on the input graph (but modifed with this DPU's id as suffix).
+     * Data graph URI is generated.
      * @param entry
      * @return New output graph.
      * @throws DPUException
@@ -247,7 +304,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
      * @return
      * @throws DPUException
      */
-    protected List<URI> toUriList(final List<RDFDataUnit.Entry> entries) throws DPUException {
+    protected List<URI> getGraphUriList(final List<RDFDataUnit.Entry> entries) throws DPUException {
         final List<URI> result = new ArrayList<>(entries.size());
 
         for (RDFDataUnit.Entry entry : entries) {
