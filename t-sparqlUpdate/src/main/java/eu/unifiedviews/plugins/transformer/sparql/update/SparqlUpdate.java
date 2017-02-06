@@ -70,7 +70,22 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     @Override
     protected void innerExecute() throws DPUException {
 
-        boolean optimalized = true;
+        boolean optimisticMode = false;
+
+        if (ctx.isOptimisticModeEnabled(rdfInput)) {
+            optimisticMode = true;
+            if (!config.isPerGraph()) {
+                //activated, but no effect, as per graph option not selected
+                ContextUtils.sendInfo(ctx, "sparqlUpdate.dpu.opt.all.warn", "sparqlUpdate.dpu.opt.all.warn.detailed");
+            } else {
+                //activated
+                ContextUtils.sendInfo(ctx, "sparqlUpdate.dpu.optimistic.on", "sparqlUpdate.dpu.optimistic.on.detailed");
+            }
+
+        } else {
+            //not activated
+            ContextUtils.sendInfo(ctx, "sparqlUpdate.dpu.optimistic.off", "sparqlUpdate.dpu.optimistic.off.detailed");
+        }
 
         if (useDataset()) {
             //default and usual choice
@@ -95,8 +110,10 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
             LOG.error(e.getLocalizedMessage(), e.getStackTrace());
         }
 
-        int numberOfGraphs = sourceEntries.size();
-        LOG.info("{} graph(s) in the input data unit", numberOfGraphs);
+        int numberOfInputGraphs = sourceEntries.size();
+        LOG.info("{} graph(s) in the input data unit", numberOfInputGraphs);
+
+        int numberOfOutputGraphs;
 
 
         if (config.isPerGraph()) {
@@ -119,7 +136,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
                 //get target entries graph URL
                 URI targetGraph;
-                if (optimalized) {
+                if (optimisticMode) {
                     CopyHelper copyHelper = CopyHelpers.create(rdfInput, rdfOutput);
                     try {
                         copyHelper.copyMetadata(sourceSymbolicName);
@@ -142,20 +159,22 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
                 LOG.info("Source: {}, graph {} is copied to graph {}", sourceSymbolicName, sourceDataGraphURI, targetGraph);
 
                 // Execute query 1 -> 1.
-                updateEntries(query, getGraphUriList(Arrays.asList(sourceEntry)), targetGraph, optimalized);
+                updateEntries(query, getGraphUriList(Arrays.asList(sourceEntry)), targetGraph, optimisticMode);
                 outputGraphs.add(targetGraph);
+
                 if (ctx.canceled()) {
                     throw ContextUtils.dpuExceptionCancelled(ctx);
                 }
             }
+
+            numberOfOutputGraphs = numberOfInputGraphs;
         } else {
             // Execute query on top of all graphs at once.
             // In case of NON-optimalized approach (the original one) it creates only one OUTPUT graph, but in case of optimalized version it produces more graphs!
             // For Optimized mode, this mode is not available!
             ContextUtils.sendInfo(ctx, "sparqlUpdate.dpu.info.singleOutput", "sparqlUpdate.dpu.info.singleOutput.detailed");
-            if (optimalized) ContextUtils.sendInfo(ctx,"sparqlUpdate.dpu.opt.all.warn","sparqlUpdate.dpu.opt.all.warn.detailed");
 
-            if (numberOfGraphs > MAX_GRAPH_COUNT) {
+            if (numberOfInputGraphs > MAX_GRAPH_COUNT) {
                 throw ContextUtils.dpuException(ctx, "sparqlUpdate.dpu.error.tooManyGraphs",
                         MAX_GRAPH_COUNT, sourceEntries.size());
             }
@@ -166,12 +185,14 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
             // Execute over all intpu graph ie. m -> 1
             updateEntries(query, getGraphUriList(sourceEntries), targetGraph, false);
             outputGraphs.add(targetGraph);
+
+            numberOfOutputGraphs = 1;
         }
 
         // Calculate output size
         long outputSize = getTriplesCount(rdfOutput, outputGraphs.toArray(new URI[0]));
 
-        ContextUtils.sendShortInfo(ctx, "sparqlUpdate.dpu.msg.report", inputSize, outputSize);
+        ContextUtils.sendInfo(ctx, "sparqlUpdate.dpu.msg.report", "sparqlUpdate.dpu.msg.report.detailed", inputSize, outputSize, numberOfInputGraphs, numberOfOutputGraphs);
     }
 
     /**
