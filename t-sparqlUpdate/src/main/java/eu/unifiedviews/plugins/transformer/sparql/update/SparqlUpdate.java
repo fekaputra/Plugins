@@ -70,10 +70,10 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
     @Override
     protected void innerExecute() throws DPUException {
 
-        boolean optimisticMode = false;
+        boolean performanceOptimizationEnabled = false;
 
-        if (ctx.isOptimisticModeEnabled(rdfInput)) {
-            optimisticMode = true;
+        if (ctx.isPerformanceOptimizationEnabled(rdfInput)) {
+            performanceOptimizationEnabled = true;
             if (!config.isPerGraph()) {
                 //activated, but no effect, as per graph option not selected
                 ContextUtils.sendInfo(ctx, "sparqlUpdate.dpu.opt.all.warn", "sparqlUpdate.dpu.opt.all.warn.detailed");
@@ -136,7 +136,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
                 //get target entries graph URL
                 URI targetGraph;
-                if (optimisticMode) {
+                if (performanceOptimizationEnabled) {
                     CopyHelper copyHelper = CopyHelpers.create(rdfInput, rdfOutput);
                     try {
                         copyHelper.copyMetadata(sourceSymbolicName);
@@ -159,7 +159,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
                 LOG.info("Source: {}, graph {} is copied to graph {}", sourceSymbolicName, sourceDataGraphURI, targetGraph);
 
                 // Execute query 1 -> 1.
-                updateEntries(query, getGraphUriList(Arrays.asList(sourceEntry)), targetGraph, optimisticMode);
+                updateEntries(query, getGraphUriList(Arrays.asList(sourceEntry)), targetGraph, performanceOptimizationEnabled);
                 outputGraphs.add(targetGraph);
 
                 if (ctx.canceled()) {
