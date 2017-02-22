@@ -168,13 +168,24 @@ public class SparqlEndpoint extends AbstractDpu<SparqlEndpointConfig_V1> {
 
         LOG.info("Get size of the extracted data");
         long size = 0;
+        RepositoryConnection connection = null;
         try {
-            size = rdfOutput.getConnection().size(outputEntry.getDataGraphURI());
+            connection = rdfOutput.getConnection();
+            size = connection.size(outputEntry.getDataGraphURI());
         } catch (RepositoryException e) {
             LOG.error(e.getLocalizedMessage(), e.getStackTrace());
         } catch (DataUnitException e) {
             LOG.error(e.getLocalizedMessage(), e.getStackTrace());
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (RepositoryException e) {
+                    LOG.warn("Cannot close connection", e);
+                }
+            }
         }
+
         ContextUtils.sendShortInfo(ctx, "SparqlEndpoint.exec.extracted", size);
 
 
