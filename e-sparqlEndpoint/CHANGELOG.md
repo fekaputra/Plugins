@@ -1,6 +1,11 @@
 E-SparqlEndpoint
 ----------
 
+v1.1.1
+---
+* Connections properly closed
+* Fault tolerance support removed (not used anyway)
+
 v1.1.0
 ---
 * Added support for chunked queries. The given query can be rewritten so that results are chunked in order to avoid timeouts, result sets max rows limitations, etc.
