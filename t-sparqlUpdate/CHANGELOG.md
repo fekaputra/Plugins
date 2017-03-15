@@ -1,16 +1,22 @@
 T-SparqlUpdate
 ----------
 
-2.1.6
+v2.2.0
+---
+* Support for [RDF Data Processing Performance Optimization](https://grips.semantic-web.at/display/UDDOC/RDF+Data+Processing+Performance+Optimization)
+* Connections properly closed
+* Fault tolerance support removed (not used anyway)
+
+v2.1.6
 ---
 * Added support for [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation)
 * Update to helpers 2.1.7
 
-2.1.5
+v2.1.5
 ---
 * Improved slovak translation
 
-2.1.4
+v2.1.4
 ---
 * Documentation (About) improved
 * Update to helpers 2.1.4

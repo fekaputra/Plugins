@@ -1,11 +1,24 @@
 package eu.unifiedviews.plugins.transformer.rdftofiles;
 
 import eu.unifiedviews.dataunit.DataUnit;
+import eu.unifiedviews.dataunit.files.FilesDataUnit;
 import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
 import eu.unifiedviews.dpu.DPU;
+import eu.unifiedviews.dpu.DPUContext.MessageType;
 import eu.unifiedviews.dpu.DPUException;
-
+import eu.unifiedviews.helpers.dataunit.files.FilesDataUnitUtils;
+import eu.unifiedviews.helpers.dataunit.files.FilesVocabulary;
+import eu.unifiedviews.helpers.dataunit.metadata.MetadataUtils;
+import eu.unifiedviews.helpers.dataunit.rdf.RdfDataUnitUtils;
+import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
+import eu.unifiedviews.helpers.dpu.config.migration.ConfigurationUpdate;
+import eu.unifiedviews.helpers.dpu.context.ContextUtils;
+import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
+import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
+import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
+import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
+import eu.unifiedviews.helpers.dpu.extension.rdf.RdfConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.openrdf.model.URI;
 import org.openrdf.repository.RepositoryConnection;
@@ -21,21 +34,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.List;
-
-import eu.unifiedviews.dataunit.files.FilesDataUnit;
-import eu.unifiedviews.dpu.DPUContext.MessageType;
-import eu.unifiedviews.helpers.dataunit.files.FilesDataUnitUtils;
-import eu.unifiedviews.helpers.dataunit.files.FilesVocabulary;
-import eu.unifiedviews.helpers.dataunit.metadata.MetadataUtils;
-import eu.unifiedviews.helpers.dataunit.rdf.RdfDataUnitUtils;
-import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
-import eu.unifiedviews.helpers.dpu.config.migration.ConfigurationUpdate;
-import eu.unifiedviews.helpers.dpu.context.ContextUtils;
-import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
-import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
-import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
-import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
-import eu.unifiedviews.helpers.dpu.extension.rdf.RdfConfiguration;
 
 @DPU.AsTransformer
 public class RdfToFiles extends AbstractDpu<RdfToFilesConfig_V2> {
@@ -149,7 +147,7 @@ public class RdfToFiles extends AbstractDpu<RdfToFilesConfig_V2> {
     /**
      * Check if file graph should be generated and if so, then generate new graph file.
      * 
-     * @param graph
+     * @param rdfFile
      * @param graphName
      *            Name of the graph, that will be written into .graph file.
      * @throws DPUException
