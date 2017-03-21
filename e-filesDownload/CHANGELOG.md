@@ -4,6 +4,7 @@ E-FilesDownload
 v2.1.7
 ---
 * Added support for custom delay (in ms)  between the HTTP calls
+* Adjusted creation of Virtual Path (see the user documentation)
 
 v2.1.6
 ---
