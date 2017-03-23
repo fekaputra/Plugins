@@ -17,9 +17,7 @@ import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
 import eu.unifiedviews.helpers.dpu.context.ContextUtils;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.Collections;
 
 
 /**
@@ -48,15 +46,14 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
         ContextUtils.sendShortInfo(ctx, "SparkPipeline.message");
 
         try {
-            ArrayList<String> uris = new ArrayList<>();
             for(FilesDataUnit.Entry entry : FilesHelper.getFiles(input)){
-                uris.add(entry.getFileURIString());
-                RddLike<String> rdd = RddLike$.MODULE$.fromTextFiles(uris);
+                RddLike<String> rdd = RddLike$.MODULE$.fromTextFiles(Collections.singletonList(entry.getFileURIString()));
 
                 FilePipeline pipeline = new FilePipeline();
                 rdd = (RddLike<String>) pipeline.transform(rdd);
 
                 FilesHelper.createFile(output, entry.getFileURIString());
+                rdd.saveAsTextFile(entry.getFileURIString());
             }
 
         } catch (DataUnitException e) {

@@ -19,6 +19,9 @@ import java.util.stream.*;
 
 /**
  * Created by chile on 22.03.17.
+ * Creates a Stream of Statements based on the StatementSupplier
+ * This Class should be used when reading from a RepositoryConnection.
+ * When  reading (RDF) files we will use the internal SPARK methods of distributing file segments to the worker nodes
  */
 public class StatementStream implements Stream<Statement> {
 

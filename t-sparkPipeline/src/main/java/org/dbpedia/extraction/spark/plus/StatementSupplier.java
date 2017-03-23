@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 
 /**
  * Created by chile on 22.03.17.
+ * Doubles as Statement handler and Stream Supplier
  */
 public class StatementSupplier implements org.openrdf.rio.RDFHandler, Supplier<Statement>{
 
