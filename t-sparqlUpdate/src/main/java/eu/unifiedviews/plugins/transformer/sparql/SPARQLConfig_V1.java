@@ -6,6 +6,7 @@ import java.util.List;
 import cz.cuni.mff.xrg.uv.transformer.sparql.update.SparqlUpdateConfig_V1;
 import eu.unifiedviews.helpers.dpu.config.VersionedConfig;
 
+
 /**
  * SPARQL transformer configuration.
  *

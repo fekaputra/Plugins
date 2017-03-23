@@ -54,7 +54,8 @@
 
         <!-- QUALITY CONTROL -->
         <module>q-sparqlAsk</module>
-    </modules>
+    <module>t-sparkPipeline</module>
+  </modules>
 
     <profiles>
         <profile>
