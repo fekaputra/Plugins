@@ -12,7 +12,7 @@
     <artifactId>uv-t-sparqlUpdate</artifactId>
     <name>T-SparqlUpdate</name>
     <description>Execute a single SPARQL Update query.</description>
-    <version>2.2.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>

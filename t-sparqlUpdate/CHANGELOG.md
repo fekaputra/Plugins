@@ -1,7 +1,7 @@
 T-SparqlUpdate
 ----------
 
-v2.2.0
+v3.0.0
 ---
 * Support for [RDF Data Processing Performance Optimization](https://grips.semantic-web.at/display/UDDOC/RDF+Data+Processing+Performance+Optimization)
 * Connections properly closed
