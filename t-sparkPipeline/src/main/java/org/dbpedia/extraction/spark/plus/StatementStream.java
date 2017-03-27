@@ -8,6 +8,7 @@ import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.*;
+import scala.collection.immutable.Stream$;
 
 import java.io.*;
 import java.util.Comparator;

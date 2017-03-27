@@ -16,6 +16,8 @@
     <description></description>
 
     <properties>
+        <project.java.source.version>1.8</project.java.source.version>
+        <project.java.target.version>1.8</project.java.target.version>
         <dpu.package>org.dbpedia.extraction.spark</dpu.package>
         <dpu.mainClass>SparkPipeline</dpu.mainClass>
     </properties>

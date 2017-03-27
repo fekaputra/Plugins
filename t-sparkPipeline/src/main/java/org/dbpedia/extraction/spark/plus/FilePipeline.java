@@ -1,46 +1,49 @@
 package org.dbpedia.extraction.spark.plus;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.dbpedia.spark.core.*;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by chile on 23.03.17.
  * This Pipeline will be loaded by reading text files
  */
-public class FilePipeline implements Pipeline<String, String> {
+public class FilePipeline extends AbstractPipeline<String, String> {
+
+    private List<PipelineStep<?, ?>> stages = new ArrayList<>();
 
     public FilePipeline(){   }
 
     @Override
     public URI uri() {
-        return null;
+        //TODO
+        return new URIImpl("http://example.org/path");
     }
 
     @Override
     public List<PipelineStep<Object, Object>> getStages() {
-        return null;
+        throw new NotImplementedException("");
     }
 
     @Override
     public void setStages(List<PipelineStep<?, ?>> stages) {
-
-    }
-
-    @Override
-    public DataFrame<String> transform(DataFrame<String> in) {
-        return Pipeline.super.transform(in);
+        this.stages = stages;
     }
 
     @Override
     public DatasourceProfile<String> requires() {
-        return null;
+
+        throw new NotImplementedException("");
     }
 
     @Override
     public DatasourceProfile<String> produces() {
-        return null;
+
+        throw new NotImplementedException("");
     }
 
 }
