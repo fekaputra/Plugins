@@ -7,6 +7,7 @@ import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
 import eu.unifiedviews.dpu.DPU;
 import eu.unifiedviews.dpu.DPUException;
 import eu.unifiedviews.helpers.dataunit.files.FilesHelper;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.MapFunction;
 import org.dbpedia.extraction.spark.plus.FilePipeline;
 import org.dbpedia.spark.core.*;
@@ -19,6 +20,7 @@ import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
 import eu.unifiedviews.helpers.dpu.context.ContextUtils;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import scala.Function1;
+import scala.reflect.ClassTag$;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +70,8 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
             PipelineStep <String, String> step1 = new PipelineStep<String, String>(new Transformer<String, String>() {
                 @Override
                 public DataFrame<String> transform(DataFrame<String> in) {
-                    return ((RddLike<String>) in).rdd().<String>map(x -> x);
+                    JavaRDD<String> javardd = ((JavaRDD<String>) in).<String>map(x -> x);
+                    return RddLike$.MODULE$.fromJavaRDD(javardd, ClassTag$.MODULE$.<String>apply(String.class));
                 }
 
                 @Override
@@ -90,7 +93,8 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
             PipelineStep <String, String> step2 = new PipelineStep<String, String>(new Transformer<String, String>() {
                 @Override
                 public DataFrame<String> transform(DataFrame<String> in) {
-                    return ((RddLike<String>) in).rdd().<String>map(x -> x);
+                    JavaRDD<String> javardd = ((JavaRDD<String>) in).<String>map(x -> x);
+                    return RddLike$.MODULE$.fromJavaRDD(javardd, ClassTag$.MODULE$.<String>apply(String.class));
                 }
 
                 @Override
