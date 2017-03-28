@@ -16,17 +16,13 @@
  */
 package eu.unifiedviews.plugins.transformer.filestordft;
 
-import eu.unifiedviews.dpu.DPUException;
-import info.aduna.io.GZipUtil;
-import info.aduna.io.ZipUtil;
+import org.eclipse.rdf4j.common.io.GZipUtil;
+import org.eclipse.rdf4j.common.io.ZipUtil;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.rio.*;
+import org.eclipse.rdf4j.rio.helpers.ParseErrorLogger;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
@@ -34,10 +30,6 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.openrdf.model.ValueFactory;
-import org.openrdf.rio.*;
-import org.openrdf.rio.helpers.ParseErrorLogger;
 
 /**
  * Handles common I/O to retrieve and parse RDF.
@@ -89,7 +81,7 @@ public class ParseErrorListenerEnabledRDFLoader {
             baseURI = file.toURI().toString();
         }
         if (dataFormat == null) {
-            dataFormat = Rio.getParserFormatForFileName(file.getName());
+            dataFormat = Rio.getParserFormatForFileName(file.getName()).orElse(null);
         }
 
         if (dataFormat == null) {
@@ -163,11 +155,11 @@ public class ParseErrorListenerEnabledRDFLoader {
             if (semiColonIdx >= 0) {
                 mimeType = mimeType.substring(0, semiColonIdx);
             }
-            dataFormat = Rio.getParserFormatForMIMEType(mimeType);
+            dataFormat = Rio.getParserFormatForMIMEType(mimeType).orElse(null);
 
             // Fall back to using file name extensions
             if (dataFormat == null) {
-                dataFormat = Rio.getParserFormatForFileName(url.getPath());
+                dataFormat = Rio.getParserFormatForFileName(url.getPath()).orElse(null);
             }
         }
 
@@ -259,7 +251,7 @@ public class ParseErrorListenerEnabledRDFLoader {
                     continue;
                 }
 
-                RDFFormat format = Rio.getParserFormatForFileName(entry.getName(), dataFormat);
+                RDFFormat format = Rio.getParserFormatForFileName(entry.getName()).orElse(dataFormat);
 
                 try {
                     // Prevent parser (Xerces) from closing the input stream

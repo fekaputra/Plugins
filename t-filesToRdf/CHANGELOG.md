@@ -1,6 +1,11 @@
 T-FilesToRdf
 ----------
 
+v3.0.0
+---
+* Upgraded to rdf4j
+
+
 v2.2.1
 ---
 * Added support for [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation).

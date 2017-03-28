@@ -24,24 +24,24 @@ import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
 import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.Update;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.util.RDFInserter;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.Rio;
-import org.openrdf.rio.helpers.ParseErrorLogger;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.Update;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
+import org.eclipse.rdf4j.repository.util.RDFInserter;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.rio.helpers.ParseErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,13 +216,13 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
                 @Override
                 public RDFFormat action() throws Exception {
                     if (!config.getOutputType().equals("AUTO")) {
-                        return Rio.getParserFormatForMIMEType(config.getOutputType());
+                        return Rio.getParserFormatForMIMEType(config.getOutputType()).orElse(null);
                     }
                     String inputVirtualPath = MetadataUtils.get(filesInput, entry, FilesVocabulary.UV_VIRTUAL_PATH);
                     if (inputVirtualPath != null) {
-                        return Rio.getParserFormatForFileName(inputVirtualPath);
+                        return Rio.getParserFormatForFileName(inputVirtualPath).orElse(null);
                     } else {
-                        return Rio.getParserFormatForFileName(entry.getSymbolicName());
+                        return Rio.getParserFormatForFileName(entry.getSymbolicName()).orElse(null);
                     }
                 }
             });
