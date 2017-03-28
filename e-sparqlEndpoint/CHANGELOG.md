@@ -1,10 +1,11 @@
 E-SparqlEndpoint
 ----------
 
-v1.1.1
+v2.0.0
 ---
 * Connections properly closed
 * Fault tolerance support removed (not used anyway)
+* Upgraded to use rdf4j
 
 v1.1.0
 ---

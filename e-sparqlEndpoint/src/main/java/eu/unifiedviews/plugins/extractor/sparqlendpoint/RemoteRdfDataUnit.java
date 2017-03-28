@@ -8,10 +8,10 @@ import eu.unifiedviews.helpers.dpu.context.Context;
 import eu.unifiedviews.helpers.dpu.exec.ExecContext;
 import eu.unifiedviews.helpers.dpu.extension.Extension;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionException;
-import org.openrdf.model.URI;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sparql.SPARQLRepository;
+import  org.eclipse.rdf4j.model.IRI;
+import  org.eclipse.rdf4j.repository.RepositoryConnection;
+import  org.eclipse.rdf4j.repository.RepositoryException;
+import  org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class RemoteRdfDataUnit implements RDFDataUnit, AutoCloseable, Extension,
 
     private boolean closed = false;
 
-    RemoteRdfDataUnit(ExecContext<?> execContext, String endpointUrl, URI... graphs)
+    RemoteRdfDataUnit(ExecContext<?> execContext, String endpointUrl, IRI... graphs)
             throws ExternalError {
         this.execContext = execContext;
         this.repository = new SPARQLRepository(endpointUrl);
@@ -54,7 +54,7 @@ public class RemoteRdfDataUnit implements RDFDataUnit, AutoCloseable, Extension,
         }
         // Initialize entries.
         entries = new ArrayList<>(graphs.length);
-        for (URI uri : graphs) {
+        for (IRI uri : graphs) {
             entries.add(new RdfDataUnitUtils.InMemoryEntry(uri, "remote: " + endpointUrl));
         }
     }
@@ -92,7 +92,7 @@ public class RemoteRdfDataUnit implements RDFDataUnit, AutoCloseable, Extension,
     }
 
     @Override
-    public Set<URI> getMetadataGraphnames() throws DataUnitException {
+    public Set<IRI> getMetadataGraphnames() throws DataUnitException {
         return Collections.EMPTY_SET;
     }
 

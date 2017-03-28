@@ -107,7 +107,7 @@ public final class ExtractorEndpointParams {
      * Add next default graph to default graphs collection.
      *
      * @param graphURI
-     *            String value of default graph URI.
+     *            String value of default graph IRI.
      */
     public void addDefaultGraph(String graphURI) {
         if (graphURI != null && !graphURI.isEmpty()) {
@@ -120,7 +120,7 @@ public final class ExtractorEndpointParams {
      * Add next named graph to named graphs collection.
      *
      * @param graphURI
-     *            String value of named graph URI.
+     *            String value of named graph IRI.
      */
     public void addNamedGraph(String graphURI) {
         if (graphURI != null && !graphURI.isEmpty()) {
@@ -165,10 +165,10 @@ public final class ExtractorEndpointParams {
     }
 
     /**
-     * Returns collection of default graphs (URI type) used for SPARQL
+     * Returns collection of default graphs (IRI type) used for SPARQL
      * extractor.
      *
-     * @return collection of default graphs (URI type) used for SPARQL
+     * @return collection of default graphs (IRI type) used for SPARQL
      *         extractor.
      */
     public List<String> getDefaultGraphURI() {
@@ -176,9 +176,9 @@ public final class ExtractorEndpointParams {
     }
 
     /**
-     * Returns collection of named graphs (URI type) used for SPARQL extractor.
+     * Returns collection of named graphs (IRI type) used for SPARQL extractor.
      *
-     * @return collection of named graphs (URI type) used for SPARQL extractor.
+     * @return collection of named graphs (IRI type) used for SPARQL extractor.
      */
     public List<String> getNamedGraphURI() {
         return namedGraphURI;
