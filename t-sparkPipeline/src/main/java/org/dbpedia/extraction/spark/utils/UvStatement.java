@@ -106,24 +106,26 @@ public class UvStatement implements Statement {
     }
 
     private static final List<String> forbiddenTypes = Arrays.asList("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", "http://www.w3.org/2001/XMLSchema#string");
+
+    @Override
     public String toString() {
         //subject
         StringBuilder buf = new StringBuilder("<" + this.getSubject().stringValue().trim() + ">");
         //predicate
-        buf.append("\t<" + this.getPredicate().stringValue().trim() + ">");
+        buf.append("\t<").append(this.getPredicate().stringValue().trim()).append(">");
         //value
         if(URI.class.isAssignableFrom(this.getObject().getClass()))
-            buf.append("\t<" + this.getObject().stringValue().trim() + ">");
+            buf.append("\t<").append(this.getObject().stringValue().trim()).append(">");
         else {
-            buf.append("\t\"" + this.getObject().stringValue().trim() + "\"");
+            buf.append("\t\"").append(this.getObject().stringValue().trim()).append("\"");
             URI type = ((Literal)(this.getObject())).getDatatype();
             if(type != null && !forbiddenTypes.contains(type.stringValue()))
-                buf.append("^^<" + ((Literal)(this.getObject())).getDatatype().stringValue().trim() + ">");
+                buf.append("^^<").append(((Literal) (this.getObject())).getDatatype().stringValue().trim()).append(">");
             else if(((Literal)(this.getObject())).getLanguage() != null)
-                buf.append("@" + ((Literal)(this.getObject())).getLanguage().trim());
+                buf.append("@").append(((Literal) (this.getObject())).getLanguage().trim());
         }
         if(this.getContext() != null)
-            buf.append("\t<" + this.getContext().stringValue().trim() + ">");
+            buf.append("\t<").append(this.getContext().stringValue().trim()).append(">");
 
         buf.append(" .");
         return buf.toString();
