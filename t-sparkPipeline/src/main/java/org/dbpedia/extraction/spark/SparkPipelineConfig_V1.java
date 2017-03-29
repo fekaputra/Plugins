@@ -1,42 +1,33 @@
 package org.dbpedia.extraction.spark;
 
-import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
-import org.dbpedia.spark.core.datasources.MasterContext;
+import org.dbpedia.extraction.spark.utils.SparkDpuConfig;
 
 /**
  * Configuration class for SparkPipeline.
  *
- * @author Unknown
+ * @author Kay
  */
 public class SparkPipelineConfig_V1 {
 
-    private SparkDpuConfig config;
+    /** spark configuration */
+    final SparkDpuConfig sparkConfig;
 
     //dummy constructor
     public SparkPipelineConfig_V1() {  throw new IllegalArgumentException("Please provide configurstion File");  }
 
     public SparkPipelineConfig_V1(String configPath)  {
         try {
-            config = new SparkDpuConfig(configPath);
+            this.sparkConfig = new SparkDpuConfig(configPath);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
     public SparkDpuConfig getConfig() {
-        return config;
+        return this.sparkConfig;
     }
 
-    public String getInputFilePath(){
-        return "/home/chile/unifiedviews/inputsToSparkFragment.nt";
-    }
-
-    public String getOutputFilePath(){
-        return "/home/chile/unifiedviews/testOut.nt";
-    }
-
-    public String getPPXFilePath(){
-        return "/home/chile/unifiedviews/outputs of PPX.ttl";
+    public String getSparkEntry(String key){
+        return sparkConfig.getSparkConfig().get(key);
     }
 }

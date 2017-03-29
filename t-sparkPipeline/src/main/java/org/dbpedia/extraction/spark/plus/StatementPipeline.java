@@ -1,9 +1,6 @@
 package org.dbpedia.extraction.spark.plus;
 
-import org.dbpedia.spark.core.DataFrame;
-import org.dbpedia.spark.core.DatasourceProfile;
-import org.dbpedia.spark.core.Pipeline;
-import org.dbpedia.spark.core.PipelineStep;
+import org.dbpedia.spark.core.*;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 
@@ -30,7 +27,7 @@ public class StatementPipeline implements Pipeline<Statement, Statement> {
     }
 
     @Override
-    public DataFrame<Statement> transform(DataFrame<Statement> in) {
+    public RddLike<Statement> transform(RddLike<Statement> in) {
         return null;
     }
 
