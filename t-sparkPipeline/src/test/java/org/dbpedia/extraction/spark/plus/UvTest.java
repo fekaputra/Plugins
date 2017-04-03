@@ -1,15 +1,12 @@
 package org.dbpedia.extraction.spark.plus;
 
 import cz.cuni.mff.xrg.odcs.dpu.test.TestEnvironment;
-import eu.unifiedviews.dataunit.files.FilesDataUnit;
 import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
 import eu.unifiedviews.dataunit.files.impl.ManageableWritableFilesDataUnit;
-import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
 import eu.unifiedviews.helpers.dpu.test.config.ConfigurationBuilder;
 import org.dbpedia.extraction.spark.SparkPipeline;
 import org.dbpedia.extraction.spark.SparkPipelineConfig_V1;
 import org.junit.Test;
-import org.openrdf.repository.RepositoryConnection;
 
 /**
  * Created by chile on 29.03.17.
@@ -32,8 +29,9 @@ public class UvTest {
 
         // Prepare data unit.
         ManageableWritableFilesDataUnit filesInput = (ManageableWritableFilesDataUnit) environment.createFilesFDataUnit("sparkinput");
-        String uri = config.getSparkEntry("spark.uv-piepeline.inputfile");
-        filesInput.addExistingFile(uri.substring(uri.lastIndexOf('/')+1), uri);
+        //String uri = config.getSparkEntry("spark.dbpedialinks.filemanager.inputdir");
+        // add input file(s)
+        //filesInput.addExistingFile(uri.substring(uri.lastIndexOf('/')+1), uri);
         environment.addInput("sparkinput", filesInput);
 
         WritableFilesDataUnit filesOutput = environment.createFilesOutput("sparkoutput");

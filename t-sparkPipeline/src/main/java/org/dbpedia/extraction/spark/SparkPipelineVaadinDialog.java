@@ -2,7 +2,6 @@ package org.dbpedia.extraction.spark;
 
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
-
 import eu.unifiedviews.dpu.config.DPUConfigException;
 import eu.unifiedviews.helpers.dpu.vaadin.dialog.AbstractDialog;
 

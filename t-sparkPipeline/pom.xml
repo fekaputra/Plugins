@@ -20,6 +20,7 @@
         <project.java.target.version>1.8</project.java.target.version>
         <dpu.package>org.dbpedia.extraction.spark</dpu.package>
         <dpu.mainClass>SparkPipeline</dpu.mainClass>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <dependencies>
@@ -27,17 +28,10 @@
         <dependency>
             <groupId>eu.unifiedviews</groupId>
             <artifactId>uv-dataunit-helpers</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>eu.unifiedviews</groupId>
             <artifactId>uv-dpu-helpers</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.dbpedia</groupId>
-            <artifactId>spark-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -45,7 +39,13 @@
             <artifactId>sesame-rio-turtle</artifactId>
             <version>2.8.0</version>
         </dependency>
-        <!-- Test dependencies -->
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-osgi</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>

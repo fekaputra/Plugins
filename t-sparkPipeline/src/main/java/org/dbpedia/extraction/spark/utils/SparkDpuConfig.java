@@ -1,13 +1,8 @@
 package org.dbpedia.extraction.spark.utils;
 
-import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.internal.config.ConfigReader;
-import org.dbpedia.extraction.spark.utils.SparkConfigReader;
-import org.dbpedia.spark.core.datasources.MasterContext;
-
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by chile on 27.03.17.
@@ -15,7 +10,7 @@ import java.util.Map;
 public class SparkDpuConfig {
 
     /** Spark configuration instance */
-    final SparkConf sparkConfig;
+    final Map<String, String> sparkConfig;
 
     /** master value */
     private String master;
@@ -28,7 +23,7 @@ public class SparkDpuConfig {
             SparkConfigReader reader = new SparkConfigReader(filePath);
 
             // create Spark config
-            this.sparkConfig = new SparkConf();
+            this.sparkConfig = new HashMap<>();
 
             // load config with loaded parameters
             Map<String, String> loadedConfigParameters = reader.getConfigParameters();
@@ -39,36 +34,30 @@ public class SparkDpuConfig {
                 if (keyLowerCase.endsWith(".master")) {
                     // found master config parameter
                     this.master = parameter;
-                    this.sparkConfig.setMaster(parameter);
-                    continue;
                 } else if (keyLowerCase.endsWith(".app.name")) {
                     // found appName config parameter
                     this.appName = parameter;
-                    this.sparkConfig.setAppName(parameter);
-                    continue;
                 }
 
-                sparkConfig.set(key, parameter);
+                sparkConfig.put(key, parameter);
             }
-        } else {
-            // parameters should be loaded by default from command line parameters
-            this.sparkConfig = new SparkConf(true);
-
-            ///TODO: km: Remove once we run on the cluster!!!!
-            this.sparkConfig.setAppName(this.getAppName());
-            this.sparkConfig.setMaster(this.getMasterUrl());
-        }
+        } else
+            throw new IllegalArgumentException("No SPARK config file was provided!");
     }
 
-    protected String getAppName() {
+    public String getAppName() {
         return (null == this.appName ? "sparkpipeline" : this.appName);
     }
 
-    protected String getMasterUrl(){
+    public String getMasterUrl(){
         return (null == this.master ? "local[*]" : this.master);
     }
 
-    public SparkConf getSparkConfig() {
+    public Map<String, String> getSparkConfig() {
         return this.sparkConfig;
+    }
+
+    public Optional<String> getProperty(String key){
+        return Optional.ofNullable(this.sparkConfig.get(key));
     }
 }

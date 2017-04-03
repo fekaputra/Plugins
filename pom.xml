@@ -80,11 +80,32 @@
 
     <repositories>
         <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
             <id>maven.eea.sk</id>
             <name>maven.eea.sk-public</name>
             <url>http://maven.eea.sk/artifactory/public/</url>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Maven Plugin Repository</name>
+            <url>http://repo1.maven.org/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
@@ -109,6 +130,14 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+                <dependencies>
+                    <!-- https://mvnrepository.com/artifact/org.apache.felix/maven-bundle-plugin -->
+                    <dependency>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <version>2.5.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
