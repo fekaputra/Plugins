@@ -1,5 +1,8 @@
 package org.dbpedia.extraction.spark.utils;
 
+import org.dbpedia.extraction.spark.SparkPipeline;
+
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -15,12 +18,16 @@ public class SparkDpuConfig {
     /** master value */
     private String master;
 
+    /** rest endpoint */
+    private String restApi;
+
     /** appName value */
     private String appName;
 
-    public SparkDpuConfig(final String filePath) throws Exception {
-        if (null != filePath) {
-            SparkConfigReader reader = new SparkConfigReader(filePath);
+    public SparkDpuConfig(final String resourceName) throws Exception {
+        if (null != resourceName && !resourceName.isEmpty()) {
+            InputStream configStream = SparkPipeline.class.getClassLoader().getResourceAsStream(resourceName);
+            SparkConfigReader reader = new SparkConfigReader(configStream);
 
             // create Spark config
             this.sparkConfig = new HashMap<>();
@@ -31,12 +38,15 @@ public class SparkDpuConfig {
                 String parameter = loadedConfigParameters.get(key);
 
                 String keyLowerCase = key.toLowerCase();
-                if (keyLowerCase.endsWith(".master")) {
+                if (keyLowerCase.endsWith("spark.master")) {
                     // found master config parameter
                     this.master = parameter;
-                } else if (keyLowerCase.endsWith(".app.name")) {
+                } else if (keyLowerCase.endsWith("spark.app.name")) {
                     // found appName config parameter
                     this.appName = parameter;
+                } else if (keyLowerCase.endsWith("spark.restApi")) {
+                    // found restApi config parameter
+                    this.restApi = parameter;
                 }
 
                 sparkConfig.put(key, parameter);
@@ -59,5 +69,21 @@ public class SparkDpuConfig {
 
     public Optional<String> getProperty(String key){
         return Optional.ofNullable(this.sparkConfig.get(key));
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getRestApiUri(){
+        if(this.restApi == null){
+            //infer from master using the default port
+            this.restApi = this.master.substring(0, this.master.lastIndexOf(':')) + ":6066";
+        }
+        return this.restApi.replace("spark:", "http:");
+    }
+
+    public String getSparkOutputDir(String appName){
+        return sparkConfig.get("spark." + appName + ".filemanager.outputdir");
     }
 }

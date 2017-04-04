@@ -1,9 +1,6 @@
 package org.dbpedia.extraction.spark.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,46 +17,21 @@ public class SparkConfigReader {
     /** map which contains all configuration values */
     final Map<String, String> configurationParameters = new HashMap<>();
 
-    /** path to config file */
-    final String filePath;
-
     /** pattern can be used to get rid off all the white spaces */
     Pattern whiteSpace = Pattern.compile("\\s+");
 
-    public SparkConfigReader(final String filePath) {
-        this.filePath = filePath;
-
-        // first try to load from the workspace context
-        URL filePathUrl = SparkConfigReader.class.getResource(filePath);
-
-        File configFile;
-        if (null == filePathUrl) {
-            // treat it as absolute path
-            configFile = new File(filePath);
-        } else {
-            configFile = new File(filePathUrl.getFile());
-        }
-
-        if (!configFile.exists() || !configFile.isFile()) {
-            throw new RuntimeException("Was not read config file: " + filePath);
-        }
-
-        try {
-            this.readConfigParameters(configFile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public SparkConfigReader(final InputStream input) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        readConfigParameters(reader);
     }
 
     /**
      * This method can be used to read configuration parameters from a Spark config file
      *
-     * @param configFile - config file instance
+     * @param reader - Reader reading the config file
      * @throws IOException
      */
-    protected void readConfigParameters(final File configFile) throws IOException {
-
-        BufferedReader reader = new BufferedReader(new FileReader(configFile));
+    protected void readConfigParameters(final BufferedReader reader) throws IOException {
 
         String line = null;
         while (null != (line = reader.readLine())) {

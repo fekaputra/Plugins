@@ -1,19 +1,16 @@
 package org.dbpedia.extraction.spark.rest;
 
-import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Iterator;
 
 /**
  * Created by chile on 03.04.17.
  */
-public class SparkResponse extends JSONObject {
+public class SparkRestResponse extends JSONObject {
 
     private String action;
     private String message;
@@ -24,8 +21,8 @@ public class SparkResponse extends JSONObject {
     private String workerHostPort;
     private String workerId;
 
-    public SparkResponse(HttpResponse httpResponse) throws IOException, JSONException {
-        super(new JSONTokener(new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()))));
+    public SparkRestResponse(JSONTokener responseAsTokener) throws IOException, JSONException {
+        super(responseAsTokener);
         fillResponse();
     }
 
@@ -51,5 +48,37 @@ public class SparkResponse extends JSONObject {
             else if(key.equals("success"))
                 this.success = this.getBoolean(key);
         }
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getServerSparkVersion() {
+        return serverSparkVersion;
+    }
+
+    public String getSubmissionId() {
+        return submissionId;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getDriverState() {
+        return driverState;
+    }
+
+    public String getWorkerHostPort() {
+        return workerHostPort;
+    }
+
+    public String getWorkerId() {
+        return workerId;
     }
 }

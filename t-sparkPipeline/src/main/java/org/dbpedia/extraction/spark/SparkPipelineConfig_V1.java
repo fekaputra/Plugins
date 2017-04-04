@@ -2,6 +2,7 @@ package org.dbpedia.extraction.spark;
 
 import org.dbpedia.extraction.spark.utils.SparkDpuConfig;
 
+
 /**
  * Configuration class for SparkPipeline.
  *
@@ -12,12 +13,9 @@ public class SparkPipelineConfig_V1 {
     /** spark configuration */
     final SparkDpuConfig sparkConfig;
 
-    //dummy constructor
-    public SparkPipelineConfig_V1() {  throw new IllegalArgumentException("Please provide configurstion File");  }
-
-    public SparkPipelineConfig_V1(String configPath)  {
+    public SparkPipelineConfig_V1()  {
         try {
-            this.sparkConfig = new SparkDpuConfig(configPath);
+            this.sparkConfig = new SparkDpuConfig("spark.config");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

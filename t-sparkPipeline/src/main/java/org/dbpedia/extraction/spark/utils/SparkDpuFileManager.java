@@ -46,6 +46,16 @@ public class SparkDpuFileManager {
         return ret;
     }
 
+    public void copyDirectoryToOutputDirectory(String uri) throws DataUnitException {
+        File dir = new File(uri.replaceAll("file:(/)+", "/"));
+        if(dir.isDirectory()) {
+            for(File file : dir.listFiles())
+                copyToOutputDirectory(file.toURI().toString());
+        }
+        else
+            throw new IllegalArgumentException("The provided uri is not a local directory: " + uri);
+    }
+
     public void copyToOutputDirectory(String uri) throws DataUnitException {
         copyToLocalhoast(uri, this.output.getBaseFileURIString());
     }
@@ -57,6 +67,7 @@ public class SparkDpuFileManager {
      * @throws DataUnitException
      */
     public void copyToLocalhoast(String uri, String targetDirectory) throws DataUnitException {
+        File result = null;
         try {
             URI source = new URI(uri);
             String fileName = source.getPath().substring(source.getPath().contains("/") ? source.getPath().lastIndexOf('/') +1 : 0);
@@ -70,7 +81,9 @@ public class SparkDpuFileManager {
 
             //copy on localhost -> if SPARK driver is on same machine
             if(source.getScheme().contains("file")){
-                FileUtils.copyFile(new File(source), new File(target));
+                //TODO ask Tomas if just providing a location on localhost is enough here (otherwise copy files around)
+                //FileUtils.copyFile(new File(source), new File(target));
+                result = new File(removeScheme(source.toString()));
             }
             //fetch source from (s)ftp source
             else if(source.getScheme().contains("ftp")){
@@ -84,7 +97,8 @@ public class SparkDpuFileManager {
             }
             //fetch from the web
             else if(source.getScheme().contains("http")){
-                FileUtils.copyURLToFile(source.toURL(), new File(target));
+                result = new File(target);
+                FileUtils.copyURLToFile(source.toURL(), result);
             }
             else
                 throw new DataUnitException("This file cannot be transferred to the executing machine, since its uri scheme is not supported: " + source);
@@ -92,8 +106,8 @@ public class SparkDpuFileManager {
             throw new DataUnitException(e);
         }
 
-        File file = new File(this.output.getBaseFileURIString().replace("file:", ""), uri.substring(uri.lastIndexOf('/')+1));
-        FilesHelper.addFile(this.output, file, file.toString());
+        //new File(this.output.getBaseFileURIString().replace("file:", ""), uri.substring(uri.lastIndexOf('/')+1));
+        FilesHelper.addFile(this.output, result, result.toString());
     }
 
     /**
@@ -119,5 +133,9 @@ public class SparkDpuFileManager {
         } catch (URISyntaxException e) {
             throw new DataUnitException(e);
         }
+    }
+
+    private String removeScheme(String uri){
+        return uri.replaceAll("^\\w+:(/)+", "/");
     }
 }

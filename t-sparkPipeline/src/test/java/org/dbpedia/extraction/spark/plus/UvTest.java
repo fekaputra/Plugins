@@ -16,9 +16,7 @@ public class UvTest {
     @Test
     public void execute() throws Exception {
         // Prepare config.
-        String configPath = UvTest.class.getClassLoader().getResource("spark.config").toString();
-        configPath = configPath.startsWith("file:") ? configPath.substring(5) : configPath;
-        SparkPipelineConfig_V1 config = new SparkPipelineConfig_V1(configPath);
+        SparkPipelineConfig_V1 config = new SparkPipelineConfig_V1();
 
         // Prepare DPU.
         SparkPipeline dpuInstance = new SparkPipeline();
