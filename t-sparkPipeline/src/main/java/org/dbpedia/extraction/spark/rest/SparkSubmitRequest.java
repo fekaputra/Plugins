@@ -52,7 +52,7 @@ public class SparkSubmitRequest extends JSONObject {
 
         //now add all spark properties
         JSONObject sparkProperties = new JSONObject();
-        for(Map.Entry<String, String> ent : config.getSparkConfig().entrySet()){
+        for(Map.Entry<String, String> ent : config.getItemIds()){
             sparkProperties.put(ent.getKey(), ent.getValue());
         }
         this.put("sparkProperties", sparkProperties);

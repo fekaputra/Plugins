@@ -26,6 +26,7 @@ public class SparkPipelineConfig_V1 {
     }
 
     public String getSparkEntry(String key){
-        return sparkConfig.getSparkConfig().get(key);
+        //TODO test
+        return sparkConfig.getItem(key).getBean().getValue();
     }
 }

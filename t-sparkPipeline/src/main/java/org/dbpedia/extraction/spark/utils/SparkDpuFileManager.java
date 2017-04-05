@@ -29,7 +29,7 @@ public class SparkDpuFileManager {
         this.input = input;
         this.output = output;
         this.configPrefix = "spark." + this.config.getAppName() + ".";
-        this.sparkWorkingDir = this.config.getSparkConfig().get(this.configPrefix + "filemanager.inputdir");
+        this.sparkWorkingDir = this.config.getItem(this.configPrefix + "filemanager.inputdir").getBean().getValue();
     }
 
     public void copyToSparkWorkingDir() throws DataUnitException {
@@ -48,9 +48,12 @@ public class SparkDpuFileManager {
 
     public void copyDirectoryToOutputDirectory(String uri) throws DataUnitException {
         File dir = new File(uri.replaceAll("file:(/)+", "/"));
+        String pattern = this.config.getItem("spark." + this.config.getAppName() + ".filemanager.filePattern").getBean().getValue();
+        pattern = pattern.substring(0, pattern.indexOf("$key") >= 0 ? pattern.indexOf("$key") : pattern.length());
         if(dir.isDirectory()) {
             for(File file : dir.listFiles())
-                copyToOutputDirectory(file.toURI().toString());
+                if(file.isFile() && file.toString().contains(pattern))
+                    copyToOutputDirectory(file.toURI().toString());
         }
         else
             throw new IllegalArgumentException("The provided uri is not a local directory: " + uri);

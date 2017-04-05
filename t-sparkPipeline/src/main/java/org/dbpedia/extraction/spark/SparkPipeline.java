@@ -49,7 +49,7 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
     protected void innerExecute() throws DPUException {
 
         //TODO!
-        String currentPiepelineApp = "dbpedialinks";
+        String currentPiepelineApp = this.config.getConfig().getAppName();
 
         long startTimeStamp = System.currentTimeMillis();
         ContextUtils.sendShortInfo(ctx, "Running SPARK pipeline: " + config.getSparkEntry("spark.app.name"));
