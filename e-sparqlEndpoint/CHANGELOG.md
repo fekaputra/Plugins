@@ -5,7 +5,7 @@ v2.0.0
 ---
 * Connections properly closed
 * Fault tolerance support removed (not used anyway)
-* Upgraded to use rdf4j
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
 
 v1.1.0
 ---

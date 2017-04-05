@@ -5,7 +5,7 @@ v3.0.0
 ---
 * Added support for custom delay (in ms)  between the HTTP calls
 * Adjusted creation of Virtual Path (see the user documentation)
-* Updated to use latest helpers using rdf4j
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
 
 v2.1.6
 ---

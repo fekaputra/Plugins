@@ -3,7 +3,7 @@ T-FilesToRdf
 
 v3.0.0
 ---
-* Upgraded to rdf4j
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
 
 
 v2.2.1
