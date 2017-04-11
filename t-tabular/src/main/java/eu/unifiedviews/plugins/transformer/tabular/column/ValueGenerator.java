@@ -3,9 +3,9 @@ package eu.unifiedviews.plugins.transformer.tabular.column;
 import java.util.List;
 import java.util.Map;
 
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
 
 import eu.unifiedviews.plugins.transformer.tabular.parser.ParseFailed;
 

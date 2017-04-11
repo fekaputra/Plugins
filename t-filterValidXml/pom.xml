@@ -4,15 +4,15 @@
 	<parent>
 		<groupId>eu.unifiedviews</groupId>
 		<artifactId>uv-pom-dpu</artifactId>
-		<version>2.1.3</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<groupId>eu.unifiedviews.plugins</groupId>
 	<artifactId>uv-t-filterValidXml</artifactId>
-	<description>Validates XML inputs in 3 ways: checks if the XML is well formed, checks if it conforms to a specified XSD scheme and validates using specified XSLT template</description>
+	<description>Validates XML inputs in 3 ways: checks if the XML is well formed, checks if it conforms to a specified XSD schema and validates XML using specified XSLT template</description>
 	<packaging>bundle</packaging>
-	<version>2.1.4-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<name> T-FilterValidXml</name>
 
 	<properties>
@@ -41,9 +41,12 @@
 
 	<repositories>
 		<repository>
-			<id>maven.eea.sk</id>
-			<name>maven.eea.sk-public</name>
-			<url>http://maven.eea.sk/artifactory/public/</url>
+			<id>uv-releases</id>
+			<url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>uv-snapshots</id>
+			<url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 

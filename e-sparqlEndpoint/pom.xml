@@ -133,7 +133,7 @@
     <repositories>
         <repository>
             <id>uv-releases</id>
-            <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases</url>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
         </repository>
         <repository>
             <id>uv-snapshots</id>

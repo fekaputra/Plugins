@@ -5,8 +5,8 @@ package eu.unifiedviews.plugins.transformer.fusiontool.config;
 
 import cz.cuni.mff.odcleanstore.fusiontool.config.LDFTConfigConstants;
 import cz.cuni.mff.odcleanstore.fusiontool.util.LDFusionToolUtils;
-import org.openrdf.model.URI;
-import org.openrdf.rio.ParserConfig;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.rio.ParserConfig;
 
 import java.util.Collection;
 import java.util.Set;

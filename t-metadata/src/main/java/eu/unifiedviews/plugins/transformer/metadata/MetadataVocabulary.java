@@ -1,8 +1,8 @@
 package eu.unifiedviews.plugins.transformer.metadata;
 
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
 
 public class MetadataVocabulary {
 

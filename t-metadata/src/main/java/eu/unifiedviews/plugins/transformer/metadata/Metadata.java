@@ -6,11 +6,11 @@ import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
 import eu.unifiedviews.dpu.DPU;
 import eu.unifiedviews.dpu.DPUException;
 
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.DCTERMS;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.SKOS;
-import org.openrdf.repository.RepositoryConnection;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.SKOS;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openrdf.model.vocabulary.FOAF;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
 
 import eu.unifiedviews.helpers.dataunit.DataUnitUtils;
 import eu.unifiedviews.helpers.dataunit.rdf.RdfDataUnitUtils;

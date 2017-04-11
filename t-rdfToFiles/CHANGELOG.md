@@ -1,11 +1,15 @@
 T-RdfToFiles
 ----------
 
-2.1.5
+v3.0.0
+---
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
+v2.1.5
 ---
 * If there is no data on the input, no data is produced and there is an INFO event about that.
 
-2.1.4
+v2.1.4
 ---
 * Fixed documentation (About)
 * Update to helpers 2.1.4

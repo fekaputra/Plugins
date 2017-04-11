@@ -9,12 +9,12 @@ import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.openrdf.model.URI;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.Rio;
-import org.openrdf.rio.turtle.TurtleWriter;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.rio.turtle.TurtleWriter;
 
 import cz.cuni.mff.xrg.odcs.dpu.test.TestEnvironment;
 import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;

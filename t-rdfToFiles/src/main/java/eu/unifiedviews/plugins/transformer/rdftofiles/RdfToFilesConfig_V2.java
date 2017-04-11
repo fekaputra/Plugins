@@ -1,6 +1,6 @@
 package eu.unifiedviews.plugins.transformer.rdftofiles;
 
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 import eu.unifiedviews.helpers.dpu.ontology.EntityDescription;
 

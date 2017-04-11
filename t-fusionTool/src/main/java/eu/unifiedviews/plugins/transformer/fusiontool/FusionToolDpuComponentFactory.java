@@ -47,12 +47,12 @@ import eu.unifiedviews.plugins.transformer.fusiontool.io.DataUnitRDFWriter;
 import eu.unifiedviews.plugins.transformer.fusiontool.io.DataUnitRDFWriterWithMetadata;
 import eu.unifiedviews.plugins.transformer.fusiontool.io.DataUnitSameAsLinkLoader;
 import eu.unifiedviews.plugins.transformer.fusiontool.io.NoOpRDFWriter;
-import org.openrdf.model.Model;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.TreeModel;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.impl.TreeModel;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 
 import java.io.File;
 import java.io.IOException;

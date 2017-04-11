@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;

@@ -16,8 +16,8 @@ import cz.cuni.mff.odcleanstore.fusiontool.config.xml.ResolutionStrategyXml;
 import cz.cuni.mff.odcleanstore.fusiontool.util.NamespacePrefixExpander;
 import eu.unifiedviews.plugins.transformer.fusiontool.config.xml.ConfigXml;
 import eu.unifiedviews.plugins.transformer.fusiontool.exceptions.InvalidInputException;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 

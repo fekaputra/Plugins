@@ -20,11 +20,11 @@ import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
 import eu.unifiedviews.helpers.dpu.extension.rdf.RdfConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.openrdf.model.URI;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.Rio;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,9 +2,9 @@ package eu.unifiedviews.plugins.transformer.relationaltordf.column;
 
 import java.util.List;
 
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
 
 /**
  * Generate values as string with language tag or without it if not specified.

@@ -8,9 +8,9 @@ import cz.cuni.mff.odcleanstore.conflictresolution.EnumCardinality;
 import cz.cuni.mff.odcleanstore.conflictresolution.ResolutionStrategy;
 import eu.unifiedviews.plugins.transformer.fusiontool.exceptions.InvalidInputException;
 import org.junit.Test;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.RDFS;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
 
 import java.io.InputStreamReader;
 import java.util.Collections;

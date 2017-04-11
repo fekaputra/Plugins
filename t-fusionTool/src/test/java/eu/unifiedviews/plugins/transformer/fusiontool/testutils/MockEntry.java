@@ -2,7 +2,7 @@ package eu.unifiedviews.plugins.transformer.fusiontool.testutils;
 
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
-import org.openrdf.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 
 /**
 *

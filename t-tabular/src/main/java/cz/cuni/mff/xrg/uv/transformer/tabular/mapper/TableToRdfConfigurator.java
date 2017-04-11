@@ -7,8 +7,8 @@ import cz.cuni.mff.xrg.uv.transformer.tabular.column.ValueGeneratorReplace;
 
 import java.util.*;
 
-import org.openrdf.model.vocabulary.RDFS;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

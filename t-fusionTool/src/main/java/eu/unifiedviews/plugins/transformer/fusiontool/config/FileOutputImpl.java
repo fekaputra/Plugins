@@ -4,7 +4,7 @@
 package eu.unifiedviews.plugins.transformer.fusiontool.config;
 
 import cz.cuni.mff.odcleanstore.fusiontool.io.EnumSerializationFormat;
-import org.openrdf.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 
 import java.io.File;
 

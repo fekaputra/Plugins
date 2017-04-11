@@ -1,11 +1,11 @@
 package eu.unifiedviews.plugins.transformer.rdftofiles;
 
 import java.util.Collection;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.rio.*;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

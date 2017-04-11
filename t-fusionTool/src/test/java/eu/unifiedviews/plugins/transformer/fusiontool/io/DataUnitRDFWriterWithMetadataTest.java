@@ -16,11 +16,11 @@ import eu.unifiedviews.plugins.transformer.fusiontool.util.MockRDFDataUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.repository.RepositoryConnection;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 
 import java.util.Collection;
 import java.util.List;

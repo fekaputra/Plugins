@@ -5,7 +5,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-import org.openrdf.model.Statement;
+import org.eclipse.rdf4j.model.Statement;
 
 /**
  * Tests {@link org.openrdf.model.Statement} for equality.

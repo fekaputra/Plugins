@@ -4,15 +4,15 @@
 	<parent>
 		<groupId>eu.unifiedviews</groupId>
 		<artifactId>uv-pom-dpu</artifactId>
-		<version>2.1.4</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<groupId>eu.unifiedviews.plugins</groupId>
 	<artifactId>uv-l-filesToParliament</artifactId>
 	<name>L-FilesToParliament</name>
-	<description>Uploads files to Parliament.</description>
-	<version>1.0.5-SNAPSHOT</version>
+	<description>Uploads files to Parliament RDF store</description>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<properties>
@@ -59,9 +59,12 @@
 
 	<repositories>
 		<repository>
-			<id>maven.eea.sk</id>
-			<name>maven.eea.sk-public</name>
-			<url>http://maven.eea.sk/artifactory/public/</url>
+			<id>uv-releases</id>
+			<url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>uv-snapshots</id>
+			<url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 

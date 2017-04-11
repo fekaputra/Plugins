@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
 
 import eu.unifiedviews.plugins.transformer.relationaltordf.ConversionFailed;
 import eu.unifiedviews.plugins.transformer.relationaltordf.Utils;

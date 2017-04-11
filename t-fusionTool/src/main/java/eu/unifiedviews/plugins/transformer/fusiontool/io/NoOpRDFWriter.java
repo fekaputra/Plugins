@@ -2,7 +2,7 @@ package eu.unifiedviews.plugins.transformer.fusiontool.io;
 
 import cz.cuni.mff.odcleanstore.conflictresolution.ResolvedStatement;
 import cz.cuni.mff.odcleanstore.fusiontool.writers.CloseableRDFWriterBase;
-import org.openrdf.model.Statement;
+import org.eclipse.rdf4j.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -4,10 +4,10 @@ import cz.cuni.mff.odcleanstore.conflictresolution.ResolvedStatement;
 import cz.cuni.mff.odcleanstore.fusiontool.writers.CloseableRDFWriterBase;
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 
 import java.io.IOException;
 

@@ -3,7 +3,7 @@ package eu.unifiedviews.plugins.transformer.rdftofiles;
 import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import eu.unifiedviews.dpu.config.DPUConfigException;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
