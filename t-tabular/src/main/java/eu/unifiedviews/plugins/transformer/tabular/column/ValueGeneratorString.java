@@ -20,7 +20,7 @@ public class ValueGeneratorString extends ValueGeneratorReplace {
      */
     private final String language;
 
-    public ValueGeneratorString(URI uri, String template, String language) {
+    public ValueGeneratorString(IRI uri, String template, String language) {
         super(uri, template);
         this.language = language;
     }

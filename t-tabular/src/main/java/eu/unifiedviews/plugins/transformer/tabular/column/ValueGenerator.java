@@ -39,6 +39,6 @@ public interface ValueGenerator {
      *
      * @return URI for generated value.
      */
-    public URI getUri();
+    public IRI getUri();
 
 }

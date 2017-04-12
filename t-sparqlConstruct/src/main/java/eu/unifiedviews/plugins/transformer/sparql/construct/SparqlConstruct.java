@@ -102,7 +102,7 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
      */
     protected void executeUpdateQuery(final String query, final List<RDFDataUnit.Entry> sourceEntries)
             throws DPUException {
-        final List<URI> outputGraphs = new LinkedList<>();
+        final List<IRI> outputGraphs = new LinkedList<>();
         // Execute based on configuration.
         if (config.isPerGraph()) {
             // Execute one graph at time.
@@ -112,11 +112,11 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
             for (final RDFDataUnit.Entry sourceEntry : sourceEntries) {
                 LOG.info("Executing {}/{}", counter++, sourceEntries.size());
                 // For each input graph prepare output graph.
-                final URI targetGraph = faultTolerance.execute(new FaultTolerance.ActionReturn<URI>() {
+                final IRI targetGraph = faultTolerance.execute(new FaultTolerance.ActionReturn<IRI>() {
 
                     @Override
-                    public URI action() throws Exception {
-                        final URI outputUri = createOutputGraph(sourceEntry);
+                    public IRI action() throws Exception {
+                        final IRI outputUri = createOutputGraph(sourceEntry);
                         LOG.info("   {} -> {}", sourceEntry.getDataGraphURI(), outputUri);
                         return outputUri;
                     }
@@ -140,10 +140,10 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
             }
             ContextUtils.sendInfo(ctx, "SparqlConstruct.execute.allGraphMode", "SparqlConstruct.execute.allGraphMode.count", sourceEntries.size());
             // Prepare single output graph.
-            final URI targetGraph = faultTolerance.execute(new FaultTolerance.ActionReturn<URI>() {
+            final IRI targetGraph = faultTolerance.execute(new FaultTolerance.ActionReturn<IRI>() {
 
                 @Override
-                public URI action() throws Exception {
+                public IRI action() throws Exception {
                     return createOutputGraph();
                 }
 
@@ -160,14 +160,14 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
             outputGraphs.add(targetGraph);
         }
         // Summmary message.
-        long inputSize = getTriplesCount(rdfOutput, faultTolerance.execute(new FaultTolerance.ActionReturn<URI[]>() {
+        long inputSize = getTriplesCount(rdfOutput, faultTolerance.execute(new FaultTolerance.ActionReturn<IRI[]>() {
 
             @Override
-            public URI[] action() throws Exception {
+            public IRI[] action() throws Exception {
                 return RdfDataUnitUtils.asGraphs(sourceEntries);
             }
         }));
-        long outputSize = getTriplesCount(rdfOutput, outputGraphs.toArray(new URI[0]));
+        long outputSize = getTriplesCount(rdfOutput, outputGraphs.toArray(new IRI[0]));
 
         ContextUtils.sendShortInfo(ctx, "SparqlConstruct.execute.report", inputSize, outputSize);
     }
@@ -185,7 +185,7 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
      * @throws eu.unifiedviews.dataunit.DataUnitException
      */
     protected void executeUpdateQuery(String query, final List<RDFDataUnit.Entry> sourceEntries,
-            URI targetGraph,
+            IRI targetGraph,
             RepositoryConnection connection) throws DPUException, DataUnitException {
         // Prepare query.
         if (!useDataset()) {
@@ -219,7 +219,7 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
      * @return New output graph.
      * @throws DPUException
      */
-    protected URI createOutputGraph() throws DPUException {
+    protected IRI createOutputGraph() throws DPUException {
         // Register new output graph
         final String symbolicName = "http://unifiedviews.eu/resource/sparql-construct/"
                 + Long.toString((new Date()).getTime());
@@ -235,7 +235,7 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
      * @return New output graph.
      * @throws DPUException
      */
-    protected URI createOutputGraph(RDFDataUnit.Entry entry) throws DPUException {
+    protected IRI createOutputGraph(RDFDataUnit.Entry entry) throws DPUException {
         final String suffix = "/" + ctx.getExecMasterContext().getDpuContext().getDpuInstanceId().toString();
         try {
             return rdfOutput.addNewDataGraph(entry.getSymbolicName() + suffix);
@@ -250,7 +250,7 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
      * @param graph
      * @return
      */
-    protected String prepareWithClause(URI graph) {
+    protected String prepareWithClause(IRI graph) {
         final StringBuilder withClause = new StringBuilder();
         withClause.append("WITH <");
         withClause.append(graph.stringValue());
@@ -310,7 +310,7 @@ public class SparqlConstruct extends AbstractDpu<SparqlConstructConfig_V1> {
      * @param entries
      * @return Number of triples in given entries.
      */
-    protected Long getTriplesCount(final RDFDataUnit dataUnit, final URI[] graphs)
+    protected Long getTriplesCount(final RDFDataUnit dataUnit, final IRI[] graphs)
             throws DPUException {
         return faultTolerance.execute(new FaultTolerance.ActionReturn<Long>() {
 

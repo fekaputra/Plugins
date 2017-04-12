@@ -148,14 +148,14 @@ public class TableToRdfConfigurator {
             // add to configuration
             //
             valueGenerators.add(ValueGeneratorReplace.create(
-                tableToRdf.valueFactory.createURI(columnInfo.getURI()),
+                tableToRdf.valueFactory.createIRI(columnInfo.getURI()),
                 template));
             //
             // generate metadata about column - for now only labels
             //
             if (config.generateLabels) {
                 tableToRdf.outRdf.add(
-                    tableToRdf.valueFactory.createURI(columnInfo.getURI()), RDFS.LABEL,
+                    tableToRdf.valueFactory.createIRI(columnInfo.getURI()), RDFS.LABEL,
                     tableToRdf.valueFactory.createLiteral(columnName));
             }
         }
@@ -204,7 +204,7 @@ public class TableToRdfConfigurator {
             String uri = prepareAsUri(item.getUri(), config);
             // add tempalte
             valueGenerators.add(ValueGeneratorReplace.create(
-                tableToRdf.valueFactory.createURI(uri),
+                tableToRdf.valueFactory.createIRI(uri),
                 item.getTemplate()));
         }
         //
@@ -220,7 +220,7 @@ public class TableToRdfConfigurator {
         if (config.rowsClass != null && !config.rowsClass.isEmpty()) {
             try {
             tableToRdf.rowClass =
-                    tableToRdf.valueFactory.createURI(config.rowsClass);
+                    tableToRdf.valueFactory.createIRI(config.rowsClass);
             } catch (IllegalArgumentException ex) {
                 throw new ParseFailed("Failed to create row's class URI from:" +
                         config.rowsClass, ex);

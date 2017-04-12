@@ -108,11 +108,11 @@ public class Tabular extends AbstractDpu<TabularConfig_V2> {
                 if (config.isUseTableSubject()) {
                     // Prepare subject for table.
                     // TODO: We can use better subject here!
-                    final URI tableURI = faultTolerance.execute(new FaultTolerance.ActionReturn<URI>() {
+                    final IRI tableURI = faultTolerance.execute(new FaultTolerance.ActionReturn<IRI>() {
 
                         @Override
-                        public URI action() throws Exception {
-                            return rdfTableWrap.getValueFactory().createURI(entry.getFileURIString());
+                        public IRI action() throws Exception {
+                            return rdfTableWrap.getValueFactory().createIRI(entry.getFileURIString());
                         }
                     });
                     // Set as a table subject.
