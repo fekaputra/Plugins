@@ -23,9 +23,9 @@
     <dependencies>
         <!-- Virtuoso. -->
         <dependency>
-            <groupId>eu.comsode</groupId>
-            <artifactId>com.openlinksw.virtuoso.virt_sesame2</artifactId>
-            <version>1.21-7-develop-SNAPSHOT</version>
+            <groupId>com.openlinksw.virtuoso</groupId>
+            <artifactId>virt_rdf4j</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>eu.comsode</groupId>
