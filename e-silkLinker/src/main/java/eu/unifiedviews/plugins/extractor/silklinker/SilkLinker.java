@@ -1,8 +1,22 @@
 package eu.unifiedviews.plugins.extractor.silklinker;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
+import eu.unifiedviews.dataunit.DataUnit;
+import eu.unifiedviews.dataunit.DataUnitException;
+import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
+import eu.unifiedviews.dpu.DPU;
+import eu.unifiedviews.dpu.DPUContext;
+import eu.unifiedviews.dpu.DPUException;
+import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
+import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,32 +26,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.RepositoryException;
-import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.RDFParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
-import eu.unifiedviews.dataunit.DataUnit;
-import eu.unifiedviews.dataunit.DataUnitException;
-import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
-import eu.unifiedviews.dpu.DPU;
-import eu.unifiedviews.dpu.DPUContext;
-import eu.unifiedviews.dpu.DPUException;
-import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
+import java.io.File;
+import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Silk Linker
@@ -246,7 +240,7 @@ public class SilkLinker extends AbstractDpu<SilkLinkerConfig_V1> {
                 log.info("File with confirmed links was generated {}", confirmedLinks);
                 connection = outputConfirmed.getConnection();
                 String baseURI = "";
-                URI graph = outputConfirmed.addNewDataGraph("confirmed");
+                IRI graph = outputConfirmed.addNewDataGraph("confirmed");
                 connection.add(f, baseURI, RDFFormat.TURTLE, graph);
             }
             else {
@@ -281,7 +275,7 @@ public class SilkLinker extends AbstractDpu<SilkLinkerConfig_V1> {
                 log.info("File with links to be verfied was generated, {}", toBeVerifiedLinks);
                 connection2 = outputToVerify.getConnection();
                 String baseURI = "";
-                URI graph = outputToVerify.addNewDataGraph("toverify");
+                IRI graph = outputToVerify.addNewDataGraph("toverify");
                 connection2.add(f, baseURI, RDFFormat.TURTLE, graph);
             }
             else {

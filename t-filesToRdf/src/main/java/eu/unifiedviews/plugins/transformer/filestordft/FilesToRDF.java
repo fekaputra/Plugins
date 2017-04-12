@@ -24,11 +24,11 @@ import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
 import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.Update;
@@ -110,7 +110,7 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
     protected void innerExecute() throws DPUException {
         ContextUtils.sendInfo(ctx, "FilesToRDF.execute.starting", "");
 
-        final URI globalOutputGraphUri;
+        final IRI globalOutputGraphUri;
 
         // Create output graph if we are in M->1 mode.
         if (FilesToRDFConfig_V1.USE_FIXED_SYMBOLIC_NAME.equals(config.getOutputNaming())) {
@@ -161,7 +161,7 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
             }
 
             // Set output graph name.
-            final URI outputGraphUri;
+            final IRI outputGraphUri;
             if (globalOutputGraphUri == null) {
                 faultTolerance.execute(new FaultTolerance.Action() {
 
@@ -181,11 +181,11 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
                     }
                 }
 
-                outputGraphUri = faultTolerance.execute(new FaultTolerance.ActionReturn<URI>() {
+                outputGraphUri = faultTolerance.execute(new FaultTolerance.ActionReturn<IRI>() {
 
                     @Override
-                    public URI action() throws Exception {
-                        return new URIImpl(rdfOutput.getBaseDataGraphURI().stringValue() + "/" + String.valueOf(atomicInteger.getAndIncrement()));
+                    public IRI action() throws Exception {
+                        return  SimpleValueFactory.getInstance().createIRI(rdfOutput.getBaseDataGraphURI().stringValue() + "/" + String.valueOf(atomicInteger.getAndIncrement()));
                     }
                 });
 
@@ -288,7 +288,7 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
         }
     }
 
-    private void updateExistingDataGraphFromFile(String symbolicName, URI newDataGraphURI) throws DPUException {
+    private void updateExistingDataGraphFromFile(String symbolicName, IRI newDataGraphURI) throws DPUException {
         RepositoryConnection connection = null;
         RepositoryResult<Statement> result = null;
         try {
