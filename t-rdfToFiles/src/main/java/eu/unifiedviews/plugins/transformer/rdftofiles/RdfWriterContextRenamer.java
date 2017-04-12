@@ -1,18 +1,20 @@
 package eu.unifiedviews.plugins.transformer.rdftofiles;
 
-import java.util.Collection;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.rio.*;
+import org.eclipse.rdf4j.rio.helpers.AbstractRDFWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 
 /**
  * @author Škoda Petr
  */
-public class RdfWriterContextRenamer implements RDFWriter {
+public class RdfWriterContextRenamer extends AbstractRDFWriter {
 
     /**
      * Wrap for single statement used to change context.
@@ -27,7 +29,7 @@ public class RdfWriterContextRenamer implements RDFWriter {
         }
 
         @Override
-        public URI getPredicate() {
+        public IRI getPredicate() {
             return statement.getPredicate();
         }
 
@@ -72,7 +74,7 @@ public class RdfWriterContextRenamer implements RDFWriter {
     }
 
     /**
-     * Set context (graph URI) used in output for all statements.
+     * Set context (graph IRI) used in output for all statements.
      * 
      * @param context
      */
@@ -85,10 +87,10 @@ public class RdfWriterContextRenamer implements RDFWriter {
         return writer.getRDFFormat();
     }
 
-    @Override
-    public void setWriterConfig(WriterConfig wc) {
-        writer.setWriterConfig(wc);
-    }
+//    @Override
+//    public void setWriterConfig(WriterConfig wc) {
+//        writer.setWriterConfig(wc);
+//    }
 
     @Override
     public WriterConfig getWriterConfig() {
@@ -99,6 +101,7 @@ public class RdfWriterContextRenamer implements RDFWriter {
     public Collection<RioSetting<?>> getSupportedSettings() {
         return writer.getSupportedSettings();
     }
+
 
     @Override
     public void startRDF() throws RDFHandlerException {

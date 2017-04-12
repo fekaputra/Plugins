@@ -70,7 +70,7 @@ public class RelationalToRdfTest {
 
         this.testEnv.run(this.dpu);
 
-        final Set<URI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
+        final Set<IRI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
         assertEquals(1, graphsURIs.size());
     }
 
@@ -88,7 +88,7 @@ public class RelationalToRdfTest {
 
         this.testEnv.run(this.dpu);
 
-        final Set<URI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
+        final Set<IRI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
         assertEquals(1, graphsURIs.size());
 
     }

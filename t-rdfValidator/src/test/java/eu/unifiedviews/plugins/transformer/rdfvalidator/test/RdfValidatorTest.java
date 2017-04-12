@@ -53,7 +53,7 @@ public class RdfValidatorTest {
         RepositoryConnection connection = null;
         try {
             connection = input.getConnection();
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -100,7 +100,7 @@ public class RdfValidatorTest {
         RepositoryConnection connection = null;
         try {
             connection = input.getConnection();
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -155,7 +155,7 @@ public class RdfValidatorTest {
         try {
             connection = input.getConnection();
             input.addNewDataGraph("testEmpty");
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -204,7 +204,7 @@ public class RdfValidatorTest {
         try {
             connection = input.getConnection();
             input.addNewDataGraph("testEmpty");
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -253,7 +253,7 @@ public class RdfValidatorTest {
         try {
             connection = input.getConnection();
             input.addNewDataGraph("testEmpty");
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -301,7 +301,7 @@ public class RdfValidatorTest {
         RepositoryConnection connection = null;
         try {
             connection = input.getConnection();
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             StringWriter swInput = new StringWriter();
             connection.export(Rio.createWriter(RDFFormat.TURTLE, swInput), graph);
@@ -351,7 +351,7 @@ public class RdfValidatorTest {
         RepositoryConnection connection = null;
         try {
             connection = input.getConnection();
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -400,7 +400,7 @@ public class RdfValidatorTest {
         try {
             connection = input.getConnection();
             input.addNewDataGraph("testEmpty");
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -449,7 +449,7 @@ public class RdfValidatorTest {
         try {
             connection = input.getConnection();
             input.addNewDataGraph("testEmpty");
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -498,7 +498,7 @@ public class RdfValidatorTest {
         try {
             connection = input.getConnection();
             input.addNewDataGraph("testEmpty");
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -546,7 +546,7 @@ public class RdfValidatorTest {
         RepositoryConnection connection = null;
         try {
             connection = input.getConnection();
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -594,7 +594,7 @@ public class RdfValidatorTest {
         RepositoryConnection connection = null;
         try {
             connection = input.getConnection();
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -642,7 +642,7 @@ public class RdfValidatorTest {
         RepositoryConnection connection = null;
         try {
             connection = input.getConnection();
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);
@@ -690,7 +690,7 @@ public class RdfValidatorTest {
         RepositoryConnection connection = null;
         try {
             connection = input.getConnection();
-            URI graph = input.addNewDataGraph("test");
+            IRI graph = input.addNewDataGraph("test");
             connection.add(inputStream, "", RDFFormat.TURTLE, graph);
             ByteArrayOutputStream inputBos = new ByteArrayOutputStream();
             connection.export(new TurtleWriter(inputBos), graph);

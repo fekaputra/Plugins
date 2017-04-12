@@ -34,8 +34,8 @@ public interface ValueGenerator {
     public Value generateValue(List<Object> row, ValueFactory valueFactory);
 
     /**
-     * @return URI for generated value.
+     * @return IRI for generated value.
      */
-    public URI getUri();
+    public IRI getUri();
 
 }

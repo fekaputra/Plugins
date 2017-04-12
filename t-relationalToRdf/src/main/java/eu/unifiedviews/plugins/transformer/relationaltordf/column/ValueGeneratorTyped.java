@@ -16,9 +16,9 @@ public class ValueGeneratorTyped extends ValueGeneratorReplace {
 
     private final String typeStr;
 
-    private URI typeUri;
+    private IRI typeUri;
 
-    public ValueGeneratorTyped(URI uri, String template, String typeStr) {
+    public ValueGeneratorTyped(IRI uri, String template, String typeStr) {
         super(uri, template);
         this.typeStr = typeStr;
     }
@@ -36,7 +36,7 @@ public class ValueGeneratorTyped extends ValueGeneratorReplace {
     @Override
     public void compile(Map<String, Integer> nameToIndex, ValueFactory valueFactory) throws ConversionFailed {
         super.compile(nameToIndex, valueFactory);
-        this.typeUri = valueFactory.createURI(this.typeStr);
+        this.typeUri = valueFactory.createIRI(this.typeStr);
     }
 
 }

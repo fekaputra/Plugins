@@ -97,7 +97,7 @@ public class RdfValidator extends AbstractDpu<RdfValidatorConfig_V2> {
         RepositoryConnection connection = null;
         try {
             connection = rdfInput.getConnection();
-            Set<URI> graphURIs = new HashSet<>();
+            Set<IRI> graphURIs = new HashSet<>();
             for (RDFDataUnit.Entry entry : graphs) {
                 graphURIs.add(entry.getDataGraphURI());
             }

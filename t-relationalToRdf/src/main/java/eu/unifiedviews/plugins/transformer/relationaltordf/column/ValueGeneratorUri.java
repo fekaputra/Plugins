@@ -11,7 +11,7 @@ import org.eclipse.rdf4j.model.ValueFactory;
  */
 public class ValueGeneratorUri extends ValueGeneratorReplace {
 
-    public ValueGeneratorUri(URI uri, String template) {
+    public ValueGeneratorUri(IRI uri, String template) {
         super(uri, template);
     }
 
@@ -23,7 +23,7 @@ public class ValueGeneratorUri extends ValueGeneratorReplace {
         }
 
         // the replace thing is done as a part of ValueGeneratorReplace
-        return valueFactory.createURI(rawResult);
+        return valueFactory.createIRI(rawResult);
     }
 
 }

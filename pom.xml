@@ -26,7 +26,7 @@
         <module>t-filesRenamer</module>
         <module>t-filesToRdf</module>
         <module>t-filterValidXml</module>
-        <module>t-fusionTool</module>
+        <!--<module>t-fusionTool</module>-->
         <module>t-gunzipper</module>
         <module>t-gzipper</module>
         <module>t-metadata</module>

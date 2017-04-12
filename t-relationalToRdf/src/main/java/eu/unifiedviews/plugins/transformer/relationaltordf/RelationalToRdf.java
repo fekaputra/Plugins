@@ -107,11 +107,11 @@ public class RelationalToRdf extends AbstractDpu<RelationalToRdfConfig_V1> {
                         LOG.debug("Use table subject option is used, preparing subject for table");
                         // Prepare subject for table.
                         // TODO: We can use better subject here!
-                        final URI tableURI = this.faultTolerance.execute(new FaultTolerance.ActionReturn<URI>() {
+                        final IRI tableURI = this.faultTolerance.execute(new FaultTolerance.ActionReturn<IRI>() {
 
                             @Override
-                            public URI action() throws Exception {
-                                return RelationalToRdf.this.rdfTableWrap.getValueFactory().createURI(entry.getTableName());
+                            public IRI action() throws Exception {
+                                return RelationalToRdf.this.rdfTableWrap.getValueFactory().createIRI(entry.getTableName());
                             }
                         });
                         // Set as a table subject.
