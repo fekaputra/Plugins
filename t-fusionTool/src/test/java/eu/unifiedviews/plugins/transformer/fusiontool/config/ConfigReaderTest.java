@@ -7,25 +7,22 @@ import cz.cuni.mff.odcleanstore.conflictresolution.EnumAggregationErrorStrategy;
 import cz.cuni.mff.odcleanstore.conflictresolution.EnumCardinality;
 import cz.cuni.mff.odcleanstore.conflictresolution.ResolutionStrategy;
 import eu.unifiedviews.plugins.transformer.fusiontool.exceptions.InvalidInputException;
-import org.junit.Test;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.junit.Test;
 
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class ConfigReaderTest {
 
-    private static final URI FB_LONGITUDE = new URIImpl("http://rdf.freebase.com/ns/location.geocode.longitude");
-    private static final URI FB_LATITUDE = new URIImpl("http://rdf.freebase.com/ns/location.geocode.latitude");
+    private static final IRI FB_LONGITUDE = SimpleValueFactory.getInstance().createIRI("http://rdf.freebase.com/ns/location.geocode.longitude");
+    private static final IRI FB_LATITUDE = SimpleValueFactory.getInstance().createIRI("http://rdf.freebase.com/ns/location.geocode.latitude");
 
     @Test
     public void parsesMinimalConfigFile() throws Exception {
@@ -47,7 +44,7 @@ public class ConfigReaderTest {
         assertThat(config.getMaxOutputTriples(), nullValue());
         assertThat(config.getPrefixes(), equalTo(Collections.<String, String>emptyMap()));
         assertThat(config.getRequiredClassOfProcessedResources(), nullValue());
-        assertThat(config.getPropertyResolutionStrategies(), equalTo(Collections.<URI, ResolutionStrategy>emptyMap()));
+        assertThat(config.getPropertyResolutionStrategies(), equalTo(Collections.<IRI, ResolutionStrategy>emptyMap()));
         assertThat(config.isLocalCopyProcessing(), equalTo(true));
 
         assertThat(config.getMaxDateDifference(), equalTo(FTConfigConstants.MAX_DATE_DIFFERENCE));
@@ -88,7 +85,7 @@ public class ConfigReaderTest {
         assertThat(config.getMaxOutputTriples(), nullValue());
         assertThat(config.getEnableFileCache(), equalTo(false));
         assertThat(config.isLocalCopyProcessing(), equalTo(true));
-        assertThat(config.getRequiredClassOfProcessedResources(), equalTo((URI) new URIImpl("http://schema.org/PostalAddress")));
+        assertThat(config.getRequiredClassOfProcessedResources(), equalTo((IRI) SimpleValueFactory.getInstance().createIRI("http://schema.org/PostalAddress")));
 
         assertThat(config.getDefaultResolutionStrategy(), notNullValue());
         assertThat(config.getDefaultResolutionStrategy().getResolutionFunctionName(), equalTo("ALL"));
@@ -140,7 +137,7 @@ public class ConfigReaderTest {
         assertThat(config.getMaxOutputTriples(), nullValue());
         assertThat(config.getPrefixes(), equalTo(Collections.<String, String>emptyMap()));
         assertThat(config.getRequiredClassOfProcessedResources(), nullValue());
-        assertThat(config.getPropertyResolutionStrategies(), equalTo(Collections.<URI, ResolutionStrategy>emptyMap()));
+        assertThat(config.getPropertyResolutionStrategies(), equalTo(Collections.<IRI, ResolutionStrategy>emptyMap()));
         assertThat(config.isLocalCopyProcessing(), equalTo(true));
 
         assertThat(config.getMaxDateDifference(), equalTo(FTConfigConstants.MAX_DATE_DIFFERENCE));

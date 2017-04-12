@@ -200,10 +200,10 @@ public class FusionToolDpuComponentFactory implements FusionComponentFactory {
     protected Set<String> getPreferredURIs() throws IOException {
         Collection<String> preferredCanonicalURIs = config.getPreferredCanonicalURIs();
         File canonicalURIsInputFile = getCanonicalUrisFile();
-        Set<URI> settingsPreferredURIs = config.getPropertyResolutionStrategies().keySet();
+        Set<IRI> settingsPreferredURIs = config.getPropertyResolutionStrategies().keySet();
 
         Set<String> preferredURIs = new HashSet<>(settingsPreferredURIs.size());
-        for (URI uri : settingsPreferredURIs) {
+        for (IRI uri : settingsPreferredURIs) {
             preferredURIs.add(uri.stringValue());
         }
         if (canonicalURIsInputFile != null) {

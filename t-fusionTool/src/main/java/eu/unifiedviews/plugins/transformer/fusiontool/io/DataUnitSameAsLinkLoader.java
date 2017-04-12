@@ -22,9 +22,9 @@ import java.util.Set;
 public class DataUnitSameAsLinkLoader {
     private static final Logger LOG = LoggerFactory.getLogger(DataUnitSameAsLinkLoader.class);
     private static RDFDataUnit dataUnit;
-    private static Set<URI> sameAsLinkTypes;
+    private static Set<IRI> sameAsLinkTypes;
 
-    public DataUnitSameAsLinkLoader(RDFDataUnit dataUnit, Set<URI> sameAsLinkTypes) {
+    public DataUnitSameAsLinkLoader(RDFDataUnit dataUnit, Set<IRI> sameAsLinkTypes) {
         this.dataUnit = dataUnit;
         this.sameAsLinkTypes = sameAsLinkTypes;
     }
@@ -44,7 +44,7 @@ public class DataUnitSameAsLinkLoader {
             throws QueryEvaluationException, RepositoryException, MalformedQueryException {
 
         long loadedCount = 0;
-        for (URI link : sameAsLinkTypes) {
+        for (IRI link : sameAsLinkTypes) {
             String query = String.format("CONSTRUCT {?s <%1$s> ?o} WHERE {?s <%1$s> ?o}", link.stringValue());
             GraphQueryResult sameAsTriples = connection.prepareGraphQuery(QueryLanguage.SPARQL, query).evaluate();
             while (sameAsTriples.hasNext()) {

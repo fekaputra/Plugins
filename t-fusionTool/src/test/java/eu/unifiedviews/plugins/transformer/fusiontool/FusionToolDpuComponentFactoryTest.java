@@ -214,8 +214,8 @@ public class FusionToolDpuComponentFactoryTest {
             ResolvedStatement resolvedStatement = new ResolvedStatementImpl(statement, 0.5, ImmutableList.of((Resource) createHttpUri("source1")));
             writer.write(resolvedStatement);
 
-            URI metadataGraph = outputDataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_METADATA_GRAPH_NAME);
-            URI statementGraph = outputDataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_DATA_GRAPH_NAME + "-1");
+            IRI metadataGraph = outputDataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_METADATA_GRAPH_NAME);
+            IRI statementGraph = outputDataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_DATA_GRAPH_NAME + "-1");
 
             List<Statement> expectedStatements = ImmutableList.of(
                     VF.createStatement(statement.getSubject(), statement.getPredicate(), statement.getObject(), statementGraph),
@@ -244,7 +244,7 @@ public class FusionToolDpuComponentFactoryTest {
 
         ConfigContainer config = mock(ConfigContainer.class);
         when(config.getSameAsLinkTypes()).thenReturn(ImmutableSet.of(OWL.SAMEAS));
-        when(config.getPropertyResolutionStrategies()).thenReturn(ImmutableMap.<URI, ResolutionStrategy>of(createHttpUri("p2"), new ResolutionStrategyImpl()));
+        when(config.getPropertyResolutionStrategies()).thenReturn(ImmutableMap.<IRI, ResolutionStrategy>of(createHttpUri("p2"), new ResolutionStrategyImpl()));
         when(config.getPreferredCanonicalURIs()).thenReturn(ImmutableSet.of(createHttpUri("a2").stringValue()));
         Files.write(new File(resultDir, "canonicalUris.txt").toPath(), ImmutableList.of(createHttpUri("b2").stringValue()), Charset.defaultCharset());
         when(config.getCanonicalURIsFileName()).thenReturn("canonicalUris.txt");
@@ -329,7 +329,7 @@ public class FusionToolDpuComponentFactoryTest {
         ConfigContainer config = mock(ConfigContainer.class);
         when(config.isLocalCopyProcessing()).thenReturn(true);
         when(config.getParserConfig()).thenReturn(FTConfigConstants.DEFAULT_FILE_PARSER_CONFIG);
-        when(config.getPropertyResolutionStrategies()).thenReturn(ImmutableMap.<URI, ResolutionStrategy>of(
+        when(config.getPropertyResolutionStrategies()).thenReturn(ImmutableMap.<IRI, ResolutionStrategy>of(
                 createHttpUri("resourceDescriptionProperty"), new ResolutionStrategyImpl(NestedResourceDescriptionResolution.getName())
         ));
         ImmutableList<Statement> inputTriples1 = ImmutableList.of(
@@ -343,7 +343,7 @@ public class FusionToolDpuComponentFactoryTest {
         );
 
         // Act
-        Map<URI, Collection<Statement>> resourceDescriptions;
+        Map<IRI, Collection<Statement>> resourceDescriptions;
         try (MockRDFDataUnit source1 = dataUnitWithGraph(inputTriples1, createHttpUri("dataGraph1"));
              MockRDFDataUnit source2 = dataUnitWithGraph(inputTriples2, createHttpUri("dataGraph2"));
              InputLoader inputLoader = getComponentFactory(config, ImmutableList.of(source1, source2)).getInputLoader()
@@ -364,17 +364,17 @@ public class FusionToolDpuComponentFactoryTest {
                 contextAwareStatementIsEqual(createHttpStatement("dependent", "pd", "od", "dataGraph2"))));
     }
 
-    private MockRDFDataUnit dataUnitWithGraph(ImmutableList<Statement> inputTriples1, URI dataGraphUri) throws RepositoryException {
+    private MockRDFDataUnit dataUnitWithGraph(ImmutableList<Statement> inputTriples1, IRI dataGraphUri) throws RepositoryException {
         MockRDFDataUnit dataUnit = new MockRDFDataUnit(inputTriples1);
         dataUnit.setDataGraphURI(dataGraphUri);
         return dataUnit;
     }
 
-    private Map<URI, Collection<Statement>> collectResourcesDescriptions(InputLoader inputLoader) throws LDFusionToolException {
-        Map<URI, Collection<Statement>> result = new HashMap<>();
+    private Map<IRI, Collection<Statement>> collectResourcesDescriptions(InputLoader inputLoader) throws LDFusionToolException {
+        Map<IRI, Collection<Statement>> result = new HashMap<>();
         while (inputLoader.hasNext()) {
             ResourceDescription resourceDescription = inputLoader.next();
-            result.put((URI) resourceDescription.getResource(), resourceDescription.getDescribingStatements());
+            result.put((IRI) resourceDescription.getResource(), resourceDescription.getDescribingStatements());
         }
         return result;
     }

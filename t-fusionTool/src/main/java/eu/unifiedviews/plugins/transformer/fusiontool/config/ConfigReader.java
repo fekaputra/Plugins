@@ -89,15 +89,15 @@ public final class ConfigReader {
         return config;
     }
 
-    private Map<URI, ResolutionStrategy> extractPropertyResolutionStrategies(
+    private Map<IRI, ResolutionStrategy> extractPropertyResolutionStrategies(
             List<PropertyResolutionStrategyXml> propertyResolutionStrategies,
             NamespacePrefixExpander prefixExpander)
             throws InvalidInputException {
-        Map<URI, ResolutionStrategy> result = new HashMap<>(propertyResolutionStrategies.size());
+        Map<IRI, ResolutionStrategy> result = new HashMap<>(propertyResolutionStrategies.size());
         for (PropertyResolutionStrategyXml strategyXml : propertyResolutionStrategies) {
             ResolutionStrategy strategy = extractResolutionStrategy(strategyXml, prefixExpander);
             for (PropertyXml propertyXml : strategyXml.getProperties()) {
-                URI uri = convertToUriWithExpansion(prefixExpander, propertyXml.getId());
+                IRI uri = convertToUriWithExpansion(prefixExpander, propertyXml.getId());
                 result.put(uri, strategy);
             }
         }
@@ -142,7 +142,7 @@ public final class ConfigReader {
         for (ParamXml param : params) {
             if (ConfigParameters.PROCESSING_ONLY_RESOURCES_WITH_CLASS.equalsIgnoreCase(param.getName())) {
                 if (!ODCSUtils.isNullOrEmpty(param.getValue())) {
-                    URI classUri = convertToUriWithExpansion(prefixExpander, param.getValue());
+                    IRI classUri = convertToUriWithExpansion(prefixExpander, param.getValue());
                     config.setRequiredClassOfProcessedResources(classUri);
                 }
             } else {
@@ -152,7 +152,7 @@ public final class ConfigReader {
         }
     }
 
-    private URI convertToURI(String str, String errorMessage) throws InvalidInputException {
+    private IRI convertToURI(String str, String errorMessage) throws InvalidInputException {
         try {
             return ValueFactoryImpl.getInstance().createURI(str);
         } catch (IllegalArgumentException e) {
@@ -160,7 +160,7 @@ public final class ConfigReader {
         }
     }
 
-    private URI convertToUriWithExpansion(NamespacePrefixExpander prefixExpander, String value) throws InvalidInputException {
+    private IRI convertToUriWithExpansion(NamespacePrefixExpander prefixExpander, String value) throws InvalidInputException {
         try {
             return prefixExpander.convertToUriWithExpansion(value);
         } catch (cz.cuni.mff.odcleanstore.fusiontool.exceptions.InvalidInputException e) {

@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class DataUnitRDFWriter extends CloseableRDFWriterBase {
     private final RepositoryConnection connection;
-    private final URI context;
+    private final IRI context;
 
     public DataUnitRDFWriter(WritableRDFDataUnit dataUnit, String dataGraphSymbolicName) throws DataUnitException {
         this.connection = dataUnit.getConnection();

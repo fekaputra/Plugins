@@ -73,10 +73,10 @@ public class DataUnitRDFWriterWithMetadataTest {
         writer.write(resolvedStatement);
 
         // Assert
-        Collection<URI> addedGraphs = dataUnit.getAddedGraphs().values(); // must be first before calling dataUnit.addNewDataGraph()
+        Collection<IRI> addedGraphs = dataUnit.getAddedGraphs().values(); // must be first before calling dataUnit.addNewDataGraph()
 
-        URI metadataGraph = dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_METADATA_GRAPH_NAME);
-        URI statementGraph = dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_DATA_GRAPH_NAME + "-1");
+        IRI metadataGraph = dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_METADATA_GRAPH_NAME);
+        IRI statementGraph = dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_DATA_GRAPH_NAME + "-1");
         assertThat(addedGraphs, containsInAnyOrder(
                 dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_DATA_GRAPH_NAME),
                 metadataGraph,

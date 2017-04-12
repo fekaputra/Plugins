@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 public class DataUnitRDFWriterTest {
 
-    public static final URI DEFAULT_CONTEXT = FTDPUTestUtils.getUniqueURI();
+    public static final IRI DEFAULT_CONTEXT = FTDPUTestUtils.getUniqueURI();
     private DataUnitRDFWriter writer;
     private Repository repository;
     private RepositoryConnection connection;

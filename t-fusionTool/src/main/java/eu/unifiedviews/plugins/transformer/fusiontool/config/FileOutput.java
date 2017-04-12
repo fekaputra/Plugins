@@ -26,15 +26,15 @@ public interface FileOutput {
     EnumSerializationFormat getFormat();
     
     /**
-     * Returns URI of named graph where resolved quads will be placed. 
+     * Returns IRI of named graph where resolved quads will be placed.
      * Overrides the unique named graph assigned to each resolved quad from Conflict Resolution.
-     * @return named graph URI
+     * @return named graph IRI
      */
-    URI getDataContext();
+    IRI getDataContext();
 
     /**
-     * Returns URI of named graph where Conflict Resolution metadata will be placed. 
-     * @return named graph URI
+     * Returns IRI of named graph where Conflict Resolution metadata will be placed.
+     * @return named graph IRI
      */
-    URI getMetadataContext();
+    IRI getMetadataContext();
 }

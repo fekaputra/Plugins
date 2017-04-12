@@ -47,7 +47,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
             + "\n LIMIT %2$s OFFSET %3$s";
 
     private RepositoryConnection _connection;
-    private final URI defaultContext;
+    private final IRI defaultContext;
     private final RDFDataUnit rdfInput;
     private int maxSparqlResultsSize = LDFTConfigConstants.DEFAULT_SPARQL_RESULT_MAX_ROWS;
 
@@ -96,7 +96,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
         }
     }
 
-    private int loadAllTriplesForGraph(URI dataGraphURI, RDFHandler rdfHandler) throws OpenRDFException, DataUnitException {
+    private int loadAllTriplesForGraph(IRI dataGraphURI, RDFHandler rdfHandler) throws OpenRDFException, DataUnitException {
         LOG.debug("Loading input quads from data unit for graph {}", dataGraphURI);
         int totalLoadedQuads = 0;
         int lastLoadedQuads = Integer.MAX_VALUE;
@@ -112,7 +112,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
         return totalLoadedQuads;
     }
 
-    private int addQuadsFromQuery(URI dataGraphURI, String sparqlQuery, RDFHandler rdfHandler) throws OpenRDFException, DataUnitException {
+    private int addQuadsFromQuery(IRI dataGraphURI, String sparqlQuery, RDFHandler rdfHandler) throws OpenRDFException, DataUnitException {
         int quadCount = 0;
         RepositoryConnection connection = getConnection();
         TupleQueryResult resultSet = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparqlQuery).evaluate();
@@ -122,7 +122,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
                 BindingSet bindings = resultSet.next();
                 Statement quad = valueFactory.createStatement(
                         (Resource) bindings.getValue("s"),
-                        (URI) bindings.getValue("p"),
+                        (IRI) bindings.getValue("p"),
                         bindings.getValue("o"),
                         dataGraphURI);
                 rdfHandler.handleStatement(quad);
@@ -159,7 +159,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
     //    }
     //}
 
-    private String formatQuery(URI graph, int limit, int offset) {
+    private String formatQuery(IRI graph, int limit, int offset) {
         return String.format(Locale.ROOT,
                 LOAD_SPARQL_QUERY,
                 graph.stringValue(),
@@ -168,7 +168,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
     }
 
     @Override
-    public URI getDefaultContext() throws LDFusionToolException {
+    public IRI getDefaultContext() throws LDFusionToolException {
         return defaultContext;
     }
 

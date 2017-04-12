@@ -30,26 +30,26 @@ public final class FTDPUTestUtils {
 
     private static AtomicLong uriCounter = new AtomicLong(0);
 
-    /** Returns a URI unique within a test run. @return URI as a string */
+    /** Returns a IRI unique within a test run. @return IRI as a string */
     public static String getUniqueURIString() {
         return "http://example.com/" + Long.toString(uriCounter.incrementAndGet());
     }
     
-    /** Returns a URI unique within a test run. @return URI */
-    public static URI getUniqueURI() {
+    /** Returns a IRI unique within a test run. @return IRI */
+    public static IRI getUniqueURI() {
         return VF.createURI(getUniqueURIString());
     }
 
-    /** Resets the URI counter used by {@link #getUniqueURIString()}. */
+    /** Resets the IRI counter used by {@link #getUniqueURIString()}. */
     public static void resetURICounter() {
         uriCounter.set(0);
     }
 
     /**
-     * Create a new quad with the given subject, predicate and object with a unique named graph URI.
-     * @param subjectURI subject URI
-     * @param predicateURI predicate URI
-     * @param objectURI object URI
+     * Create a new quad with the given subject, predicate and object with a unique named graph IRI.
+     * @param subjectURI subject IRI
+     * @param predicateURI predicate IRI
+     * @param objectURI object IRI
      * @return quad
      */
     public static Statement createStatement(String subjectURI, String predicateURI, String objectURI) {
@@ -61,13 +61,13 @@ public final class FTDPUTestUtils {
     }
     
     /**
-     * Create a new quad with the given subject, predicate and object with a unique named graph URI.
-     * @param subjectURI subject URI
-     * @param predicateURI predicate URI
-     * @param objectURI object URI
+     * Create a new quad with the given subject, predicate and object with a unique named graph IRI.
+     * @param subjectURI subject IRI
+     * @param predicateURI predicate IRI
+     * @param objectURI object IRI
      * @return quad
      */
-    public static Statement createStatement(URI subjectURI, URI predicateURI, URI objectURI) {
+    public static Statement createStatement(IRI subjectURI, IRI predicateURI, IRI objectURI) {
         return VF.createStatement(
                 (subjectURI),
                 (predicateURI),
@@ -85,11 +85,11 @@ public final class FTDPUTestUtils {
     }
     
     /**
-     * Create a new quad with the given subject, predicate, object and named graph URI.
-     * @param subjectURI subject URI
-     * @param predicateURI predicate URI
-     * @param objectURI object URI
-     * @param namedGraphURI named graph URI
+     * Create a new quad with the given subject, predicate, object and named graph IRI.
+     * @param subjectURI subject IRI
+     * @param predicateURI predicate IRI
+     * @param objectURI object IRI
+     * @param namedGraphURI named graph IRI
      * @return quad
      */
     public static Statement createStatement(String subjectURI, String predicateURI, String objectURI, String namedGraphURI) {
@@ -114,7 +114,7 @@ public final class FTDPUTestUtils {
                 && ODCSUtils.nullProofEquals(statement1.getContext(), statement2.getContext());
     }
 
-    public static URI createHttpUri(String uriPart) {
+    public static IRI createHttpUri(String uriPart) {
         return VF.createURI("http://" + uriPart);
     }
 

@@ -22,13 +22,13 @@ import java.util.Set;
 public class MockRDFDataUnit implements WritableRDFDataUnit, AutoCloseable {
     private final Repository repository;
 
-    private URI metadataGraphURI;
+    private IRI metadataGraphURI;
 
-    private URI dataGraphURI;
+    private IRI dataGraphURI;
 
-    private Map<String, URI> addedGraphs;
+    private Map<String, IRI> addedGraphs;
 
-    private Set<URI> iterationGraphs;
+    private Set<IRI> iterationGraphs;
 
     {
         metadataGraphURI = FTDPUTestUtils.getUniqueURI();
@@ -56,7 +56,7 @@ public class MockRDFDataUnit implements WritableRDFDataUnit, AutoCloseable {
     }
 
     @Override
-    public Set<URI> getMetadataGraphnames() throws DataUnitException {
+    public Set<IRI> getMetadataGraphnames() throws DataUnitException {
         return ImmutableSet.of(metadataGraphURI);
     }
 
@@ -71,19 +71,19 @@ public class MockRDFDataUnit implements WritableRDFDataUnit, AutoCloseable {
     }
 
     @Override
-    public URI getBaseDataGraphURI() throws DataUnitException {
+    public IRI getBaseDataGraphURI() throws DataUnitException {
         return dataGraphURI;
     }
 
     @Override
-    public void addExistingDataGraph(String s, URI uri) throws DataUnitException {
+    public void addExistingDataGraph(String s, IRI uri) throws DataUnitException {
         addedGraphs.put(s, uri);
         iterationGraphs.add(uri);
     }
 
     @Override
-    public URI addNewDataGraph(String s) throws DataUnitException {
-        URI uri = FTDPUTestUtils.createHttpUri("mockDU/" + s);
+    public IRI addNewDataGraph(String s) throws DataUnitException {
+        IRI uri = FTDPUTestUtils.createHttpUri("mockDU/" + s);
         addExistingDataGraph(s, uri);
         return uri;
     }
@@ -94,25 +94,25 @@ public class MockRDFDataUnit implements WritableRDFDataUnit, AutoCloseable {
     }
 
     @Override
-    public URI getMetadataWriteGraphname() throws DataUnitException {
+    public IRI getMetadataWriteGraphname() throws DataUnitException {
         return metadataGraphURI;
     }
 
-    //public URI getMetadataGraphURI() {
+    //public IRI getMetadataGraphURI() {
     //    return metadataGraphURI;
     //}
 
-    public URI getDataGraphURI() {
+    public IRI getDataGraphURI() {
         return dataGraphURI;
     }
 
-    public void setDataGraphURI(URI newDataGraphURI) {
+    public void setDataGraphURI(IRI newDataGraphURI) {
         iterationGraphs.remove(dataGraphURI);
         dataGraphURI = newDataGraphURI;
         iterationGraphs.add(newDataGraphURI);
     }
 
-    public Map<String, URI> getAddedGraphs() {
+    public Map<String, IRI> getAddedGraphs() {
         return addedGraphs;
     }
 
@@ -121,12 +121,12 @@ public class MockRDFDataUnit implements WritableRDFDataUnit, AutoCloseable {
     }
 
     @Override
-    public void updateExistingDataGraph(String string, URI uri) throws DataUnitException {
+    public void updateExistingDataGraph(String string, IRI uri) throws DataUnitException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private class MockIteration implements RDFDataUnit.Iteration {
-        private final Iterator<URI> iterator;
+        private final Iterator<IRI> iterator;
 
         private MockIteration() {
             this.iterator = iterationGraphs.iterator();
@@ -149,14 +149,14 @@ public class MockRDFDataUnit implements WritableRDFDataUnit, AutoCloseable {
     }
 
     private static class MockEntry implements RDFDataUnit.Entry {
-        private final URI uri;
+        private final IRI uri;
 
-        private MockEntry(URI uri) {
+        private MockEntry(IRI uri) {
             this.uri = uri;
         }
 
         @Override
-        public URI getDataGraphURI() throws DataUnitException {
+        public IRI getDataGraphURI() throws DataUnitException {
             return uri;
         }
 

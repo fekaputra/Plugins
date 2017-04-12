@@ -153,7 +153,7 @@ public class AllTriplesDataUnitLoaderTest {
         Repository repository = FTDPUTestUtils.createRepository(statements);
 
         // Act
-        URI defaultContext;
+        IRI defaultContext;
         try (MockRDFDataUnit rdfDataUnit = getDataUnit(statements);
              AllTriplesDataUnitLoader loader = getLoader(rdfDataUnit, 2)
         ) {
@@ -173,7 +173,7 @@ public class AllTriplesDataUnitLoaderTest {
     private MockRDFDataUnit getDataUnit(Collection<Statement> statements) throws RepositoryException, DataUnitException {
         MockRDFDataUnit rdfDataUnit = new MockRDFDataUnit(statements);
         for (Statement statement : statements) {
-            URI graphName = (URI) statement.getContext();
+            IRI graphName = (IRI) statement.getContext();
             rdfDataUnit.addExistingDataGraph(graphName.stringValue(), graphName);
         }
         return rdfDataUnit;
