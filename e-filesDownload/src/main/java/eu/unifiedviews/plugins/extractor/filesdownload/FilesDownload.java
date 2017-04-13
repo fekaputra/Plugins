@@ -192,7 +192,8 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                     continue;
                 }
                 else {
-                    throw ContextUtils.dpuException(ctx, "FilesDownload.execute.exception.nofile", vfsFile.getUri());
+                    ContextUtils.sendError(ctx,"FilesDownload.execute.exception.nofile", "FilesDownload.execute.exception.nofile.detail", vfsFile.getFileName(), vfsFile.getUri());
+                    return;
                 }
             }
 
