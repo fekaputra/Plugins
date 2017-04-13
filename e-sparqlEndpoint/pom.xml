@@ -45,50 +45,51 @@
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-repository-api</artifactId>
             <version>${rdf4j.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-repository-sparql</artifactId>
             <version>${rdf4j.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <!-- Tuple query result parsers. -->
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-queryresultio-binary</artifactId>
             <version>${rdf4j.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-queryresultio-compliance</artifactId>
             <version>${rdf4j.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-queryresultio-sparqljson</artifactId>
             <version>${rdf4j.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-queryresultio-sparqlxml</artifactId>
             <version>${rdf4j.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-queryresultio-text</artifactId>
             <version>${rdf4j.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <!-- Support for query validation. -->
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-queryparser-sparql</artifactId>
             <version>${rdf4j.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Test environment. -->
         <dependency>
