@@ -52,7 +52,7 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
         String currentPiepelineApp = this.config.getConfig().getAppName();
 
         long startTimeStamp = System.currentTimeMillis();
-        ContextUtils.sendShortInfo(ctx, "Running SPARK pipeline: " + config.getSparkEntry("spark.app.name"));
+        ContextUtils.sendShortInfo(ctx, "Running SPARK pipeline: " + config.getConfig().getByStringKey("spark.app.name"));
 
         // we have to initialize the FileManager here, since DataUnits not initialized at construction
         this.fileManager = new SparkDpuFileManager(this.config.getConfig(), this.input, this.output);

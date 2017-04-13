@@ -29,7 +29,7 @@ public class SparkDpuFileManager {
         this.input = input;
         this.output = output;
         this.configPrefix = "spark." + this.config.getAppName() + ".";
-        this.sparkWorkingDir = this.config.getItem(this.configPrefix + "filemanager.inputdir").getBean().getValue();
+        this.sparkWorkingDir = this.config.getByStringKey(this.configPrefix + "filemanager.inputdir");
     }
 
     public void copyToSparkWorkingDir() throws DataUnitException {

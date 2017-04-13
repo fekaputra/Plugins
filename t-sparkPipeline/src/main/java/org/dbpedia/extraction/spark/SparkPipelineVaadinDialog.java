@@ -9,6 +9,8 @@ import eu.unifiedviews.dpu.config.DPUConfigException;
 import eu.unifiedviews.helpers.dpu.vaadin.dialog.AbstractDialog;
 import org.dbpedia.extraction.spark.utils.SparkDpuConfig;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -37,7 +39,7 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
             ".pairRddKeys"
     );
 
-    private ObjectProperty<Integer> defaultTimeout = new ObjectProperty<Integer>(0);
+    private ObjectProperty<String> defaultTimeout = new ObjectProperty<String>("");
 
     private ObjectProperty<Boolean> ignoreTlsErrors = new ObjectProperty<Boolean>(Boolean.FALSE);
 
@@ -47,14 +49,13 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
     public SparkPipelineVaadinDialog() throws DPUConfigException {
         super(SparkPipeline.class);
         this.setConfiguration(new SparkPipelineConfig_V1());
-
     }
 
     @Override
     public void setConfiguration(SparkPipelineConfig_V1 c) throws DPUConfigException {
         this.config_v1 = c;
 
-        //get all use case names
+/*        //get all use case names
         Map<String, String> knownUseCaseNames = new HashMap<>();
         for(SparkDpuConfig.SparkConfigEntry ent : this.config_v1.getConfig().getItemIds()){
             if(ent.getKey().contains(".filemanager."))
@@ -126,14 +127,17 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
             });
         } catch (CloneNotSupportedException e) {
             throw new DPUConfigException(e);
-        }
+        }*/
 
-        //FIXME is this neccessary?
-        buildDialogLayout();
     }
 
     @Override
     public SparkPipelineConfig_V1 getConfiguration() throws DPUConfigException {
+        try {
+            this.config_v1 = new SparkPipelineConfig_V1(new URL(defaultTimeout.getValue()));
+        } catch (MalformedURLException e) {
+            throw new DPUConfigException(e);
+        }
         return this.config_v1;
     }
 
@@ -145,6 +149,15 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
         mainLayout.setMargin(true);
         mainLayout.addComponent(new Label(ctx.tr("SparkPipeline.dialog.label")));
 
+
+        TextField txtDefaultTimeout = new TextField(ctx.tr("SparkPipeline.defaultTimeout.caption"), defaultTimeout);
+        txtDefaultTimeout.setNullRepresentation("");
+        //txtDefaultTimeout.setConversionError(ctx.tr("FilesDownloadVaadinDialog.defaultTimeout.conversionError"));
+        txtDefaultTimeout.setImmediate(true);
+        txtDefaultTimeout.setLocale(ctx.getDialogMasterContext().getDialogContext().getLocale());
+
+        mainLayout.addComponent(txtDefaultTimeout);
+/*
         final HorizontalLayout topMostSectionLeft = new HorizontalLayout();
         final HorizontalLayout topMostSectionRight = new HorizontalLayout();
         final Button addSparkProperty = new Button("+");
@@ -185,10 +198,20 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
 
         final HorizontalSplitPanel splitTop = new HorizontalSplitPanel(topMostSectionLeft, topMostSectionRight);
         mainLayout.addComponent(splitTop);
+        mainLayout.addComponent(implementNewTable(this.sparkMandatoryEntries));
+        mainLayout.addComponent(implementNewTable(this.sparkOptionalEntries));
+        mainLayout.addComponent(implementNewTable(this.useCaseMandatoryEntries));
+        mainLayout.addComponent(implementNewTable(this.useCaseOptionalEntries));
+*/
 
-        final Table table = new Table();
+
+        setCompositionRoot(mainLayout);
+    }
+
+
+    private Table implementNewTable(SparkDpuConfig source) {
+        Table table = new Table();
         table.addGeneratedColumn("remove", new Table.ColumnGenerator() {
-
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
                 Button result = new Button("-");
@@ -207,7 +230,7 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
             }
 
         });
-        table.setContainerDataSource(this.sparkMandatoryEntries);
+        table.setContainerDataSource(source);
         table.setColumnHeaderMode(Table.ColumnHeaderMode.EXPLICIT);
         table.setColumnHeader("key", ctx.tr("SparkPipeline.config.key"));
         table.setColumnHeader("value", ctx.tr("SparkPipeline.config.Value"));
@@ -234,8 +257,6 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
 
         });
         table.setVisibleColumns("remove", "key", "value");
-        mainLayout.addComponent(table);
-
-        setCompositionRoot(mainLayout);
+        return table;
     }
 }

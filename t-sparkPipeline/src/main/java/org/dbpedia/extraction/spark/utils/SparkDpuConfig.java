@@ -5,6 +5,7 @@ import eu.unifiedviews.helpers.dpu.ontology.EntityDescription;
 import org.dbpedia.extraction.spark.SparkPipeline;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,12 +29,12 @@ public class SparkDpuConfig extends BeanItemContainer<SparkDpuConfig.SparkConfig
         super(SparkDpuConfig.SparkConfigEntry.class);
     }
 
-    public SparkDpuConfig(final String resourceName) throws Exception {
+    public SparkDpuConfig(final URL resourceUrl) throws Exception {
         super(SparkDpuConfig.SparkConfigEntry.class);
 
-        if (null != resourceName && !resourceName.isEmpty()) {
+        if (null != resourceUrl) {
             //TODO the config loading
-            InputStream configStream = SparkPipeline.class.getClassLoader().getResourceAsStream(resourceName);
+            InputStream configStream = resourceUrl.openStream();
             SparkConfigReader reader = new SparkConfigReader(configStream);
 
             // load config with loaded parameters
@@ -69,7 +70,7 @@ public class SparkDpuConfig extends BeanItemContainer<SparkDpuConfig.SparkConfig
 
     public Optional<String> getProperty(String key){
         //TODO test this
-        return Optional.ofNullable(this.getItem(key).getBean().getValue());
+        return Optional.ofNullable(this.getByStringKey(key));
     }
 
     public void setAppName(String appName) {
@@ -90,6 +91,14 @@ public class SparkDpuConfig extends BeanItemContainer<SparkDpuConfig.SparkConfig
             return zw.get();
         else
             throw new Exception("TODO"); //TODO
+    }
+
+    public String getByStringKey(String key){
+        for(SparkDpuConfig.SparkConfigEntry ent : this.getItemIds()){
+            if(ent.getKey().trim().equals(key.trim()))
+                return ent.getValue();
+        }
+        return null;
     }
 
     @Override

@@ -2,6 +2,8 @@ package org.dbpedia.extraction.spark;
 
 import org.dbpedia.extraction.spark.utils.SparkDpuConfig;
 
+import java.net.URL;
+
 
 /**
  * Configuration class for SparkPipeline.
@@ -15,7 +17,16 @@ public class SparkPipelineConfig_V1 {
 
     public SparkPipelineConfig_V1()  {
         try {
-            this.sparkConfig = new SparkDpuConfig("spark.config");
+            URL configUrl = SparkPipeline.class.getClassLoader().getResource("spark.config");
+            this.sparkConfig = new SparkDpuConfig(configUrl);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public SparkPipelineConfig_V1(URL configUrl)  {
+        try {
+            this.sparkConfig = new SparkDpuConfig(configUrl);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
