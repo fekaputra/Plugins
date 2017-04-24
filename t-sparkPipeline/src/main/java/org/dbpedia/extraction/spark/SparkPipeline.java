@@ -37,7 +37,7 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
     private SparkDpuFileManager fileManager;
 
     public SparkPipeline() {
-		super(SparkPipelineVaadinDialog.class, ConfigHistory.noHistory(SparkPipelineConfig_V1.class));
+		super(SparkPipelineVvaadinDialog.class, ConfigHistory.noHistory(SparkPipelineConfig_V1.class));
         this.config = new SparkPipelineConfig_V1();
 	}
 

@@ -5,6 +5,7 @@ import eu.unifiedviews.helpers.dpu.ontology.EntityDescription;
 import org.dbpedia.extraction.spark.SparkPipeline;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
@@ -14,7 +15,7 @@ import java.util.Optional;
  *
  * Loads a SPARK config file as a Bean Container (so we can use it directly in the Vaadin Dialog....)
  */
-public class SparkDpuConfig extends BeanItemContainer<SparkDpuConfig.SparkConfigEntry> {
+public class SparkDpuConfig extends BeanItemContainer<SparkDpuConfig.SparkConfigEntry> implements Serializable {
 
     /** master value */
     private String master;
@@ -104,7 +105,7 @@ public class SparkDpuConfig extends BeanItemContainer<SparkDpuConfig.SparkConfig
     @Override
     public Object clone() throws CloneNotSupportedException {
         SparkDpuConfig clone = new SparkDpuConfig();
-        for(SparkConfigEntry ent : this.getAllItemIds()) {
+        for(SparkDpuConfig.SparkConfigEntry ent : this.getAllItemIds()) {
             clone.addItem(ent);
         }
         clone.master = this.master;
@@ -114,7 +115,7 @@ public class SparkDpuConfig extends BeanItemContainer<SparkDpuConfig.SparkConfig
     }
 
     @EntityDescription.Entity(type = SparkDpuConfig.SPARK_CONFIG_ENTRY)
-    public static class SparkConfigEntry implements Map.Entry<String, String> {
+    public static class SparkConfigEntry implements Map.Entry<String, String>, Serializable {
 
         public SparkConfigEntry(){
         }
