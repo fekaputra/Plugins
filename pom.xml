@@ -54,6 +54,7 @@
 
         <!-- QUALITY CONTROL -->
         <module>q-sparqlAsk</module>
+        <module>q-rdfUnit</module>
     </modules>
 
     <profiles>
