@@ -5,6 +5,7 @@ import eu.unifiedviews.dataunit.files.FilesDataUnit;
 import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
 import eu.unifiedviews.helpers.dataunit.files.FilesHelper;
 import org.apache.commons.io.FileUtils;
+import org.dbpedia.extraction.spark.dialog.SparkDpuConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class SparkDpuFileManager {
         this.input = input;
         this.output = output;
         this.configPrefix = "spark." + this.config.getAppName() + ".";
-        this.sparkWorkingDir = this.config.getByStringKey(this.configPrefix + "filemanager.inputdir");
+        this.sparkWorkingDir = this.config.getByStringKey(this.configPrefix + "filemanager.inputdir").getValue().toString();
     }
 
     public void copyToSparkWorkingDir() throws DataUnitException {
@@ -48,7 +49,7 @@ public class SparkDpuFileManager {
 
     public void copyDirectoryToOutputDirectory(String uri) throws DataUnitException {
         File dir = new File(uri.replaceAll("file:(/)+", "/"));
-        String pattern = this.config.getItem("spark." + this.config.getAppName() + ".filemanager.filePattern").getBean().getValue();
+        String pattern = this.config.getItem("spark." + this.config.getAppName() + ".filemanager.filePattern").getBean().getValue().toString();
         pattern = pattern.substring(0, pattern.indexOf("$key") >= 0 ? pattern.indexOf("$key") : pattern.length());
         if(dir.isDirectory()) {
             for(File file : dir.listFiles())

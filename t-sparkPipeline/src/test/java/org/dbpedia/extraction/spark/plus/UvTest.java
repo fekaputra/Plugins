@@ -7,7 +7,7 @@ import eu.unifiedviews.dpu.config.vaadin.ConfigDialogContext;
 import eu.unifiedviews.helpers.dpu.test.config.ConfigurationBuilder;
 import org.dbpedia.extraction.spark.SparkPipeline;
 import org.dbpedia.extraction.spark.SparkPipelineConfig_V1;
-import org.dbpedia.extraction.spark.SparkPipelineVaadinDialog;
+import org.dbpedia.extraction.spark.dialog.SparkPipelineVaadinDialog;
 import org.junit.Test;
 
 import java.util.Locale;

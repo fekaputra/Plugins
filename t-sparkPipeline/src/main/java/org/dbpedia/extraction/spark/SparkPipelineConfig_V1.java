@@ -1,6 +1,6 @@
 package org.dbpedia.extraction.spark;
 
-import org.dbpedia.extraction.spark.utils.SparkDpuConfig;
+import org.dbpedia.extraction.spark.dialog.SparkDpuConfig;
 
 import java.net.URL;
 
@@ -36,8 +36,8 @@ public class SparkPipelineConfig_V1 {
         return this.sparkConfig;
     }
 
-    public String getSparkEntry(String key){
+    public <T> T getSparkEntry(String key){
         //TODO test
-        return sparkConfig.getItem(key).getBean().getValue();
+        return (T) sparkConfig.getItem(key).getBean().getValue();
     }
 }

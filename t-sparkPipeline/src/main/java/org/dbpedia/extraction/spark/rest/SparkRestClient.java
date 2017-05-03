@@ -1,6 +1,5 @@
 package org.dbpedia.extraction.spark.rest;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -10,7 +9,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.dbpedia.extraction.spark.utils.SparkDpuConfig;
+import org.dbpedia.extraction.spark.dialog.SparkDpuConfig;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 

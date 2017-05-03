@@ -47,6 +47,35 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-server</artifactId>
+            <version>7.3.7</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-shared</artifactId>
+            <version>7.3.7</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.vaadin/vaadin-icons -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-icons</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>de.steinwedel.vaadin.addon</groupId>
+            <artifactId>messagebox</artifactId>
+            <version>3.0.19</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -69,6 +98,7 @@
                                     <filtering>true</filtering>
                                     <includes>
                                         <include>spark.config</include>
+                                        <include>spark.defaults.csv</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -92,6 +122,10 @@
             <id>maven.eea.sk</id>
             <name>maven.eea.sk-public</name>
             <url>http://maven.eea.sk/artifactory/public/</url>
+        </repository>
+        <repository>
+            <id>vaadin-addons</id>
+            <url>http://maven.vaadin.com/vaadin-addons</url>
         </repository>
     </repositories>
 </project>

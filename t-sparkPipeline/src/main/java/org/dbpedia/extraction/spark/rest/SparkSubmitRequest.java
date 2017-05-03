@@ -1,7 +1,8 @@
 package org.dbpedia.extraction.spark.rest;
 
 import org.apache.http.client.utils.URIBuilder;
-import org.dbpedia.extraction.spark.utils.SparkDpuConfig;
+import org.dbpedia.extraction.spark.dialog.SparkConfigEntry;
+import org.dbpedia.extraction.spark.dialog.SparkDpuConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,7 +53,7 @@ public class SparkSubmitRequest extends JSONObject {
 
         //now add all spark properties
         JSONObject sparkProperties = new JSONObject();
-        for(Map.Entry<String, String> ent : config.getItemIds()){
+        for(SparkConfigEntry ent : config.getItemIds()){
             sparkProperties.put(ent.getKey(), ent.getValue());
         }
         this.put("sparkProperties", sparkProperties);

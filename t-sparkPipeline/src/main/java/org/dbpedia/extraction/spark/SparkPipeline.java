@@ -8,6 +8,7 @@ import eu.unifiedviews.dpu.DPUException;
 import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
 import eu.unifiedviews.helpers.dpu.context.ContextUtils;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
+import org.dbpedia.extraction.spark.dialog.SparkPipelineVaadinDialog;
 import org.dbpedia.extraction.spark.rest.SparkRestClient;
 import org.dbpedia.extraction.spark.rest.SparkRestResponse;
 import org.dbpedia.extraction.spark.utils.SparkDpuFileManager;
@@ -37,7 +38,7 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
     private SparkDpuFileManager fileManager;
 
     public SparkPipeline() {
-		super(SparkPipelineVvaadinDialog.class, ConfigHistory.noHistory(SparkPipelineConfig_V1.class));
+		super(SparkPipelineVaadinDialog.class, ConfigHistory.noHistory(SparkPipelineConfig_V1.class));
         this.config = new SparkPipelineConfig_V1();
 	}
 
@@ -52,7 +53,7 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
         String currentPiepelineApp = this.config.getConfig().getAppName();
 
         long startTimeStamp = System.currentTimeMillis();
-        ContextUtils.sendShortInfo(ctx, "Running SPARK pipeline: " + config.getConfig().getByStringKey("spark.app.name"));
+        ContextUtils.sendShortInfo(ctx, "Running SPARK pipeline: " + config.getConfig().getByStringKey("spark.app.name").toString());
 
         // we have to initialize the FileManager here, since DataUnits not initialized at construction
         this.fileManager = new SparkDpuFileManager(this.config.getConfig(), this.input, this.output);
