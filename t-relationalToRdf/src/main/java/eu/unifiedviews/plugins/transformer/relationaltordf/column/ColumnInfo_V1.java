@@ -6,7 +6,7 @@ package eu.unifiedviews.plugins.transformer.relationaltordf.column;
 public class ColumnInfo_V1 {
 
     /**
-     * Used column URI.
+     * Used column IRI.
      */
     private String URI = null;
 

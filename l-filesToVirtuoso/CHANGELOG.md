@@ -1,12 +1,16 @@
 L-FilesToVirtuoso
 ----------
 
-2.1.5
+v3.0.0
+---
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
+v2.1.5
 ---
 * Fixed missing error message in case of failure.
 * Improved slovak translations
 
-2.1.4
+v2.1.4
 ---
 * output data unit is optional in loader
 * Update to helpers 2.1.4

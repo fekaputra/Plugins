@@ -15,11 +15,11 @@ import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.rdf.simple.WritableSimpleRdf;
 import eu.unifiedviews.plugins.extractor.rdffromsparql.RdfFromSparqlEndpointConfig_V1;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.query.*;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
+import  org.eclipse.rdf4j.model.Statement;
+import  org.eclipse.rdf4j.model.IRI;
+import  org.eclipse.rdf4j.query.*;
+import  org.eclipse.rdf4j.repository.RepositoryConnection;
+import  org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +66,7 @@ public class SparqlEndpoint extends AbstractDpu<SparqlEndpointConfig_V1> {
         LOG.info("Connecting to remote repository (to fetch the data)");
         final RemoteRdfDataUnit remote;
         try {
-            remote = new RemoteRdfDataUnit(ctx.getExecMasterContext(), config.getEndpoint(), new URI[0]);
+            remote = new RemoteRdfDataUnit(ctx.getExecMasterContext(), config.getEndpoint(), new IRI[0]);
             // Add for release at the end of execution.
             ctx.getExecMasterContext().getExtensions().add(remote);
         } catch (ExternalError ex) {

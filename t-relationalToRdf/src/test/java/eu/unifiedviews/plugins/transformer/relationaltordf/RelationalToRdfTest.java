@@ -9,7 +9,7 @@ import eu.unifiedviews.plugins.transformer.relationaltordf.column.ColumnType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openrdf.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -70,7 +70,7 @@ public class RelationalToRdfTest {
 
         this.testEnv.run(this.dpu);
 
-        final Set<URI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
+        final Set<IRI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
         assertEquals(1, graphsURIs.size());
     }
 
@@ -88,7 +88,7 @@ public class RelationalToRdfTest {
 
         this.testEnv.run(this.dpu);
 
-        final Set<URI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
+        final Set<IRI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
         assertEquals(1, graphsURIs.size());
 
     }

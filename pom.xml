@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-plugin-dpus</artifactId>
-    <version>2.2.4-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven aggregation project for general purpose DPU implementations.</description>
 
@@ -11,12 +11,12 @@
     <modules>
         <!-- EXTRACTORS -->
         <module>e-distributionMetadata</module>
+        <module>e-executeShellScript</module>
         <module>e-filesDownload</module>
         <module>e-httpRequest</module>
         <module>e-relationalFromSql</module>
         <module>e-silkLinker</module>
         <module>e-sparqlEndpoint</module>
-        <module>e-executeShellScript</module>
 
         <!-- TRANSFORMERS -->
         <module>t-excelToCsv</module>
@@ -26,7 +26,7 @@
         <module>t-filesRenamer</module>
         <module>t-filesToRdf</module>
         <module>t-filterValidXml</module>
-        <module>t-fusionTool</module>
+        <!--<module>t-fusionTool</module>-->
         <module>t-gunzipper</module>
         <module>t-gzipper</module>
         <module>t-metadata</module>
@@ -79,9 +79,12 @@
 
     <repositories>
         <repository>
-            <id>maven.eea.sk</id>
-            <name>maven.eea.sk-public</name>
-            <url>http://maven.eea.sk/artifactory/public/</url>
+            <id>uv-releases</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>uv-snapshots</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 

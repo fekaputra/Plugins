@@ -1,16 +1,5 @@
 package eu.unifiedviews.plugins.transformer.relationaltordf.mapper;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.openrdf.model.vocabulary.RDFS;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.unifiedviews.dpu.DPUException;
 import eu.unifiedviews.plugins.transformer.relationaltordf.ConversionFailed;
 import eu.unifiedviews.plugins.transformer.relationaltordf.Utils;
@@ -18,6 +7,12 @@ import eu.unifiedviews.plugins.transformer.relationaltordf.column.ColumnInfo_V1;
 import eu.unifiedviews.plugins.transformer.relationaltordf.column.ColumnType;
 import eu.unifiedviews.plugins.transformer.relationaltordf.column.ValueGenerator;
 import eu.unifiedviews.plugins.transformer.relationaltordf.column.ValueGeneratorReplace;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * Configure {@link TableToRdf} class.
@@ -152,14 +147,14 @@ public class TableToRdfConfigurator {
             // add to configuration
             //
             valueGenerators.add(ValueGeneratorReplace.create(
-                    tableToRdf.valueFactory.createURI(columnInfo.getURI()),
+                    tableToRdf.valueFactory.createIRI(columnInfo.getURI()),
                     template));
             //
             // generate metadata about column - for now only labels
             //
             if (config.generateLabels) {
                 tableToRdf.outRdf.add(
-                        tableToRdf.valueFactory.createURI(columnInfo.getURI()), RDFS.LABEL,
+                        tableToRdf.valueFactory.createIRI(columnInfo.getURI()), RDFS.LABEL,
                         tableToRdf.valueFactory.createLiteral(columnName));
             }
         }
@@ -208,7 +203,7 @@ public class TableToRdfConfigurator {
         tableToRdf.infoMap = valueGenerators.toArray(new ValueGenerator[0]);
         if (config.rowsClass != null && !config.rowsClass.isEmpty()) {
             try {
-                tableToRdf.rowClass = tableToRdf.valueFactory.createURI(config.rowsClass);
+                tableToRdf.rowClass = tableToRdf.valueFactory.createIRI(config.rowsClass);
             } catch (IllegalArgumentException ex) {
                 throw new ConversionFailed("Failed to create row's class URI from:" +
                         config.rowsClass, ex);

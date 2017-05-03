@@ -1,6 +1,7 @@
 package eu.unifiedviews.plugins.transformer.rdftofiles;
 
 import eu.unifiedviews.dataunit.DataUnit;
+import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.files.FilesDataUnit;
 import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
@@ -20,11 +21,12 @@ import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
 import eu.unifiedviews.helpers.dpu.extension.rdf.RdfConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.openrdf.model.URI;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.Rio;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParserRegistry;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Set;
 
 @DPU.AsTransformer
 public class RdfToFiles extends AbstractDpu<RdfToFilesConfig_V2> {
@@ -69,7 +72,10 @@ public class RdfToFiles extends AbstractDpu<RdfToFilesConfig_V2> {
 
     @Override
     protected void innerExecute() throws DPUException {
-        rdfFormat = RDFFormat.valueOf(config.getRdfFileFormat());
+
+        Set<RDFFormat> rdfFormats = RDFParserRegistry.getInstance().getKeys();
+
+        rdfFormat = (RDFFormat) RDFFormat.matchFileName(config.getRdfFileFormat(), rdfFormats).get();
         if (rdfFormat == null) {
             throw ContextUtils.dpuException(ctx, "rdfToFiles.error.rdfFortmat.null");
         }
@@ -110,34 +116,58 @@ public class RdfToFiles extends AbstractDpu<RdfToFilesConfig_V2> {
         // Create parent directories.
         targetFile.getParentFile().mkdirs();
         // Prepare inputs.
-        final URI[] sourceUris = faultTolerance.execute(new FaultTolerance.ActionReturn<URI[]>() {
+        final IRI[] sourceUris = faultTolerance.execute(new FaultTolerance.ActionReturn<IRI[]>() {
 
             @Override
-            public URI[] action() throws Exception {
+            public IRI[] action() throws Exception {
                 return RdfDataUnitUtils.asGraphs(sources);
             }
         });
-        try (FileOutputStream outStream = new FileOutputStream(targetFile); OutputStreamWriter outWriter = new OutputStreamWriter(outStream, Charset.forName(FILE_ENCODE))) {
-            faultTolerance.execute(inRdfData, new FaultTolerance.ConnectionAction() {
 
-                @Override
-                public void action(RepositoryConnection connection) throws Exception {
-                    RDFWriter writer = Rio.createWriter(rdfFormat, outWriter);
-                    // If we export as queads, we insert our own class to rename graphs.
-                    if (rdfFormat.supportsContexts()) {
-                        RdfWriterContextRenamer writerRenamer = new RdfWriterContextRenamer(writer);
-                        final URI targetUri = connection.getValueFactory().createURI(config.getOutGraphName());
-                        // Set fixed output context.
-                        writerRenamer.setContext(targetUri);
-                        writer = writerRenamer;
-                    }
-                    // Export data.
-                    connection.export(writer, sourceUris);
-                }
-            });
+        try (FileOutputStream outStream = new FileOutputStream(targetFile); OutputStreamWriter outWriter = new OutputStreamWriter(outStream, Charset.forName(FILE_ENCODE))) {
+
+            RepositoryConnection connection = inRdfData.getConnection();
+            RDFWriter writer = Rio.createWriter(rdfFormat, outWriter);
+
+            // If we export as quads, we insert our own class to rename graphs.
+            if (rdfFormat.supportsContexts()) {
+                RdfWriterContextRenamer writerRenamer = new RdfWriterContextRenamer(writer);
+                final IRI targetUri = connection.getValueFactory().createIRI(config.getOutGraphName());
+                // Set fixed output context.
+                writerRenamer.setContext(targetUri);
+                writer = writerRenamer;
+            }
+
+            // Export data.
+            connection.export(writer, sourceUris);
+
+
         } catch (IOException ex) {
             throw ContextUtils.dpuException(ctx, ex, "rdfToFiles.error.output");
+        } catch (DataUnitException ex) {
+            throw new DPUException(ex);
         }
+
+//            faultTolerance.execute(inRdfData, new FaultTolerance.ConnectionAction() {
+//
+//                @Override
+//                public void action(RepositoryConnection connection) throws Exception {
+//                    RDFWriter writer = Rio.createWriter(rdfFormat, outWriter);
+//
+//                    // If we export as quads, we insert our own class to rename graphs.
+//                    if (rdfFormat.supportsContexts()) {
+//                        RdfWriterContextRenamer writerRenamer = new RdfWriterContextRenamer(writer);
+//                        final IRI targetUri = connection.getValueFactory().createIRI(config.getOutGraphName());
+//                        // Set fixed output context.
+//                        writerRenamer.setContext(targetUri);
+//                        writer = writerRenamer;
+//                    }
+//
+//                    // Export data.
+//                    connection.export(writer, sourceUris);
+//                }
+//            });
+
         // Generate graph.
         if (config.isGenGraphFile() && !rdfFormat.supportsContexts()) {
             generateGraphFile(target, config.getOutGraphName());

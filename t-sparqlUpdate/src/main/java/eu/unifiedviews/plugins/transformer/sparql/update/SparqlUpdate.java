@@ -20,14 +20,14 @@ import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
 import eu.unifiedviews.plugins.transformer.sparql.SPARQLConfig_V1;
-import org.openrdf.model.URI;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.Update;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.query.impl.DatasetImpl;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.Update;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
+import org.eclipse.rdf4j.query.impl.DatasetImpl;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +98,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
         if (query == null || query.isEmpty()) {
             throw ContextUtils.dpuException(ctx, "sparqlUpdate.dpu.error.emptyQuery");
         }
-        final List<URI> outputGraphs = new LinkedList<>();
+        final List<IRI> outputGraphs = new LinkedList<>();
         // Get graphs.
         final List<RDFDataUnit.Entry> sourceEntries = getInputEntries(rdfInput);
 
@@ -128,7 +128,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
                     LOG.info("Executing {}/{}", counter++, sourceEntries.size());
 
                     String sourceSymbolicName;
-                    URI sourceDataGraphURI;
+                    IRI sourceDataGraphURI;
                     try {
                         sourceSymbolicName = sourceEntry.getSymbolicName();
                         sourceDataGraphURI = sourceEntry.getDataGraphURI();
@@ -137,7 +137,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
                     }
 
                     //get target entries graph URL
-                    URI targetGraph;
+                    IRI targetGraph;
                     if (performanceOptimizationEnabled) {
                         try {
                             copyHelper.copyMetadata(sourceSymbolicName);
@@ -183,7 +183,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
                         MAX_GRAPH_COUNT, sourceEntries.size());
             }
 
-            final URI targetGraph = createOutputGraph();
+            final IRI targetGraph = createOutputGraph();
             LOG.info("All source graphs are copied to target graph {}", targetGraph);
 
             // Execute over all intpu graph ie. m -> 1
@@ -194,7 +194,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
         }
 
         // Calculate output size
-        long outputSize = getTriplesCount(rdfOutput, outputGraphs.toArray(new URI[0]));
+        long outputSize = getTriplesCount(rdfOutput, outputGraphs.toArray(new IRI[0]));
 
         ContextUtils.sendInfo(ctx, "sparqlUpdate.dpu.msg.report", "sparqlUpdate.dpu.msg.report.detailed", inputSize, outputSize, numberOfInputGraphs, numberOfOutputGraphs);
     }
@@ -209,8 +209,8 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
      * @param optimalized
      * @throws DPUException
      */
-    protected void updateEntries(final String updateQuery, final List<URI> sourceGraphs,
-                                 final URI targetgraph, boolean optimalized) throws DPUException {
+    protected void updateEntries(final String updateQuery, final List<IRI> sourceGraphs,
+                                 final IRI targetgraph, boolean optimalized) throws DPUException {
         RepositoryConnection connection = null;
         try {
             connection = rdfInput.getConnection();
@@ -252,7 +252,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
      * @param connection
      * @throws eu.unifiedviews.dpu.DPUException
      */
-    protected void executeUpdateQuery(String query, List<URI> sourceGraphs, URI targetGraph,
+    protected void executeUpdateQuery(String query, List<IRI> sourceGraphs, IRI targetGraph,
             RepositoryConnection connection) throws DPUException {
         // Prepare query.
         if (!useDataset()) {
@@ -269,7 +269,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
             final Update update = connection.prepareUpdate(QueryLanguage.SPARQL, query);
             if (useDataset()) {
                 final DatasetImpl dataset = new DatasetImpl();
-                for (URI graph : sourceGraphs) {
+                for (IRI graph : sourceGraphs) {
                     dataset.addDefaultGraph(graph);
                 }
                 dataset.addDefaultRemoveGraph(targetGraph);
@@ -286,11 +286,11 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
     /**
      * Creates new output graph. Symbolic name is completely new (using time stamp in suffix).
-     * Data graph URI is generated.
+     * Data graph IRI is generated.
      * @return New output graph.
      * @throws DPUException
      */
-    protected URI createOutputGraph() throws DPUException {
+    protected IRI createOutputGraph() throws DPUException {
         // Register new output graph
         final String symbolicName = "http://unifiedviews.eu/resource/sparql-construct/"
                 + Long.toString((new Date()).getTime());
@@ -303,12 +303,12 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
     /**
      * Creates new output graph. Symbolic name is based on the input graph (but modifed with this DPU's id as suffix).
-     * Data graph URI is generated.
+     * Data graph IRI is generated.
      * @param entry
      * @return New output graph.
      * @throws DPUException
      */
-    protected URI createOutputGraph(RDFDataUnit.Entry entry) throws DPUException {
+    protected IRI createOutputGraph(RDFDataUnit.Entry entry) throws DPUException {
         final String suffix = "/" + ctx.getExecMasterContext().getDpuContext().getDpuInstanceId().toString();
         try {
             return rdfOutput.addNewDataGraph(entry.getSymbolicName() + suffix);
@@ -323,7 +323,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
      * @param graph
      * @return
      */
-    protected String prepareWithClause(URI graph) {
+    protected String prepareWithClause(IRI graph) {
         final StringBuilder withClause = new StringBuilder();
         withClause.append("WITH <");
         withClause.append(graph.stringValue());
@@ -338,8 +338,8 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
      * @return
      * @throws DPUException
      */
-    protected List<URI> getGraphUriList(final List<RDFDataUnit.Entry> entries) throws DPUException {
-        final List<URI> result = new ArrayList<>(entries.size());
+    protected List<IRI> getGraphUriList(final List<RDFDataUnit.Entry> entries) throws DPUException {
+        final List<IRI> result = new ArrayList<>(entries.size());
 
         for (RDFDataUnit.Entry entry : entries) {
             try {
@@ -357,9 +357,9 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
      * @return Using clause for SPARQL insert, based on input graphs.
      * @throws DPUException
      */
-    protected String prepareUsingClause(List<URI> uris) throws DPUException {
+    protected String prepareUsingClause(List<IRI> uris) throws DPUException {
         final StringBuilder usingClause = new StringBuilder();
-        for (URI uri : uris) {
+        for (IRI uri : uris) {
             usingClause.append("USING <");
             usingClause.append(uri.stringValue());
             usingClause.append("> \n");
@@ -390,7 +390,7 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
      * @param graphs
      * @return Number of triples in given entries.
      */
-    protected Long getTriplesCount(final RDFDataUnit dataUnit, final URI[] graphs)
+    protected Long getTriplesCount(final RDFDataUnit dataUnit, final IRI[] graphs)
             throws DPUException {
 
         RepositoryConnection connection = null;

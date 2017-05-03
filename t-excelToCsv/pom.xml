@@ -4,16 +4,16 @@
     <parent>
         <groupId>eu.unifiedviews</groupId>
         <artifactId>uv-pom-dpu</artifactId>
-        <version>2.1.6</version>
+        <version>3.0.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-t-excelToCsv</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>T-ExcelToCsv</name>
-    <description>Transformer for Excel files (.XLS, .XLSX) which will extract selected sheet (or sheets) into CSV file</description>
+    <description>Transformer for Excel files (.XLS, .XLSX) which will extract selected sheet(s) into CSV file(s)</description>
 
     <properties>
         <dpu.package>org.opendatanode.plugins.transformer.exceltocsv</dpu.package>
@@ -54,11 +54,6 @@
 		    <id>uv-snapshots</id>
 		    <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
 	    </repository>
-        <repository>
-            <id>maven.eea.sk</id>
-            <name>maven.eea.sk-public</name>
-            <url>http://maven.eea.sk/artifactory/public/</url>
-        </repository>
     </repositories>
 
 </project>

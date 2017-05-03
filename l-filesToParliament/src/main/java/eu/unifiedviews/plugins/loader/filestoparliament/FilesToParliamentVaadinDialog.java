@@ -1,12 +1,5 @@
 package eu.unifiedviews.plugins.loader.filestoparliament;
 
-import java.nio.charset.Charset;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.openrdf.rio.RDFFormat;
-
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.ObjectProperty;
@@ -14,9 +7,15 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-
 import eu.unifiedviews.dpu.config.DPUConfigException;
 import eu.unifiedviews.helpers.dpu.vaadin.dialog.AbstractDialog;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParserRegistry;
+
+import java.nio.charset.Charset;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @SuppressWarnings("serial")
 public class FilesToParliamentVaadinDialog extends AbstractDialog<FilesToParliamentConfig_V1> {
@@ -105,7 +104,8 @@ public class FilesToParliamentVaadinDialog extends AbstractDialog<FilesToParliam
         if (auto.getName().equals(format)) {
             selectRdfFormat.setValue(auto);    
         } else {
-            selectRdfFormat.setValue(RDFFormat.valueOf(format));    
+            Set<RDFFormat> rdfFormats = RDFParserRegistry.getInstance().getKeys();
+            selectRdfFormat.setValue((RDFFormat) RDFFormat.matchFileName(format, rdfFormats).get());
         }        
         clearDestinationGraph.setValue(config.isClearDestinationGraph());
         perGraph.setValue(StringUtils.isEmpty(config.getTargetGraphName()));

@@ -1,8 +1,8 @@
 package eu.unifiedviews.plugins.trandformer.sparqlselect;
 
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.parser.QueryParserUtil;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.parser.QueryParserUtil;
 
 import com.vaadin.data.Validator;
 import com.vaadin.ui.TextArea;

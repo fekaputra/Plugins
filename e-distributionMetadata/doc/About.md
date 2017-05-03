@@ -2,6 +2,8 @@
 
 Generates CKAN Resource model for distribution metadata on output as graph named "distributionMetadata".
 
+**Deprecated. This DPU was mainly relevant for COMSODE project and will be removed from UnifiedViews Core DPUs in the future**
+
 ### Configuration parameters
 
 | Name | Description |

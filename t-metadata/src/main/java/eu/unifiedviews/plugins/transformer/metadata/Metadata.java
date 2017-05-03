@@ -6,11 +6,11 @@ import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
 import eu.unifiedviews.dpu.DPU;
 import eu.unifiedviews.dpu.DPUException;
 
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.DCTERMS;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.SKOS;
-import org.openrdf.repository.RepositoryConnection;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.SKOS;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openrdf.model.vocabulary.FOAF;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
 
 import eu.unifiedviews.helpers.dataunit.DataUnitUtils;
 import eu.unifiedviews.helpers.dataunit.rdf.RdfDataUnitUtils;
@@ -92,20 +92,20 @@ public class Metadata extends AbstractDpu<MetadataConfig_V1> {
             }
         });
         // Prepare dataset entity and fill it with data.
-        final EntityBuilder dataset = new EntityBuilder(valueFactory.createURI(config.getDatasetURI()),
+        final EntityBuilder dataset = new EntityBuilder(valueFactory.createIRI(config.getDatasetURI()),
                 valueFactory);
         dataset.property(RDF.TYPE, MetadataVocabulary.VOID_DATASET_CLASS);
         dataset.property(RDF.TYPE, MetadataVocabulary.DCAT_DATASET_CLASS);
 
-        final EntityBuilder distro = new EntityBuilder(valueFactory.createURI(config.getDistroURI()),
+        final EntityBuilder distro = new EntityBuilder(valueFactory.createIRI(config.getDistroURI()),
                 valueFactory);
         distro.property(RDF.TYPE, MetadataVocabulary.DCAT_DISTRO_CLASS);
 
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         // Build metadata ...
         if (!StringUtils.isBlank(config.getComsodeDatasetId())) {
-            dataset.property(valueFactory.createURI("http://comsode.eu/ontology/dataset"),
-                    valueFactory.createURI("http://comsode.eu/resource/dataset/" + config
+            dataset.property(valueFactory.createIRI("http://comsode.eu/ontology/dataset"),
+                    valueFactory.createIRI("http://comsode.eu/resource/dataset/" + config
                             .getComsodeDatasetId()));
         }
         if (config.isIsQb()) {
@@ -135,23 +135,23 @@ public class Metadata extends AbstractDpu<MetadataConfig_V1> {
         }
         //
         if (!StringUtils.isBlank(config.getDataDump())) {
-            dataset.property(valueFactory.createURI(MetadataVocabulary.VOID + "dataDump"),
-                    valueFactory.createURI(config.getDataDump()));
+            dataset.property(valueFactory.createIRI(MetadataVocabulary.VOID + "dataDump"),
+                    valueFactory.createIRI(config.getDataDump()));
 
-            distro.property(MetadataVocabulary.DCAT_DOWNLOAD_URL, valueFactory.createURI(config.getDataDump()));
+            distro.property(MetadataVocabulary.DCAT_DOWNLOAD_URL, valueFactory.createIRI(config.getDataDump()));
             distro.property(MetadataVocabulary.DCAT_MEDIA_TYPE, valueFactory.createLiteral(config.getMime()));
         }
         //
         if (!StringUtils.isBlank(config.getSparqlEndpoint())) {
-            dataset.property(valueFactory.createURI(MetadataVocabulary.VOID + "sparqlEndpoint"),
-                    valueFactory.createURI(config.getSparqlEndpoint()));
+            dataset.property(valueFactory.createIRI(MetadataVocabulary.VOID + "sparqlEndpoint"),
+                    valueFactory.createIRI(config.getSparqlEndpoint()));
         }
         // Lists ...
         for (String author : config.getAuthors()) {
-            dataset.property(DCTERMS.CREATOR, valueFactory.createURI(author));
+            dataset.property(DCTERMS.CREATOR, valueFactory.createIRI(author));
         }
         for (String publisherName : config.getPublishers()) {
-            final EntityBuilder publisher = new EntityBuilder(valueFactory.createURI(publisherName),
+            final EntityBuilder publisher = new EntityBuilder(valueFactory.createIRI(publisherName),
                     valueFactory);
             publisher.property(DCTERMS.TYPE, FOAF.AGENT);
             rdfData.add(publisher.asStatements());
@@ -160,27 +160,27 @@ public class Metadata extends AbstractDpu<MetadataConfig_V1> {
             dataset.property(DCTERMS.PUBLISHER, publisher);
         }
         for (String licence : config.getLicenses()) {
-            dataset.property(DCTERMS.LICENSE, valueFactory.createURI(licence));
-            distro.property(DCTERMS.LICENSE, valueFactory.createURI(licence));
+            dataset.property(DCTERMS.LICENSE, valueFactory.createIRI(licence));
+            distro.property(DCTERMS.LICENSE, valueFactory.createIRI(licence));
         }
         for (String resourceUri : config.getExampleResources()) {
-            dataset.property(MetadataVocabulary.VOID_EXAMPLE_RESOURCE, valueFactory.createURI(resourceUri));
+            dataset.property(MetadataVocabulary.VOID_EXAMPLE_RESOURCE, valueFactory.createIRI(resourceUri));
         }
         for (String source : config.getSources()) {
-            dataset.property(DCTERMS.SOURCE, valueFactory.createURI(source));
+            dataset.property(DCTERMS.SOURCE, valueFactory.createIRI(source));
         }
         for (String keyword : config.getKeywords()) {
             dataset.property(MetadataVocabulary.DCAT_KEYWORD, valueFactory.createLiteral(keyword));
         }
         for (String language : config.getLanguages()) {
-            dataset.property(DCTERMS.LANGUAGE, valueFactory.createURI(language));
+            dataset.property(DCTERMS.LANGUAGE, valueFactory.createIRI(language));
         }
         for (String temeUri : config.getThemes()) {
-            final EntityBuilder theme = new EntityBuilder(valueFactory.createURI(temeUri),
+            final EntityBuilder theme = new EntityBuilder(valueFactory.createIRI(temeUri),
                     valueFactory);
             theme.property(RDF.TYPE, SKOS.CONCEPT);
             theme.property(SKOS.IN_SCHEME,
-                    valueFactory.createURI("http://linked.opendata.cz/resource/catalog/Themes"));
+                    valueFactory.createIRI("http://linked.opendata.cz/resource/catalog/Themes"));
             rdfData.add(theme.asStatements());
 
             dataset.property(MetadataVocabulary.DCAT_THEME, theme);

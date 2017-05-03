@@ -5,8 +5,8 @@ package eu.unifiedviews.plugins.transformer.fusiontool.config;
 
 import cz.cuni.mff.odcleanstore.fusiontool.config.LDFTConfigConstants;
 import cz.cuni.mff.odcleanstore.fusiontool.util.LDFusionToolUtils;
-import org.openrdf.model.URI;
-import org.openrdf.rio.ParserConfig;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.rio.ParserConfig;
 
 import java.util.Collection;
 import java.util.Set;
@@ -67,7 +67,7 @@ public final class FTConfigConstants {
 
     public static final float MAX_FREE_MEMORY_USAGE = LDFTConfigConstants.MAX_FREE_MEMORY_USAGE;
 
-    public static final Set<URI> SAME_AS_LINK_TYPES = LDFTConfigConstants.SAME_AS_LINK_TYPES;
+    public static final Set<IRI> SAME_AS_LINK_TYPES = LDFTConfigConstants.SAME_AS_LINK_TYPES;
     public static final String CANONICAL_URI_FILE_NAME = "fusion-canonical-uris.txt";
     public static final boolean ENABLE_FILE_CACHE = false;
     public static final long MAX_MEMORY_LIMIT = 3 * LDFusionToolUtils.GB_BYTES; // FIXME: make configurable

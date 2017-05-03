@@ -1,6 +1,10 @@
 T-UnZipper
 ----------
 
+v3.0.0
+---
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
 v2.1.3
 ---
 * Added examples into documentation (About)
