@@ -33,12 +33,13 @@ public class SparkConfigEntry implements Map.Entry<String, Property>, Serializab
 
     public SparkConfigEntry(String key, Property value, SparkConfigEntry defaultEntry) {
         this(   key,
-                value.getType().equals(defaultEntry.getValue().getType()) ? value.getValue().toString() : null,
+                defaultEntry.getDefaultValue(),    //value is entered below
                 defaultEntry.getDefaultValue(),
                 defaultEntry.getSparkPropertyCategory(),
                 defaultEntry.getSparkPropertyType(),
                 defaultEntry.getRegex().toString(),
                 defaultEntry.getDescription());
+        this.setValue(value);
         this.setFloatMax(defaultEntry.floatMax);
         this.setFloatMin(defaultEntry.floatMin);
         for(String sch : defaultEntry.uriSchemes)
@@ -63,7 +64,7 @@ public class SparkConfigEntry implements Map.Entry<String, Property>, Serializab
     @EntityDescription.Property(uri = SparkDpuConfig.SPARK_CONFIG_KEY)
     private String key;
 
-    private SparkPropertyCategory sparkPropertyCategory = SparkPropertyCategory.SparkOptional;
+    private SparkPropertyCategory sparkPropertyCategory = SparkPropertyCategory.UsecaseOptional;
     private String defaultValue = "";
     private SparkPropertyType sparkPropertyType = SparkPropertyType.String;
     private Pattern regex = null;

@@ -1,5 +1,11 @@
 package org.dbpedia.extraction.spark.utils;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.Item;
+import org.dbpedia.extraction.spark.dialog.SparkConfigEntry;
+
+import java.util.List;
+
 /**
  * Created by chile on 01.04.17.
  */
@@ -18,5 +24,28 @@ public class SparkPipelineUtils {
 
     public static String padLeft(String s, int n, char c){
         return String.format("%1$" + n + "s", s).replace(' ', c);
+    }
+
+
+
+    public static Container.Filter getContainerFilter(List<SparkConfigEntry.SparkPropertyCategory> categories, String appName){
+        return new Container.Filter() {
+            @Override
+            public boolean passesFilter(Object o, Item item) throws UnsupportedOperationException {
+                String possibleUseCase = ((SparkConfigEntry) o).getKey();
+                if(possibleUseCase.length() > 7 && possibleUseCase.indexOf('.', 6) >= 0)
+                    possibleUseCase = possibleUseCase.substring(6, possibleUseCase.indexOf('.', 6));
+                boolean categoryTest = categories.contains(((SparkConfigEntry) o).getSparkPropertyCategory());
+                if(appName != null && !appName.trim().isEmpty())
+                    return categoryTest && appName.trim().equals(possibleUseCase.trim());
+                else
+                    return categoryTest;
+            }
+
+            @Override
+            public boolean appliesToProperty(Object o) {
+                return false; //TODO
+            }
+        };
     }
 }

@@ -50,14 +50,14 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
     protected void innerExecute() throws DPUException {
 
         //TODO!
-        String currentPiepelineApp = this.config.getConfig().getAppName();
+        String currentPiepelineApp = this.config.getSparkConfig().getAppName();
 
         long startTimeStamp = System.currentTimeMillis();
-        ContextUtils.sendShortInfo(ctx, "Running SPARK pipeline: " + config.getConfig().getByStringKey("spark.app.name").toString());
+        ContextUtils.sendShortInfo(ctx, "Running SPARK pipeline: " + config.getSparkConfig().getByStringKey("spark.app.name").toString());
 
         // we have to initialize the FileManager here, since DataUnits not initialized at construction
-        this.fileManager = new SparkDpuFileManager(this.config.getConfig(), this.input, this.output);
-        SparkRestClient restClient = new SparkRestClient(this.config.getConfig());
+        this.fileManager = new SparkDpuFileManager(this.config.getSparkConfig(), this.input, this.output);
+        SparkRestClient restClient = new SparkRestClient(this.config.getSparkConfig());
 
         //upload all input files to spark working dir
         try {
@@ -78,9 +78,9 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
 
             //if no error occurred...
             if(status.getDriverState().equals("FINISHED"))
-                this.fileManager.copyDirectoryToOutputDirectory(this.config.getConfig().getSparkOutputDir(currentPiepelineApp));
+                this.fileManager.copyDirectoryToOutputDirectory(this.config.getSparkConfig().getSparkOutputDir(currentPiepelineApp));
             else
-                throw new DPUException("Spark pipeline " + this.config.getConfig().getAppName() + " experienced an error: " + status.getMessage());
+                throw new DPUException("Spark pipeline " + this.config.getSparkConfig().getAppName() + " experienced an error: " + status.getMessage());
 
         } catch (Exception e) {
             throw new DPUException(e);

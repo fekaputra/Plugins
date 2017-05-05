@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +62,7 @@ public class Converters {
         public String convertToPresentation(List value, Class<? extends String> targetType, Locale locale) throws ConversionException {
             if(value == null || value.size() == 0)
                 return "";
-            return (String) value.stream().reduce(null, (o, o2) -> (o == null ? "" : (o + ",")) + o2);
+            return value.stream().reduce(null, (o, o2) -> (o == null ? "" : (o + ",")) + o2).toString();
         }
 
         @Override

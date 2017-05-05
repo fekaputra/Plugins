@@ -2,10 +2,10 @@ package org.dbpedia.extraction.spark.dialog;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.ObjectProperty;
 import org.dbpedia.extraction.spark.SparkPipeline;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -33,18 +33,17 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
 
     private List<String> KnownUseCaseNames = new ArrayList<>();
 
-    private SparkDpuConfig() throws IOException
-    {
+    public SparkDpuConfig() throws IOException {
         super(SparkConfigEntry.class);
     }
 
-    public SparkDpuConfig(final URL resourceUrl) throws Exception {
+    public SparkDpuConfig(final URL resourceUrl) throws IOException {
         super(SparkConfigEntry.class);
 
         //for each SparkPropertyCategory, add empty entry to defaults
         for(SparkConfigEntry.SparkPropertyCategory c : SparkConfigEntry.SparkPropertyCategory.values())
             defaultEntries.put(c.toString(), new SparkConfigEntry(
-                    c.toString(),
+                    "",
                     "",
                     "",
                     c,
@@ -53,9 +52,16 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
                     "empty value for " + c.toString()));
 
         if (null != resourceUrl) {
-
             // load config with loaded parameters
             Map<String, String> loadedConfigParameters = SparkDpuConfig.readSparkConfig(resourceUrl);
+
+            // detect all used usecase names in config
+            ArrayList<String> knownUseCases = new ArrayList<>();
+            for (String key : loadedConfigParameters.keySet()) {
+                List<String> keyParts = Arrays.stream(key.split("\\.")).map(String::trim).collect(Collectors.toList());
+                if(keyParts.size() > 2 && keyParts.get(2).equals("filemanager") && ! knownUseCases.contains(keyParts.get(1)))
+                    knownUseCases.add(keyParts.get(1));
+            }
 
             for (String key : loadedConfigParameters.keySet()) {
                 String parameter = loadedConfigParameters.get(key);
@@ -74,7 +80,7 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
 
                 SparkConfigEntry def = this.defaultEntries.get(key);
                 if(def != null) {
-                    this.addItem(new SparkConfigEntry(key, new ObjectProperty<String>(parameter), def));
+                    this.addItem(new SparkConfigEntry(key, parameter, def));
                 }
                 else{
                     if(key.lastIndexOf('.') > 5){
@@ -83,7 +89,7 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
                         if(def != null)
                             this.addItem(new SparkConfigEntry(key, parameter, def));
                         else
-                            this.addItem(new SparkConfigEntry(key, parameter, "", SparkConfigEntry.SparkPropertyCategory.SparkOptional, SparkConfigEntry.SparkPropertyType.String, "", "An unknown Spark property."));
+                            this.addItem(new SparkConfigEntry(key, parameter, "", SparkConfigEntry.SparkPropertyCategory.UsecaseOptional, SparkConfigEntry.SparkPropertyType.String, "", "An use case specific Spark property. No generic information available."));
                     }
                     else{
                         this.addItem(new SparkConfigEntry(key, parameter, "", SparkConfigEntry.SparkPropertyCategory.SparkOptional, SparkConfigEntry.SparkPropertyType.String, "", "An unknown Spark property."));
@@ -135,6 +141,10 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
         return null;
     }
 
+    public List<SparkConfigEntry> getFilteredIds(){
+        return this.getFilteredItemIds();
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         SparkDpuConfig clone = null;
@@ -152,11 +162,12 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
         return clone;
     }
 
-    public SparkConfigEntry GetEmptyEntry(SparkConfigEntry.SparkPropertyCategory ofType){
+    public SparkConfigEntry getEmptyEntry(SparkConfigEntry.SparkPropertyCategory ofType){
         return this.defaultEntries.get(ofType.toString());
     }
 
-    public SparkConfigEntry GetDefaultEntry(String key){
+    public SparkConfigEntry getDefaultEntry(String key){
+
         return this.defaultEntries.get(key);
     }
 
@@ -283,13 +294,59 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
         return entries;
     }
 
-    /**
-     * define mandatory, use case specific config items (uses String.contains)
-     */
-    private static final List<String> mandatoryUseCaseItems= Arrays.asList(
-            ".filemanager.",
-            ".pipelineInitialize",
-            ".pairRddKeys"
-    );
+    public String getSerializedSparkConfig(){
+        StringBuilder sb = new StringBuilder("# This SPARK configuration was exported... TODO\n\n");  //TODO some preamble comment
 
+        this.getAllItemIds().sort(new Comparator<SparkConfigEntry>() {
+            @Override
+            public int compare(SparkConfigEntry t0, SparkConfigEntry t1) {
+                return Comparator.<String>naturalOrder().compare(t0.getKey(), t1.getKey());
+            }
+        });
+
+
+        for(SparkConfigEntry sce : this.getAllItemIds()){
+            sb = sb.append(sce.getKey());
+            sb = sb.append("\t\t");
+            sb = sb.append(propertyToString(sce));
+            sb = sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String getJsonSparkConfig(){
+        StringBuilder sb = new StringBuilder("{\n");
+
+        this.getAllItemIds().sort(new Comparator<SparkConfigEntry>() {
+            @Override
+            public int compare(SparkConfigEntry t0, SparkConfigEntry t1) {
+                return Comparator.<String>naturalOrder().compare(t0.getKey(), t1.getKey());
+            }
+        });
+
+        for(SparkConfigEntry sce : this.getAllItemIds()){
+            sb = sb.append("\t\"" + sce.getKey());
+            sb = sb.append("\" : \"");
+            sb = sb.append(propertyToString(sce));
+            sb = sb.append("\",\n");
+        }
+        sb = sb.deleteCharAt(sb.length()-2);
+        sb = sb.append("}");
+        return sb.toString();
+    }
+
+    private String propertyToString(SparkConfigEntry prop){
+        String value = null;
+        if(prop.getValue() == null || prop.getValue().getValue() == null)
+            return "";
+        if(prop.getSparkPropertyType().getClazz() == List.class)
+            value = Converters.StringToStringListConverter.convertToPresentation(((List)prop.getValue().getValue()), String.class, Locale.getDefault());
+        else if(prop.getSparkPropertyType().getClazz() == Integer.class)
+            value = Converters.StringToIntegerConverter.convertToPresentation(((Integer)prop.getValue().getValue()), String.class, Locale.getDefault());
+        else if(prop.getSparkPropertyType().getClazz() == URI.class)
+            value = Converters.StringToUriConverter.convertToPresentation(((URI)prop.getValue().getValue()), String.class, Locale.getDefault());
+        else
+            value = prop.getValue().getValue().toString();
+        return value;
+    }
 }

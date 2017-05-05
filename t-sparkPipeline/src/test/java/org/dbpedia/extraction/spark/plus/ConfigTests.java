@@ -3,14 +3,9 @@ package org.dbpedia.extraction.spark.plus;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
-import org.dbpedia.extraction.spark.SparkPipelineConfig_V1;
-import org.dbpedia.extraction.spark.dialog.Converters;
-import org.dbpedia.extraction.spark.dialog.SparkConfigEntry;
-import org.dbpedia.extraction.spark.dialog.SparkDpuConfig;
-import org.dbpedia.extraction.spark.dialog.Validators;
+import org.dbpedia.extraction.spark.dialog.*;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -22,15 +17,15 @@ public class ConfigTests {
 
     @Test
     public void testConfig() throws Exception {
-        SparkPipelineConfig_V1 config = new SparkPipelineConfig_V1();
-        SparkDpuConfig dpuConfig = config.getConfig();
 
-        dpuConfig.addItem(dpuConfig.GetDefaultEntry("spark.hadoop.cloneConf"));
+        SparkPipelineVaadinDialog dia = new SparkPipelineVaadinDialog();
 
-        System.out.println(dpuConfig.getItemIds().size());
+        System.out.println(dia.getConfiguration().getSparkConfig().getItemIds().size());
 
+        SparkConfigEntry ent = dia.getConfiguration().getSparkConfig().getDefaultEntry("spark.usecase.filemanager.outputdir");
+        System.out.println(new SparkConfigEntry("spark.lala.filemanager.outputdir", "", ent).getSparkPropertyCategory());
 
-        dpuConfig.addContainerFilter(new Container.Filter() {
+        dia.getConfiguration().getSparkConfig().addContainerFilter(new Container.Filter() {
             @Override
             public boolean passesFilter(Object o, Item item) throws UnsupportedOperationException {
                 SparkConfigEntry entry = (SparkConfigEntry) o;
@@ -46,12 +41,12 @@ public class ConfigTests {
         });
 
 
-        System.out.println(dpuConfig.getItemIds().size());
+        System.out.println(dia.getConfiguration().getSparkConfig().getItemIds().size());
 
         List<String> zws = Arrays.asList("spark.executor.instances", "spark.executor", "spark.executor.inst ances");
 
 
-        for(SparkConfigEntry zw : dpuConfig.getItemIds())
+        for(SparkConfigEntry zw : dia.getConfiguration().getSparkConfig().getItemIds())
             try {
                 Validators.GetValueValidator(zw).validate(zw.getValue().getValue());
             } catch (Validator.InvalidValueException e) {

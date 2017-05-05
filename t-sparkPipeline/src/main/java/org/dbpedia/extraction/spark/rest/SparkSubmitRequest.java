@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 /**
  * Created by chile on 03.04.17.
