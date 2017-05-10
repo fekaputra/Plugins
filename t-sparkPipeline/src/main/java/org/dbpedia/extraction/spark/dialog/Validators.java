@@ -184,27 +184,27 @@ public class Validators {
 
     public static Validator GetValueValidator(SparkConfigEntry id){
         Validator val = null;
-        if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Float)
+        if(id.getSparkPropertyType() == SparkPropertyType.Float)
             val = GetFloatValidator(id.getFloatMin(), id.getFloatMax());
-        else if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Uri)
+        else if(id.getSparkPropertyType() == SparkPropertyType.Uri)
             val = GetUriValidator(id.getUriSchemes());
-        else if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Boolean)
+        else if(id.getSparkPropertyType() == SparkPropertyType.Boolean)
             val = Validators.BooleanValidator;
-        else if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.ByteSize)
+        else if(id.getSparkPropertyType() == SparkPropertyType.ByteSize)
             val = Validators.ByteSizeValidator;
-        else if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Duration)
+        else if(id.getSparkPropertyType() == SparkPropertyType.Duration)
             val = Validators.DurationValidator;
-        else if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Enum)
+        else if(id.getSparkPropertyType() == SparkPropertyType.Enum)
             val = Validators.GetRegexValidator(id.getRegex());
-        else if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Integer)
+        else if(id.getSparkPropertyType() == SparkPropertyType.Integer)
             val = Validators.IntegerValidator;
-        else if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.NonNegativeInteger)
+        else if(id.getSparkPropertyType() == SparkPropertyType.NonNegativeInteger)
             val = Validators.PositiveIntegerValidator;
-        else if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.String) {
+        else if(id.getSparkPropertyType() == SparkPropertyType.String) {
             if (id.getRegex() != null)
                 val = Validators.GetRegexValidator(id.getRegex());
         }
-        else if (id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.StringList) {
+        else if (id.getSparkPropertyType() == SparkPropertyType.StringList) {
             if (id.getRegex() != null)
                 val = Validators.GetStringListRegexValidator(id.getRegex());
         }

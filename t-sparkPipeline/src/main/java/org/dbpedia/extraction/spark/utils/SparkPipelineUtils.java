@@ -3,6 +3,7 @@ package org.dbpedia.extraction.spark.utils;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import org.dbpedia.extraction.spark.dialog.SparkConfigEntry;
+import org.dbpedia.extraction.spark.dialog.SparkPropertyCategory;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class SparkPipelineUtils {
 
 
 
-    public static Container.Filter getContainerFilter(List<SparkConfigEntry.SparkPropertyCategory> categories, String appName){
+    public static Container.Filter getContainerFilter(List<SparkPropertyCategory> categories, String appName){
         return new Container.Filter() {
             @Override
             public boolean passesFilter(Object o, Item item) throws UnsupportedOperationException {

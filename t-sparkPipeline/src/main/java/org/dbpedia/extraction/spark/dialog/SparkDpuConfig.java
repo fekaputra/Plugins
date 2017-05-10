@@ -3,6 +3,7 @@ package org.dbpedia.extraction.spark.dialog;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import org.dbpedia.extraction.spark.SparkPipeline;
+import org.dbpedia.extraction.spark.utils.SparkPipelineUtils;
 
 import java.io.*;
 import java.net.URI;
@@ -27,33 +28,43 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
     /** appName value */
     private String appName;
 
-    private Map<String, SparkConfigEntry> defaultEntries = SparkDpuConfig
-            .readConfigParameters(SparkPipeline.class.getClassLoader().getResource("spark.defaults.csv"))
-            .stream().collect(Collectors.toMap(SparkConfigEntry::getKey, item -> item));
+    private static Map<String, SparkConfigEntry> defaultEntries;
 
-    private List<String> KnownUseCaseNames = new ArrayList<>();
-
-    public SparkDpuConfig() throws IOException {
-        super(SparkConfigEntry.class);
-    }
-
-    public SparkDpuConfig(final URL resourceUrl) throws IOException {
-        super(SparkConfigEntry.class);
+    static{
+        try {
+            defaultEntries = SparkDpuConfig
+                    .readConfigParameters(SparkPipeline.class.getClassLoader().getResource("spark.defaults.csv"))
+                    .stream().collect(Collectors.toMap(SparkConfigEntry::getKey, item -> item));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         //for each SparkPropertyCategory, add empty entry to defaults
-        for(SparkConfigEntry.SparkPropertyCategory c : SparkConfigEntry.SparkPropertyCategory.values())
+        for(SparkPropertyCategory c : SparkPropertyCategory.values()) {
             defaultEntries.put(c.toString(), new SparkConfigEntry(
                     "",
                     "",
                     "",
                     c,
-                    SparkConfigEntry.SparkPropertyType.String,
+                    SparkPropertyType.String,
                     "",
                     "empty value for " + c.toString()));
+        }
+    }
 
-        if (null != resourceUrl) {
+    private List<String> KnownUseCaseNames = null;
+
+    public SparkDpuConfig() throws IOException {
+        super(SparkConfigEntry.class);
+    }
+
+    public SparkDpuConfig(final InputStream input) throws IOException {
+        super(SparkConfigEntry.class);
+
+
+        if (null != input) {
             // load config with loaded parameters
-            Map<String, String> loadedConfigParameters = SparkDpuConfig.readSparkConfig(resourceUrl);
+            Map<String, String> loadedConfigParameters = SparkDpuConfig.readSparkConfig(input);
 
             // detect all used usecase names in config
             ArrayList<String> knownUseCases = new ArrayList<>();
@@ -89,10 +100,10 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
                         if(def != null)
                             this.addItem(new SparkConfigEntry(key, parameter, def));
                         else
-                            this.addItem(new SparkConfigEntry(key, parameter, "", SparkConfigEntry.SparkPropertyCategory.UsecaseOptional, SparkConfigEntry.SparkPropertyType.String, "", "An use case specific Spark property. No generic information available."));
+                            this.addItem(new SparkConfigEntry(key, parameter, "", SparkPropertyCategory.UsecaseOptional, SparkPropertyType.String, "", "An use case specific Spark property. No generic information available."));
                     }
                     else{
-                        this.addItem(new SparkConfigEntry(key, parameter, "", SparkConfigEntry.SparkPropertyCategory.SparkOptional, SparkConfigEntry.SparkPropertyType.String, "", "An unknown Spark property."));
+                        this.addItem(new SparkConfigEntry(key, parameter, "", SparkPropertyCategory.SparkOptional, SparkPropertyType.String, "", "An unknown Spark property."));
                     }
                 }
             }
@@ -101,20 +112,38 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
     }
 
     public String getAppName() {
-        return (null == this.appName ? "sparkpipeline" : this.appName);
+        return this.appName;
     }
 
     public String getMasterUrl(){
         return (null == this.master ? "local[*]" : this.master);
     }
 
-    public Optional<String> getProperty(String key){
-        //TODO test this
-        return Optional.ofNullable(this.getByStringKey(key).toString());
+    public Optional<Property> getProperty(String key){
+        SparkConfigEntry ent = this.getByStringKey(key);
+        if(ent == null)
+            return Optional.empty();
+        return Optional.ofNullable(ent.getValue());
     }
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public void setMaster(String master) {
+        this.master = master;
+    }
+
+    public void setRestApi(String restApi) {
+        this.restApi = restApi;
+    }
+
+    public static void setDefaultEntries(Map<String, SparkConfigEntry> defaultEntries) {
+        SparkDpuConfig.defaultEntries = defaultEntries;
+    }
+
+    public void setKnownUseCaseNames(List<String> knownUseCaseNames) {
+        KnownUseCaseNames = knownUseCaseNames;
     }
 
     public String getRestApiUri(){
@@ -126,17 +155,17 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
     }
 
     public String getSparkOutputDir(String appName) throws Exception {
-        Optional<String> zw = this.getProperty("spark." + appName + ".filemanager.outputdir");
+        Optional<Property> zw = this.getProperty("spark." + appName + ".filemanager.outputdir");
         if(zw.isPresent())
-            return zw.get();
+            return zw.get().toString();
         else
             throw new Exception("TODO"); //TODO
     }
 
-    public Property getByStringKey(String key){
+    public SparkConfigEntry getByStringKey(String key){
         for(SparkConfigEntry ent : this.getItemIds()){
             if(ent.getKey().trim().equals(key.trim()))
-                return ent.getValue();
+                return ent;
         }
         return null;
     }
@@ -162,7 +191,7 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
         return clone;
     }
 
-    public SparkConfigEntry getEmptyEntry(SparkConfigEntry.SparkPropertyCategory ofType){
+    public SparkConfigEntry getEmptyEntry(SparkPropertyCategory ofType){
         return this.defaultEntries.get(ofType.toString());
     }
 
@@ -179,56 +208,55 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
 
     public static final String SPARK_CONFIG_VALUE = SPARK_CONFIG_PREFIX + "sparkConfVal";
 
-    private static Map<String, String> readSparkConfig(final URL resourceUrl) throws IOException {
+    private static Map<String, String> readSparkConfig(final InputStream configStream) throws IOException {
         Pattern whiteSpace = Pattern.compile("\\s+");
-
-        InputStream configStream = resourceUrl.openStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(configStream));
-
         Map<String, String> ret = new HashMap<>();
 
-        String line = null;
-        while (null != (line = reader.readLine())) {
-            String cleanLine = line.trim(); // ensure we do not have any white spaces left
-            if (cleanLine.startsWith("#") || cleanLine.isEmpty()) {
-                continue; // have found a comment
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(configStream))) {
+            String line = null;
+            while (null != (line = reader.readLine())) {
+                String cleanLine = line.trim(); // ensure we do not have any white spaces left
+                if (cleanLine.startsWith("#") || cleanLine.isEmpty()) {
+                    continue; // have found a comment
+                }
+
+                // get rid off all white space and replace with single space
+                cleanLine = whiteSpace.matcher(cleanLine).replaceAll(" ");
+
+                int indexWhiteSpace = cleanLine.indexOf(" ");
+                if (0 > indexWhiteSpace) {
+                    new RuntimeException("Was not able to find end of key end in line: " + line);
+                }
+
+                // get key
+                String key = cleanLine.substring(0, indexWhiteSpace);
+                if (key.isEmpty()) {
+                    continue;
+                }
+
+                // check if we have another comment at the end of the parameter
+                int endlineCommentIndex = cleanLine.lastIndexOf("#");
+
+                // get parameter
+                String parameter;
+                if (0 < endlineCommentIndex) {
+                    parameter = cleanLine.substring(indexWhiteSpace + 1, endlineCommentIndex).trim();
+                } else {
+                    parameter = cleanLine.substring(indexWhiteSpace + 1);
+                }
+
+                // make sure that we have something to save
+                if (parameter.isEmpty()) {
+                    continue;
+                }
+
+                // store config values
+                ret.put(key, parameter);
             }
-
-            // get rid off all white space and replace with single space
-            cleanLine = whiteSpace.matcher(cleanLine).replaceAll(" ");
-
-            int indexWhiteSpace = cleanLine.indexOf(" ");
-            if (0 > indexWhiteSpace) {
-                new RuntimeException("Was not able to find end of key end in line: " + line);
-            }
-
-            // get key
-            String key = cleanLine.substring(0, indexWhiteSpace);
-            if (key.isEmpty()) {
-                continue;
-            }
-
-            // check if we have another comment at the end of the parameter
-            int endlineCommentIndex = cleanLine.lastIndexOf("#");
-
-            // get parameter
-            String parameter;
-            if (0 < endlineCommentIndex) {
-                parameter = cleanLine.substring(indexWhiteSpace + 1, endlineCommentIndex).trim();
-            } else {
-                parameter = cleanLine.substring(indexWhiteSpace + 1);
-            }
-
-            // make sure that we have something to save
-            if (parameter.isEmpty()) {
-                continue;
-            }
-
-            // store config values
-            ret.put(key, parameter);
+        }catch(Exception e){
+            throw new IllegalArgumentException("The provided configuration file was not a valid SPARK configuration.", e);
         }
 
-        reader.close();
         return ret;
     }
 
@@ -273,18 +301,18 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
                     cells.get(0).trim(),
                     "",
                     cells.get(4).trim(),
-                    Enum.valueOf(SparkConfigEntry.SparkPropertyCategory.class, cells.get(1).trim()),
-                    Enum.valueOf(SparkConfigEntry.SparkPropertyType.class, type),
+                    Enum.valueOf(SparkPropertyCategory.class, cells.get(1).trim()),
+                    Enum.valueOf(SparkPropertyType.class, type),
                     cells.get(3).trim(),
                     cells.get(5).trim()
             );
 
-            if(ent.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Float && typeParameters.size() > 1) {
+            if(ent.getSparkPropertyType() == SparkPropertyType.Float && typeParameters.size() > 1) {
                 ent.setFloatMax(Float.parseFloat(typeParameters.get(1).trim()));
                 ent.setFloatMin(Float.parseFloat(typeParameters.get(0).trim()));
             }
 
-            if(ent.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Uri) {
+            if(ent.getSparkPropertyType() == SparkPropertyType.Uri) {
                 for(String scheme : typeParameters)
                     ent.addUriSchemes(scheme);
             }
@@ -304,11 +332,12 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
             }
         });
 
+        int tabDistance = calcTabDistance();
 
         for(SparkConfigEntry sce : this.getAllItemIds()){
             sb = sb.append(sce.getKey());
-            sb = sb.append("\t\t");
-            sb = sb.append(propertyToString(sce));
+            sb = sb.append(SparkPipelineUtils.padLeft("", tabDistance - (int) Math.ceil(sce.getKey().length()/4d), '\t'));
+            sb = sb.append(sce.toString());
             sb = sb.append("\n");
         }
         return sb.toString();
@@ -325,9 +354,13 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
         });
 
         for(SparkConfigEntry sce : this.getAllItemIds()){
+            //filter out use case specific properties, not belonging to current use case
+            String[] keySplits = sce.getKey().split("\\.");
+            if(!keySplits[1].equals(this.getAppName()) && KnownUseCaseNames.contains(keySplits[1]))
+                continue;
             sb = sb.append("\t\"" + sce.getKey());
             sb = sb.append("\" : \"");
-            sb = sb.append(propertyToString(sce));
+            sb = sb.append(sce.toString());
             sb = sb.append("\",\n");
         }
         sb = sb.deleteCharAt(sb.length()-2);
@@ -335,18 +368,26 @@ public class SparkDpuConfig extends BeanItemContainer<SparkConfigEntry> implemen
         return sb.toString();
     }
 
-    private String propertyToString(SparkConfigEntry prop){
-        String value = null;
-        if(prop.getValue() == null || prop.getValue().getValue() == null)
-            return "";
-        if(prop.getSparkPropertyType().getClazz() == List.class)
-            value = Converters.StringToStringListConverter.convertToPresentation(((List)prop.getValue().getValue()), String.class, Locale.getDefault());
-        else if(prop.getSparkPropertyType().getClazz() == Integer.class)
-            value = Converters.StringToIntegerConverter.convertToPresentation(((Integer)prop.getValue().getValue()), String.class, Locale.getDefault());
-        else if(prop.getSparkPropertyType().getClazz() == URI.class)
-            value = Converters.StringToUriConverter.convertToPresentation(((URI)prop.getValue().getValue()), String.class, Locale.getDefault());
-        else
-            value = prop.getValue().getValue().toString();
-        return value;
+    private int calcTabDistance(){
+        int d = 0;
+        for(SparkConfigEntry sce : this.getAllItemIds()){
+            int z = Math.round(sce.getKey().length()/4f) + 1;
+            if(z > d)
+                d = z;
+        }
+        return d;
+    }
+
+
+    public List<String> getKnownUseCaseNames() {
+        if(KnownUseCaseNames == null) {
+            this.KnownUseCaseNames = new ArrayList<>();
+            for (SparkConfigEntry sce : this.getAllItemIds()) {
+                String[] keySplits = sce.getKey().split("\\.");
+                if (keySplits.length > 2 && keySplits[2].equals("filemanager"))
+                    KnownUseCaseNames.add(keySplits[1]);
+            }
+        }
+        return KnownUseCaseNames;
     }
 }

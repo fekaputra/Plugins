@@ -6,7 +6,6 @@ import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import de.steinwedel.messagebox.MessageBox;
@@ -17,7 +16,9 @@ import org.dbpedia.extraction.spark.SparkPipelineConfig_V1;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Vaadin configuration dialog for SparkPipeline.
@@ -27,9 +28,15 @@ import java.util.List;
 public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfig_V1> {
 
     private SparkPipelineConfig_V1 config_v1;
+    private Map<SparkPropertyCategory, Table> tableMap = new HashMap<>();
 
     private SparkConfigEntry newSparkProperty;
     private SparkConfigEntry newUseCaseProperty;
+
+    private ByteArrayOutputStream uploadedConfig = null;
+
+    private Map<String, AbstractField> validationMap = new HashMap<>();
+    final private VerticalLayout mainLayout = new VerticalLayout();
 
     public SparkPipelineVaadinDialog() throws DPUConfigException {
         super(SparkPipeline.class);
@@ -39,8 +46,8 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
     }
 
     private void createDefaultNewEntries() {
-        this.newSparkProperty = new SparkConfigEntry(SparkConfigEntry.SparkPropertyCategory.SparkOptional.toString(), "", config_v1.getSparkConfig().getEmptyEntry(SparkConfigEntry.SparkPropertyCategory.SparkOptional));
-        this.newUseCaseProperty = new SparkConfigEntry(SparkConfigEntry.SparkPropertyCategory.UsecaseOptional.toString(), "", config_v1.getSparkConfig().getEmptyEntry(SparkConfigEntry.SparkPropertyCategory.UsecaseOptional));
+        this.newSparkProperty = new SparkConfigEntry(SparkPropertyCategory.SparkOptional.toString(), "", config_v1.getSparkConfig().getEmptyEntry(SparkPropertyCategory.SparkOptional));
+        this.newUseCaseProperty = new SparkConfigEntry(SparkPropertyCategory.UsecaseOptional.toString(), "", config_v1.getSparkConfig().getEmptyEntry(SparkPropertyCategory.UsecaseOptional));
     }
 
     /**
@@ -51,8 +58,12 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
      */
     @Override
     public void setConfig(String conf) throws DPUConfigException {
-        //not sure what im doing here :D
-        setConfiguration(this.config_v1);
+        //FIXME not sure what im doing here :D
+    }
+
+    @Override
+    public boolean validate() throws Validator.InvalidValueException {
+        return validationMap.values().stream().map(AbstractField::isValid).allMatch(aBoolean -> aBoolean);
     }
 
     @Override
@@ -71,28 +82,51 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
 
         //for optional item lists -> if no new item entry exists -> add it
         if(this.config_v1.getSparkOptionalEntries().getItemIds().stream().filter(x -> x.getKey().equals("")).count() == 0)
-            this.config_v1.getSparkOptionalEntries().addItem(this.config_v1.getSparkConfig().getEmptyEntry(SparkConfigEntry.SparkPropertyCategory.SparkOptional));
+            this.config_v1.getSparkOptionalEntries().addItem(this.config_v1.getSparkConfig().getEmptyEntry(SparkPropertyCategory.SparkOptional));
         if(this.config_v1.getUseCaseOptionalEntries().getItemIds().stream().filter(x -> x.getKey().equals("")).count() == 0)
-            this.config_v1.getUseCaseOptionalEntries().addItem(this.config_v1.getSparkConfig().getEmptyEntry(SparkConfigEntry.SparkPropertyCategory.UsecaseOptional));
+            this.config_v1.getUseCaseOptionalEntries().addItem(this.config_v1.getSparkConfig().getEmptyEntry(SparkPropertyCategory.UsecaseOptional));
 
-        final VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.addComponents(getHeader());
 
         mainLayout.setWidth("100%");
         mainLayout.setHeight("-1px");
         mainLayout.setMargin(true);
         mainLayout.addComponent(getFormattedLabel(ctx.tr("SparkPipeline.dialog.label")));
-        mainLayout.addComponent(implementNewTable(this.config_v1.getSparkMandatoryEntries()));
+        tableMap.put(SparkPropertyCategory.SparkMandatory, implementNewTable(this.config_v1.getSparkMandatoryEntries(), true));
+        mainLayout.addComponent(tableMap.get(SparkPropertyCategory.SparkMandatory));
         mainLayout.addComponent(getFormattedLabel(ctx.tr("SparkPipeline.dialog.label")));
-        mainLayout.addComponent(implementNewTable(this.config_v1.getSparkRecommendedEntries()));
+        tableMap.put(SparkPropertyCategory.SparkRecommended, implementNewTable(this.config_v1.getSparkRecommendedEntries(), false));
+        mainLayout.addComponent(tableMap.get(SparkPropertyCategory.SparkRecommended));
         mainLayout.addComponent(getFormattedLabel(ctx.tr("SparkPipeline.dialog.label")));
-        mainLayout.addComponent(implementNewTable(this.config_v1.getSparkOptionalEntries()));
+        tableMap.put(SparkPropertyCategory.SparkOptional, implementNewTable(this.config_v1.getSparkOptionalEntries(), false));
+        mainLayout.addComponent(tableMap.get(SparkPropertyCategory.SparkOptional));
         mainLayout.addComponent(getFormattedLabel(ctx.tr("SparkPipeline.dialog.label")));
-        mainLayout.addComponent(implementNewTable(this.config_v1.getUseCaseMandatoryEntries()));
+        tableMap.put(SparkPropertyCategory.UsecaseMandatory, implementNewTable(this.config_v1.getUseCaseMandatoryEntries(), true));
+        mainLayout.addComponent(tableMap.get(SparkPropertyCategory.UsecaseMandatory));
         mainLayout.addComponent(getFormattedLabel(ctx.tr("SparkPipeline.dialog.label")));
-        mainLayout.addComponent(implementNewTable(this.config_v1.getUseCaseOptionalEntries()));
+        tableMap.put(SparkPropertyCategory.UsecaseOptional, implementNewTable(this.config_v1.getUseCaseOptionalEntries(), false));
+        mainLayout.addComponent(tableMap.get(SparkPropertyCategory.UsecaseOptional));
 
         setCompositionRoot(mainLayout);
+    }
+
+    private void refreshTables(){
+        validationMap.clear();
+        Table oldTable = tableMap.get(SparkPropertyCategory.SparkMandatory);
+        tableMap.put(SparkPropertyCategory.SparkMandatory, implementNewTable(this.config_v1.getSparkMandatoryEntries(), true));
+        mainLayout.replaceComponent(oldTable, tableMap.get(SparkPropertyCategory.SparkMandatory));
+        oldTable = tableMap.get(SparkPropertyCategory.SparkRecommended);
+        tableMap.put(SparkPropertyCategory.SparkRecommended, implementNewTable(this.config_v1.getSparkRecommendedEntries(), false));
+        mainLayout.replaceComponent(oldTable, tableMap.get(SparkPropertyCategory.SparkRecommended));
+        oldTable = tableMap.get(SparkPropertyCategory.SparkOptional);
+        tableMap.put(SparkPropertyCategory.SparkOptional, implementNewTable(this.config_v1.getSparkOptionalEntries(), false));
+        mainLayout.replaceComponent(oldTable, tableMap.get(SparkPropertyCategory.SparkOptional));
+        oldTable = tableMap.get(SparkPropertyCategory.UsecaseMandatory);
+        tableMap.put(SparkPropertyCategory.UsecaseMandatory, implementNewTable(this.config_v1.getUseCaseMandatoryEntries(), true));
+        mainLayout.replaceComponent(oldTable, tableMap.get(SparkPropertyCategory.UsecaseMandatory));
+        oldTable = tableMap.get(SparkPropertyCategory.UsecaseOptional);
+        tableMap.put(SparkPropertyCategory.UsecaseOptional, implementNewTable(this.config_v1.getUseCaseOptionalEntries(), false));
+        mainLayout.replaceComponent(oldTable, tableMap.get(SparkPropertyCategory.UsecaseOptional));
     }
 
     private Component getHeader(){
@@ -103,26 +137,46 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
 
         Button exportButton = new Button("Export SPARK configuration");
         FileDownloader fileDownloader = new FileDownloader(new StreamResource(
-                (StreamResource.StreamSource) () -> new ByteArrayInputStream(this.config_v1.updateSparkConfig().getSerializedSparkConfig().getBytes()),
+                (StreamResource.StreamSource) () -> {
+                    if(validate())
+                        return new ByteArrayInputStream(this.config_v1.updateSparkConfig().getSerializedSparkConfig().getBytes());
+                    else
+                        Notification.show("Validation failed for at least one configuration field!", Notification.Type.ERROR_MESSAGE);
+                    return null;
+                },
                 this.config_v1.getSparkConfig().getAppName() + "-spark.config"));
         fileDownloader.extend(exportButton);
-
-        Button importButton = new Button("Import SPARK configuration");
-
-        importButton.setWidth("200px");
-        buttonBar.addComponent(importButton);
-        buttonBar.setExpandRatio(importButton, 1.0f);
-        buttonBar.setComponentAlignment(importButton, Alignment.MIDDLE_RIGHT);
 
         exportButton.setWidth("200px");
         buttonBar.addComponent(exportButton);
         buttonBar.setExpandRatio(exportButton, 1.0f);
         buttonBar.setComponentAlignment(exportButton, Alignment.MIDDLE_RIGHT);
 
+
+        Upload uploadConfig = new Upload(null, (Upload.Receiver) (filename, mimeType) -> {
+            uploadedConfig = new ByteArrayOutputStream();
+            return uploadedConfig;
+        });
+        uploadConfig.setImmediate(true);
+        uploadConfig.setButtonCaption("Import SPARK configuration");
+        uploadConfig.addSucceededListener((Upload.SucceededListener) event -> {
+            try {
+                this.setConfiguration(new SparkPipelineConfig_V1(new SparkDpuConfig(new ByteArrayInputStream(this.uploadedConfig.toByteArray()))));
+                refreshTables();
+                Notification.show("Upload Successful", "SPARK configuration updated.", Notification.Type.HUMANIZED_MESSAGE);
+            } catch (Exception e) {
+                Notification.show("Upload Error", "The provided file caused an error: " + e.getMessage(), Notification.Type.ERROR_MESSAGE);
+            }
+        });
+
+        uploadConfig.setWidth("200px");
+        buttonBar.addComponent(uploadConfig);
+        buttonBar.setComponentAlignment(uploadConfig, Alignment.MIDDLE_RIGHT);
+
         return buttonBar;
     }
 
-    private Table implementNewTable(SparkDpuConfig source) {
+    private Table implementNewTable(SparkDpuConfig source, boolean required) {
         Table table = new Table();
 
         table.addGeneratedColumn("addremove", new Table.ColumnGenerator() {
@@ -131,24 +185,24 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
                 SparkConfigEntry id = ((SparkConfigEntry) itemId);
 
                 //if mandatory table -> return no Button!
-                if(id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkMandatory || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseMandatory)
+                if(id.getSparkPropertyCategory() == SparkPropertyCategory.SparkMandatory || id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseMandatory)
                     return null;
                 //if current item is last item -> add row, else reduce it
                 Button result = new Button("".equals(id.getKey()) ? "+" : "-");
                 result.addClickListener((Button.ClickListener) event -> {
                     if("".equals(id.getKey())) {
-                        if (id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkOptional) {
+                        if (id.getSparkPropertyCategory() == SparkPropertyCategory.SparkOptional) {
                             //delete empty- (default/add) item
-                            table.removeItem(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getEmptyEntry(SparkConfigEntry.SparkPropertyCategory.SparkOptional));
+                            table.removeItem(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getEmptyEntry(SparkPropertyCategory.SparkOptional));
                             //insert new item
                             table.addItem(SparkPipelineVaadinDialog.this.newSparkProperty);
                             //reinsert empty- (default/add) item as last
-                            table.addItem(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getEmptyEntry(SparkConfigEntry.SparkPropertyCategory.SparkOptional));
+                            table.addItem(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getEmptyEntry(SparkPropertyCategory.SparkOptional));
                         }
-                        else if(id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseOptional) {
-                            table.removeItem(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getEmptyEntry(SparkConfigEntry.SparkPropertyCategory.UsecaseOptional));
+                        else if(id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseOptional) {
+                            table.removeItem(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getEmptyEntry(SparkPropertyCategory.UsecaseOptional));
                             table.addItem(SparkPipelineVaadinDialog.this.newUseCaseProperty);
-                            table.addItem(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getEmptyEntry(SparkConfigEntry.SparkPropertyCategory.UsecaseOptional));
+                            table.addItem(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getEmptyEntry(SparkPropertyCategory.UsecaseOptional));
                         }
                         id.setValue(new ObjectProperty(""));
                         // now create new dummy entries
@@ -188,9 +242,9 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
                         String newKey = event.getProperty().getValue().toString().trim();
                         SparkConfigEntry def = SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getDefaultEntry(newKey);
                         SparkConfigEntry newEntry = null;
-                        if (id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkOptional)
+                        if (id.getSparkPropertyCategory() == SparkPropertyCategory.SparkOptional)
                             newEntry = SparkPipelineVaadinDialog.this.newSparkProperty;
-                        else if (id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseOptional)
+                        else if (id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseOptional)
                             newEntry = SparkPipelineVaadinDialog.this.newUseCaseProperty;
 
                         if(def != null)
@@ -204,28 +258,28 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
                                     newEntry.getValue().toString(),
                                     "",
                                     id.getSparkPropertyCategory(),
-                                    SparkConfigEntry.SparkPropertyType.String,
+                                    SparkPropertyType.String,
                                     "",
                                     "");
 
-                        if (id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkOptional)
+                        if (id.getSparkPropertyCategory() == SparkPropertyCategory.SparkOptional)
                             SparkPipelineVaadinDialog.this.newSparkProperty = newEntry;
-                        else if (id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseOptional)
+                        else if (id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseOptional)
                             SparkPipelineVaadinDialog.this.newUseCaseProperty = newEntry;
                     }
                     else {
                         result.setStyleName("loginError");
                     }
                 });
-                if(id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkMandatory
-                        || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkOptional
-                        || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkRecommended)
+                if(id.getSparkPropertyCategory() == SparkPropertyCategory.SparkMandatory
+                        || id.getSparkPropertyCategory() == SparkPropertyCategory.SparkOptional
+                        || id.getSparkPropertyCategory() == SparkPropertyCategory.SparkRecommended)
                     result.addValidator(Validators.SparkKeyValidator);
-                if(id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseMandatory
-                        || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseOptional
-                        || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseRecommended)
+                if(id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseMandatory
+                        || id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseOptional
+                        || id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseRecommended)
                     result.addValidator(Validators.GetUseCaseKeyValidator(SparkPipelineVaadinDialog.this.config_v1.getSparkConfig().getAppName()));
-                //result.validate();
+                validationMap.put("key." + id.getKey(), result);
                 return result;
             }
         });
@@ -236,20 +290,21 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
                 SparkConfigEntry id = ((SparkConfigEntry) itemId);
 
                 /* create special components for certain types: */
-                if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Boolean)
+                if(id.getSparkPropertyType() == SparkPropertyType.Boolean)
                     return SparkPipelineVaadinDialog.this.getCheckBox(id);
-                if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Enum)
+                if(id.getSparkPropertyType() == SparkPropertyType.Enum)
                     return SparkPipelineVaadinDialog.this.getComboBox(id);
 
                 /* else -> create TextField */
                 TextField result = new TextField();
                 result.setNullRepresentation("");
                 result.setImmediate(true);
+                result.setRequired(required);
                 result.setHeight("25px");
                 result.setWidth("100%");
-                if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.Uri)
+                if(id.getSparkPropertyType() == SparkPropertyType.Uri)
                     result.setConverter(Converters.StringToUriConverter);
-                if(id.getSparkPropertyType() == SparkConfigEntry.SparkPropertyType.StringList)
+                if(id.getSparkPropertyType() == SparkPropertyType.StringList)
                     result.setConverter(Converters.StringToStringListConverter);
                 if(id.getSparkPropertyType().getClazz().equals(Integer.class))
                     result.setConverter(Converters.StringToIntegerConverter);
@@ -257,13 +312,13 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
                 result.addValueChangeListener((Property.ValueChangeListener) event -> {
                     if(result.isValid()) {
                         result.setStyleName("v-textfield");
-                        if (id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkOptional
-                                || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkRecommended
-                                || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.SparkMandatory)
+                        if (id.getSparkPropertyCategory() == SparkPropertyCategory.SparkOptional
+                                || id.getSparkPropertyCategory() == SparkPropertyCategory.SparkRecommended
+                                || id.getSparkPropertyCategory() == SparkPropertyCategory.SparkMandatory)
                             SparkPipelineVaadinDialog.this.newSparkProperty.setValue(new ObjectProperty(event.getProperty().getValue()));
-                        else if(id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseRecommended
-                                || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseMandatory
-                                || id.getSparkPropertyCategory() == SparkConfigEntry.SparkPropertyCategory.UsecaseOptional){
+                        else if(id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseRecommended
+                                || id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseMandatory
+                                || id.getSparkPropertyCategory() == SparkPropertyCategory.UsecaseOptional){
                             SparkPipelineVaadinDialog.this.newUseCaseProperty.setValue(new ObjectProperty(event.getProperty().getValue()));
                         }
                     }
@@ -274,7 +329,7 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
                 });
 
                 result.addValidator(Validators.GetValueValidator(id));
-                //result.validate();
+                validationMap.put("value." + id.getKey(), result);
                 return result;
             }
         });
@@ -316,7 +371,7 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
     }
 
     private CheckBox getCheckBox(SparkConfigEntry prop){
-        if(prop.getSparkPropertyType() != SparkConfigEntry.SparkPropertyType.Boolean)
+        if(prop.getSparkPropertyType() != SparkPropertyType.Boolean)
             throw new IllegalArgumentException("Only Boolean values can be displayed as CheckBox.");
         CheckBox cb = new CheckBox("", prop.getValue());
         cb.setConvertedValue(prop.getDefaultValue().isEmpty() ? null : new Boolean(prop.getDefaultValue()));
@@ -326,7 +381,7 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
     }
 
     private ComboBox getComboBox(SparkConfigEntry prop){
-        if(prop.getSparkPropertyType() != SparkConfigEntry.SparkPropertyType.Enum)
+        if(prop.getSparkPropertyType() != SparkPropertyType.Enum)
             throw new IllegalArgumentException("Only Enums can be displayed as ComboBoxes.");
         //we take the regex as source for our options -> splitting up by alternatives: ^(x|y|z)$
         List<String> options = Arrays.asList(prop.getRegex().pattern().replaceAll("(\\^|\\(|\\)|\\$)", "").split("\\s*\\|\\s*"));

@@ -4,6 +4,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import org.dbpedia.extraction.spark.dialog.*;
+import org.dbpedia.extraction.spark.utils.SparkDpuFileManager;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -19,6 +20,11 @@ public class ConfigTests {
     public void testConfig() throws Exception {
 
         SparkPipelineVaadinDialog dia = new SparkPipelineVaadinDialog();
+
+        SparkDpuFileManager fm = new SparkDpuFileManager(dia.getConfiguration().getSparkConfig(), null, null);
+
+        fm.copyToLocalhoast("file:/home/chile/unifiedviews/backend/working/exec_35/storage/dpu_10/0/inputsToSp4503854928179886128", "file:/home/chile/unifiedviews");
+
 
         System.out.println(dia.getConfiguration().getSparkConfig().getItemIds().size());
 

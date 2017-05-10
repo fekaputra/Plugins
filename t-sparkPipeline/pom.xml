@@ -47,7 +47,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
+<!--        <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-server</artifactId>
             <version>7.3.7</version>
@@ -59,7 +59,7 @@
             <artifactId>vaadin-shared</artifactId>
             <version>7.3.7</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/com.vaadin/vaadin-icons -->
         <dependency>

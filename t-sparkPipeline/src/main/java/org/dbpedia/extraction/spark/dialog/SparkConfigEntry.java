@@ -2,6 +2,7 @@ package org.dbpedia.extraction.spark.dialog;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.converter.Converter;
 import eu.unifiedviews.helpers.dpu.ontology.EntityDescription;
 
 import java.io.Serializable;
@@ -155,41 +156,13 @@ public class SparkConfigEntry implements Map.Entry<String, Property>, Serializab
         return defaultValue;
     }
 
-    public enum SparkPropertyCategory {
-        SparkMandatory,
-        SparkRecommended,
-        SparkOptional,
-        UsecaseMandatory,
-        UsecaseRecommended,
-        UsecaseOptional;
-
-        @Override
-        public String toString(){
-            return "spark." + super.toString();
-        }
-    }
-
-    public enum SparkPropertyType{
-        Integer(Integer.class),
-        NonNegativeInteger(Integer.class),
-        Float(Float.class),
-        Boolean(Boolean.class),
-        Duration(String.class),
-        ByteSize(String.class),
-        String(String.class),
-        StringList(List.class),
-        Uri(URI.class),
-        Enum(String.class);
-
-        private Class clazz = null;
-
-        SparkPropertyType(Class className) {
-            this.clazz = className;
-        }
-
-        public Class getClazz() {
-            return clazz;
-        }
+    @Override
+    public String toString() {
+        Converter <String, ? super Object> converter = Converters.getConverter(this.getSparkPropertyType().getClazz());
+        if(converter != null)
+            return converter.convertToPresentation(this.getValue().getValue(), String.class, Locale.getDefault());
+        else
+            return this.getValue().getValue().toString();
     }
 
     private static Object toObject(Class clazz, String value) {

@@ -2,12 +2,11 @@ package org.dbpedia.extraction.spark.dialog;
 
 import com.vaadin.data.util.converter.Converter;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -17,6 +16,12 @@ import java.util.stream.Collectors;
  * These are use for display purposes in the Config dialog.
  */
 public class Converters {
+
+
+    public static <T> Converter<String, T> getConverter(Class<T> tType){
+        return (Converter<String, T>) valueConverters.get(tType);
+    }
+
     /**
      * We reimplement a Locale independent representation of this converter
      */
@@ -105,4 +110,25 @@ public class Converters {
             return String.class;
         }
     };
+
+
+    private static Map<Class<?>, Converter<String, ? extends Object>> valueConverters = new HashMap<>();
+
+    static{
+        for(Field field : Converters.class.getDeclaredFields()){
+            if(field.getType().isAssignableFrom(Converter.class)) {
+                //get first type parameter of Converter
+                Class<?> firstTypeParam = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+                if (firstTypeParam.isAssignableFrom(String.class)){
+                    Class<?> secondTypeParam = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1];
+                    try {
+                        valueConverters.put(secondTypeParam, (Converter<String, ?>) field.get(null));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+    }
 }

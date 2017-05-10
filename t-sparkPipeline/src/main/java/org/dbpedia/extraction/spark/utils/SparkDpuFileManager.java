@@ -49,7 +49,7 @@ public class SparkDpuFileManager {
 
     public void copyDirectoryToOutputDirectory(String uri) throws DataUnitException {
         File dir = new File(uri.replaceAll("file:(/)+", "/"));
-        String pattern = this.config.getItem("spark." + this.config.getAppName() + ".filemanager.filePattern").getBean().getValue().toString();
+        String pattern = this.config.getByStringKey("spark." + this.config.getAppName() + ".filemanager.filePattern").toString();
         pattern = pattern.substring(0, pattern.indexOf("$key") >= 0 ? pattern.indexOf("$key") : pattern.length());
         if(dir.isDirectory()) {
             for(File file : dir.listFiles())
@@ -75,19 +75,19 @@ public class SparkDpuFileManager {
         try {
             URI source = new URI(uri);
             String fileName = source.getPath().substring(source.getPath().contains("/") ? source.getPath().lastIndexOf('/') +1 : 0);
-            File targetDir = new File(targetDirectory);
+            File targetDir = new File(removeScheme(targetDirectory));
             URI target = null;
 
             if(targetDir.isDirectory())
-                target = new URI(targetDir.toString() + "/" + fileName);
+                target = new URI("file:" + targetDir.toString() + "/" + fileName);
             else
-                targetDir.toString();
+                target = new URI("file:" + targetDir.toString());
 
             //copy on localhost -> if SPARK driver is on same machine
             if(source.getScheme().contains("file")){
                 //TODO ask Tomas if just providing a location on localhost is enough here (otherwise copy files around)
-                //FileUtils.copyFile(new File(source), new File(target));
-                result = new File(removeScheme(source.toString()));
+                FileUtils.copyFile(new File(source), new File(target));
+                result = new File(target.getPath());
             }
             //fetch source from (s)ftp source
             else if(source.getScheme().contains("ftp")){
@@ -122,7 +122,7 @@ public class SparkDpuFileManager {
     public void uploadLocalFile(String source, String target) throws DataUnitException {
         try{
             File localFile = new File(source);
-            if(!localFile.isFile() || !localFile.toURI().getScheme().contains("file"))
+            if(!localFile.toURI().getScheme().contains("file"))
                 throw new IllegalArgumentException("The provided source is not a file on the local file system: " + source);
 
             URI targetUri = new URI(target);
