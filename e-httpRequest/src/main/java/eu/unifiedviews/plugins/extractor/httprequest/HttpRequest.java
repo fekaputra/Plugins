@@ -64,6 +64,8 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
 
     protected CloseableHttpClient client;
 
+    protected HttpStateWrapper httpWrapper;
+
     public HttpRequest() {
         super(HttpRequestVaadinDialog.class, ConfigHistory.noHistory(HttpRequestConfig_V1.class));
         this.requestExecutor = new HttpRequestExecutor();
@@ -76,7 +78,13 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
         String longMessage = String.valueOf(this.config);
         this.context.sendMessage(DPUContext.MessageType.INFO, shortMessage, longMessage);
         CloseableHttpResponse httpResponse = null;
+
+        //TODO Deprecated and should be removed (see line below where client is prepared)
         this.client = HttpClients.custom().disableContentCompression().build();
+
+        //initialize the request executor
+        requestExecutor.initialize(config);
+
         try {
             switch (this.config.getRequestType()) {
                 case GET:
@@ -121,6 +129,7 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
             HttpRequestHelper.tryCloseHttpResponse(httpResponse);
         }
     }
+
 
     /**
      * Executes HTTP request for each input file

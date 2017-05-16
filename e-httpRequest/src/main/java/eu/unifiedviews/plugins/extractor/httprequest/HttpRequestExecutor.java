@@ -2,27 +2,42 @@ package eu.unifiedviews.plugins.extractor.httprequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.unifiedviews.dpu.DPUException;
+
 public class HttpRequestExecutor {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestExecutor.class);
+
+    private HttpStateWrapper httpWrapper;
 
     /**
      * Executes GET HTTP request based on configuration
@@ -41,10 +56,11 @@ public class HttpRequestExecutor {
             URIBuilder uriBuilder = new URIBuilder(config.getRequestURL());
             uriBuilder.setPath(uriBuilder.getPath());
             HttpGet request = new HttpGet(uriBuilder.build().normalize());
-            if (config.isUseAuthentication()) {
-                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
-            }
-            response = client.execute(request);
+//            if (config.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
+//            }
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+//            response = client.execute(request);
             checkHttpResponseStatus(response);
         } catch (URISyntaxException | IllegalStateException | IOException ex) {
             String errorMsg = String.format("Failed to execute HTTP GET request to URL %s", config.getRequestURL());
@@ -73,9 +89,9 @@ public class HttpRequestExecutor {
             uriBuilder.setPath(uriBuilder.getPath());
 
             HttpPost request = new HttpPost(uriBuilder.build().normalize());
-            if (config.isUseAuthentication()) {
-                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
-            }
+//            if (config.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
+//            }
 
             EntityBuilder builder = EntityBuilder.create();
             builder.setContentEncoding(config.getCharset());
@@ -89,7 +105,8 @@ public class HttpRequestExecutor {
             request.setEntity(entity);
             request.addHeader("Content-Type", contentType.toString());
 
-            response = client.execute(request);
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+            //response = client.execute(request);
             checkHttpResponseStatus(response);
 
         } catch (URISyntaxException | IllegalStateException | IOException ex) {
@@ -100,6 +117,10 @@ public class HttpRequestExecutor {
         return response;
 
     }
+
+
+
+
 
     /**
      * Executes MULTIPART (form data) HTTP POST request based on configuration
@@ -119,9 +140,9 @@ public class HttpRequestExecutor {
             uriBuilder.setPath(uriBuilder.getPath());
 
             HttpPost request = new HttpPost(uriBuilder.build().normalize());
-            if (config.isUseAuthentication()) {
-                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
-            }
+//            if (config.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
+//            }
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             for (String key : config.getFormDataRequestBody().keySet()) {
@@ -130,7 +151,8 @@ public class HttpRequestExecutor {
             HttpEntity entity = builder.build();
             request.setEntity(entity);
 
-            response = client.execute(request);
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+//            response = client.execute(request);
             checkHttpResponseStatus(response);
 
         } catch (URISyntaxException | IllegalStateException | IOException ex) {
@@ -159,9 +181,9 @@ public class HttpRequestExecutor {
             uriBuilder.setPath(uriBuilder.getPath());
 
             HttpPost request = new HttpPost(uriBuilder.build().normalize());
-            if (config.isUseAuthentication()) {
-                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
-            }
+//            if (config.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
+//            }
 
             EntityBuilder builder = EntityBuilder.create();
             builder.setContentEncoding(config.getCharset());
@@ -174,7 +196,8 @@ public class HttpRequestExecutor {
             request.setEntity(entity);
             request.addHeader("Content-Type", contentType.toString());
 
-            response = client.execute(request);
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+//            response = client.execute(request);
             checkHttpResponseStatus(response);
 
         } catch (URISyntaxException | IllegalStateException | IOException ex) {
@@ -212,6 +235,64 @@ public class HttpRequestExecutor {
     private static String encodeUserNamePassword(String userName, String password) {
         String authString = userName + ":" + password;
         return Base64.encodeBase64String(authString.getBytes());
+    }
+
+    public void initialize(HttpRequestConfig_V1 config) throws DPUException {
+
+        //prepare host, http client, context (to cache credentials)
+        //furthermore such objects should be used when calling services
+        this.httpWrapper = createHttpStateWithAuth(config);
+
+    }
+
+    /**
+     * Create an HTTP state after authentication with credentials for future requests
+     * @return a class wrapping HTTP host, client and context used for future requests
+     */
+    private HttpStateWrapper createHttpStateWithAuth(HttpRequestConfig_V1 config) throws DPUException {
+
+        //parse URI from config
+        URI uri = null;
+        try {
+            uri = new URI(config.getRequestURL());
+        } catch (URISyntaxException e) {
+            throw new DPUException(e);
+        }
+        String schemaString = uri.getScheme();
+        String hostString = uri.getHost();
+        int port =  uri.getPort();
+        if (!(port > 0)) {
+            //add port manually based on the protocol
+            if (schemaString.equals("https")) {
+                port = 443;
+            } else if (schemaString.equals("http")) {
+                port = 80;
+            } else {
+                LOG.warn("Port is not automatically derived for schema: {}. Port is automcatically derived only for http/https. Port may not be properly set.", schemaString);
+            }
+        }
+
+        LOG.info("Host, port, schema: {}, {}, {}", hostString, port, schemaString);
+        HttpHost host = new HttpHost(hostString, port,schemaString);
+
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+                AuthScope.ANY,
+                new UsernamePasswordCredentials(config.getUserName(), config.getPassword()));
+
+        CloseableHttpClient httpclient = HttpClients.custom()
+                .setDefaultCredentialsProvider(credsProvider)
+                .build();
+
+        // Create AuthCache instance
+        AuthCache authCache = new BasicAuthCache();
+        BasicScheme basicAuth = new BasicScheme();
+        authCache.put(host, basicAuth);
+        HttpClientContext localContext = HttpClientContext.create();
+        localContext.setAuthCache(authCache);
+        localContext.setCredentialsProvider(credsProvider);
+
+        return new HttpStateWrapper(host, httpclient, localContext);
     }
 
 }
