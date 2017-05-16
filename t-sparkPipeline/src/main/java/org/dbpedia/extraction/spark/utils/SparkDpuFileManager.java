@@ -61,16 +61,16 @@ public class SparkDpuFileManager {
     }
 
     public void copyToOutputDirectory(String uri) throws DataUnitException {
-        copyToLocalhoast(uri, this.output.getBaseFileURIString());
+        copyToLocalhost(uri, this.output.getBaseFileURIString());
     }
 
     /**
      * Will copy or download a given file to a local directory
-     * @param uri - the source uri (somewhere on the web)
+     * @param uri - the source uri
      * @param targetDirectory - the local directory
      * @throws DataUnitException
      */
-    public void copyToLocalhoast(String uri, String targetDirectory) throws DataUnitException {
+    public void copyToLocalhost(String uri, String targetDirectory) throws DataUnitException {
         File result = null;
         try {
             URI source = new URI(uri);
@@ -91,12 +91,11 @@ public class SparkDpuFileManager {
             }
             //fetch source from (s)ftp source
             else if(source.getScheme().contains("ftp")){
-                //TODO not implemented!
                 throw new DataUnitException("The (s)ftp download operations are not yet implemented.");
             }
             //fetch source from hadoop file system
             else if(source.getScheme().contains("hdfs")){
-                //TODO not implemented!
+                //TODO So that we can copy data from hdfs on the remote server with spark master
                 throw new DataUnitException("The hdfs download operations are not yet implemented.");
             }
             //fetch from the web
@@ -111,6 +110,7 @@ public class SparkDpuFileManager {
         }
 
         //new File(this.output.getBaseFileURIString().replace("file:", ""), uri.substring(uri.lastIndexOf('/')+1));
+        //TODO This should be called for the resulting files - but it is called also when files are copied to the remote master, which is incorrect
         FilesHelper.addFile(this.output, result, result.toString());
     }
 
@@ -128,7 +128,7 @@ public class SparkDpuFileManager {
             URI targetUri = new URI(target);
 
             if(targetUri.getScheme().contains("file")){
-                copyToLocalhoast(source, target);
+                copyToLocalhost(source, target);
             }
             else{
                 //TODO not implemented!

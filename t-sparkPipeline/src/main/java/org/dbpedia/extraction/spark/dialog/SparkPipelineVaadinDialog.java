@@ -61,7 +61,6 @@ public class SparkPipelineVaadinDialog extends AbstractDialog<SparkPipelineConfi
         //FIXME not sure what im doing here :D
     }
 
-    @Override
     public boolean validate() throws Validator.InvalidValueException {
         return validationMap.values().stream().map(AbstractField::isValid).allMatch(aBoolean -> aBoolean);
     }

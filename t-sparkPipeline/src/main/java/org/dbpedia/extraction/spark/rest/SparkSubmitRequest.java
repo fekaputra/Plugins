@@ -63,6 +63,7 @@ public class SparkSubmitRequest extends JSONObject {
         else
             throw new JSONException("spark.client.version" + " property was not provided for use case " + config.getAppName());
 
+        //TODO main class of spark pipeline - server part - hardcoded
         this.put("mainClass", "org.dbpedia.spark.core.SparkPipelineExecutor");
         if(config.getProperty(appPrefix + "executorArguments").isPresent())
             this.put("appArgs", config.getByStringKey(appPrefix + "executorArguments").toString().split(","));

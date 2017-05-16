@@ -68,7 +68,7 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
     protected void innerExecute() throws DPUException {
 
         //TODO!
-        String currentPiepelineApp = this.config.getSparkConfig().getAppName();
+        String currentPipelineApp = this.config.getSparkConfig().getAppName();
 
         long startTimeStamp = System.currentTimeMillis();
         ContextUtils.sendShortInfo(ctx, "Running SPARK pipeline: " + config.getSparkConfig().getByStringKey("spark.app.name").toString());
@@ -80,9 +80,10 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
         //upload all input files to spark working dir
         try {
             this.fileManager.copyToSparkWorkingDir();
-            SparkRestResponse submission = restClient.submitJob(currentPiepelineApp);
+            SparkRestResponse submission = restClient.submitJob(currentPipelineApp);
 
             //wait for the launch
+            //TODO make it configurable (how long we should sleep)
             Thread.sleep(3000);
 
             //wait until the pipeline is done
@@ -96,7 +97,7 @@ public class SparkPipeline extends AbstractDpu<SparkPipelineConfig_V1> {
 
             //if no error occurred...
             if(status.getDriverState().equals("FINISHED"))
-                this.fileManager.copyDirectoryToOutputDirectory(this.config.getSparkConfig().getSparkOutputDir(currentPiepelineApp));
+                this.fileManager.copyDirectoryToOutputDirectory(this.config.getSparkConfig().getSparkOutputDir(currentPipelineApp));
             else
                 throw new DPUException("Spark pipeline " + this.config.getSparkConfig().getAppName() + " has entered an unexpected state: " + status.getDriverState());
 

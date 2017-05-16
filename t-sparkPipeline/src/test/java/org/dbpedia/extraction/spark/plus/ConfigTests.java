@@ -23,7 +23,7 @@ public class ConfigTests {
 
         SparkDpuFileManager fm = new SparkDpuFileManager(dia.getConfiguration().getSparkConfig(), null, null);
 
-        fm.copyToLocalhoast("file:/home/chile/unifiedviews/backend/working/exec_35/storage/dpu_10/0/inputsToSp4503854928179886128", "file:/home/chile/unifiedviews");
+        fm.copyToLocalhost("file:/home/chile/unifiedviews/backend/working/exec_35/storage/dpu_10/0/inputsToSp4503854928179886128", "file:/home/chile/unifiedviews");
 
 
         System.out.println(dia.getConfiguration().getSparkConfig().getItemIds().size());
