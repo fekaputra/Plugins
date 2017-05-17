@@ -9,13 +9,13 @@ import eu.unifiedviews.plugins.transformer.fusiontool.testutils.FTDPUTestUtils;
 import eu.unifiedviews.plugins.transformer.fusiontool.util.MockRDFDataUnit;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFHandler;
-import org.openrdf.rio.helpers.StatementCollector;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFHandler;
+import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -153,7 +153,7 @@ public class AllTriplesDataUnitLoaderTest {
         Repository repository = FTDPUTestUtils.createRepository(statements);
 
         // Act
-        URI defaultContext;
+        IRI defaultContext;
         try (MockRDFDataUnit rdfDataUnit = getDataUnit(statements);
              AllTriplesDataUnitLoader loader = getLoader(rdfDataUnit, 2)
         ) {
@@ -173,7 +173,7 @@ public class AllTriplesDataUnitLoaderTest {
     private MockRDFDataUnit getDataUnit(Collection<Statement> statements) throws RepositoryException, DataUnitException {
         MockRDFDataUnit rdfDataUnit = new MockRDFDataUnit(statements);
         for (Statement statement : statements) {
-            URI graphName = (URI) statement.getContext();
+            IRI graphName = (IRI) statement.getContext();
             rdfDataUnit.addExistingDataGraph(graphName.stringValue(), graphName);
         }
         return rdfDataUnit;

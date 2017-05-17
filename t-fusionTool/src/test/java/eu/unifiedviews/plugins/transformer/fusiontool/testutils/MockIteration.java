@@ -2,7 +2,7 @@ package eu.unifiedviews.plugins.transformer.fusiontool.testutils;
 
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
-import org.openrdf.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
 
 import java.util.Arrays;
 import java.util.Iterator;

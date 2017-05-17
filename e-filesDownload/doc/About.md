@@ -2,11 +2,16 @@
 
 Downloads one or more files from the defined locations. The files to be downloaded may be located at HTTP URLs, on the local filesystem, at certain SFTP/FTP servers, etc.
 
-If internal file name is specified for the downloaded entry, such file name is then used as a symbolic name to internally identify the given file further on the pipeline and also such value is used as the value of 
-VirtualPath (target location of the file when loaded outside of UnifiedViews at the end of pipeline). If you do not care about the internal name of the file or value of VirtualPath, e.g., 
-in cases where you just need to iterate over downloaded files later on process every downloaded file in the same way, you do not need to specify a file name. 
-
 Individual files and also whole directories may be downloaded. If directory is provided then all files and files in subdirectories are extracted.
+
+If internal name (file name) is specified for the downloaded entry, such name is then used as a symbolic name to internally identify the given file further on the pipeline.
+If you specify a directory as an entry then such file name is used as a prefix for the individual files within that directory.
+If you do not care about the internal name of the file, e.g., in cases where you just need to iterate over downloaded files later on process every downloaded file in the same way,
+you do not need to specify a file name.
+
+This DPU also sets virtual path metadata for each file extracted. In case of files it is equal to the file name (local file name from the file path, e.g. example.txt from a/b/c/example.txt).
+In case of directories, virtual path metadata for each extracted file is equal to the relative path to the original directory.
+
 
 ### Configuration parameters
 

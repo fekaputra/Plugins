@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openrdf.model.URI;
-import org.openrdf.query.BooleanQuery;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.query.UnsupportedQueryLanguageException;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.query.parser.ParsedBooleanQuery;
-import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.ParsedTupleQuery;
-import org.openrdf.query.parser.QueryParserUtil;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.query.BooleanQuery;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
+import org.eclipse.rdf4j.query.UnsupportedQueryLanguageException;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
+import org.eclipse.rdf4j.query.parser.ParsedBooleanQuery;
+import org.eclipse.rdf4j.query.parser.ParsedQuery;
+import org.eclipse.rdf4j.query.parser.ParsedTupleQuery;
+import org.eclipse.rdf4j.query.parser.QueryParserUtil;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +97,7 @@ public class RdfValidator extends AbstractDpu<RdfValidatorConfig_V2> {
         RepositoryConnection connection = null;
         try {
             connection = rdfInput.getConnection();
-            Set<URI> graphURIs = new HashSet<>();
+            Set<IRI> graphURIs = new HashSet<>();
             for (RDFDataUnit.Entry entry : graphs) {
                 graphURIs.add(entry.getDataGraphURI());
             }

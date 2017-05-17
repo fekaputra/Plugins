@@ -1,3 +1,9 @@
 ## UnifiedViews Plugins travis build file
 
 language: java
+
+jdk:
+  - oraclejdk8
+
+install: 
+  - mvn clean install -B -V

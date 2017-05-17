@@ -1,6 +1,10 @@
 T-FilesRenamer
 ----------
 
+v3.0.0
+---
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
 v2.2.0
 ---
 * Added support for advanced query

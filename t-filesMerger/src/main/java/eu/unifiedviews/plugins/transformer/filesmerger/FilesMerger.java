@@ -2,7 +2,7 @@ package eu.unifiedviews.plugins.transformer.filesmerger;
 
 import java.util.List;
 
-import org.openrdf.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 import eu.unifiedviews.dpu.DPU;
 import eu.unifiedviews.dpu.DPUException;
 import org.slf4j.Logger;

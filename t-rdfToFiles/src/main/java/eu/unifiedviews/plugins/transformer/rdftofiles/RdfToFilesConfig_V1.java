@@ -2,7 +2,7 @@ package eu.unifiedviews.plugins.transformer.rdftofiles;
 
 import java.util.Arrays;
 import java.util.List;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 import eu.unifiedviews.dpu.config.DPUConfigException;
 import eu.unifiedviews.helpers.dpu.config.VersionedConfig;

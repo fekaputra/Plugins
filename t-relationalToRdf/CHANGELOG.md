@@ -1,6 +1,10 @@
 T-RelationalToRdf
 ----------
 
+v2.0.0
+---
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
 v1.0.2
 ---
 * Added support for [RDF Validation extension](https://grips.semantic-web.at/display/UDDOC/RDF+Validation)

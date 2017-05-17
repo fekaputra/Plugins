@@ -6,14 +6,14 @@ import cz.cuni.mff.odcleanstore.fusiontool.exceptions.LDFusionToolException;
 import cz.cuni.mff.odcleanstore.fusiontool.util.CloseableRepositoryConnection;
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
-import org.openrdf.OpenRDFException;
-import org.openrdf.model.URI;
-import org.openrdf.query.GraphQueryResult;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.OpenRDFException;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.query.GraphQueryResult;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +22,9 @@ import java.util.Set;
 public class DataUnitSameAsLinkLoader {
     private static final Logger LOG = LoggerFactory.getLogger(DataUnitSameAsLinkLoader.class);
     private static RDFDataUnit dataUnit;
-    private static Set<URI> sameAsLinkTypes;
+    private static Set<IRI> sameAsLinkTypes;
 
-    public DataUnitSameAsLinkLoader(RDFDataUnit dataUnit, Set<URI> sameAsLinkTypes) {
+    public DataUnitSameAsLinkLoader(RDFDataUnit dataUnit, Set<IRI> sameAsLinkTypes) {
         this.dataUnit = dataUnit;
         this.sameAsLinkTypes = sameAsLinkTypes;
     }
@@ -44,7 +44,7 @@ public class DataUnitSameAsLinkLoader {
             throws QueryEvaluationException, RepositoryException, MalformedQueryException {
 
         long loadedCount = 0;
-        for (URI link : sameAsLinkTypes) {
+        for (IRI link : sameAsLinkTypes) {
             String query = String.format("CONSTRUCT {?s <%1$s> ?o} WHERE {?s <%1$s> ?o}", link.stringValue());
             GraphQueryResult sameAsTriples = connection.prepareGraphQuery(QueryLanguage.SPARQL, query).evaluate();
             while (sameAsTriples.hasNext()) {
