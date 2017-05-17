@@ -1,21 +1,9 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.unifiedviews.dataunit.DataUnit;
 import eu.unifiedviews.dataunit.files.FilesDataUnit;
 import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
+import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
 import eu.unifiedviews.dpu.DPU;
 import eu.unifiedviews.dpu.DPUContext;
 import eu.unifiedviews.dpu.DPUException;
@@ -28,8 +16,21 @@ import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
+import eu.unifiedviews.helpers.dpu.extension.rdf.RdfConfiguration;
 import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.DataType;
 import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.RequestType;
+import org.apache.commons.io.FileUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Date;
+import java.util.List;
 
 @DPU.AsExtractor
 public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
@@ -49,12 +50,21 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
     @DataUnit.AsInput(name = "requestFilesConfig", optional = true)
     public FilesDataUnit requestFilesConfig;
 
+    @RdfConfiguration.ContainsConfiguration
+    @DataUnit.AsInput(name = "config", optional = true)
+    public RDFDataUnit rdfConfiguration;
+
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;
+
+    @ExtensionInitializer.Init
+    public RdfConfiguration _rdfConfiguration;
 
     private HttpRequestExecutor requestExecutor;
 
     protected CloseableHttpClient client;
+
+    protected HttpStateWrapper httpWrapper;
 
     public HttpRequest() {
         super(HttpRequestVaadinDialog.class, ConfigHistory.noHistory(HttpRequestConfig_V1.class));
@@ -68,7 +78,13 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
         String longMessage = String.valueOf(this.config);
         this.context.sendMessage(DPUContext.MessageType.INFO, shortMessage, longMessage);
         CloseableHttpResponse httpResponse = null;
+
+        //TODO Deprecated and should be removed (see line below where client is prepared)
         this.client = HttpClients.custom().disableContentCompression().build();
+
+        //initialize the request executor
+        requestExecutor.initialize(config);
+
         try {
             switch (this.config.getRequestType()) {
                 case GET:
@@ -114,6 +130,7 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
         }
     }
 
+
     /**
      * Executes HTTP request for each input file
      * 
@@ -146,6 +163,7 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
                     HttpRequestHelper.tryCloseHttpResponse(httpResponse);
                 }
             }
+
             if (errorCounter == files.size()) {
                 ContextUtils.sendError(this.ctx, "dpu.errors.files.all", "dpu.errors.files.all.long");
                 return;

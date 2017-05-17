@@ -1,0 +1,8 @@
+{
+   "text":"Contextual Information Extraction in Research Articles: A Case of developing contextual RDF data for ESWC paper",
+   "author":"Tomas K.",
+   "title":"Test2-2011_p234-angrosh.pdf",
+   "facets":{"dyn_uri_all_concepts":["http://vocabulary.semantic-web.at/semweb/2073","http://vocabulary.semantic-web.at/semweb/2195","http://vocabulary.semantic-web.at/semweb/2220","http://vocabulary.semantic-web.at/semweb/252","http://vocabulary.semantic-web.at/semweb/404","http://vocabulary.semantic-web.at/semweb/417","http://vocabulary.semantic-web.at/semweb/785","http://vocabulary.semantic-web.at/semweb/789"]},
+   "context":"test",
+   "date":"2017-05-16",
+   "identifier":"http://demo.semantic-web.at/2011_p234-angrosh.pdf-test2"}
