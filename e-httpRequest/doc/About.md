@@ -48,5 +48,6 @@ Configuration samples:
 ```turtle
 <http://localhost/resource/config>
     <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://unifiedviews.eu/ontology/dpu/httpRequest/Config>;
-    <http://unifiedviews.eu/ontology/dpu/httpRequest/requestBody> "...".
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/requestBody> "..." ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/url> "http://semantic-web.com/service/x".
 ```

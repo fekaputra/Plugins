@@ -24,6 +24,7 @@ public class HttpRequestConfig_V1 {
 
     private RequestContentType contentType = RequestContentType.TEXT;
 
+    @EntityDescription.Property(uri = HttpRequestVocabulary.STR_URL)
     private String requestURL = "";
 
     @EntityDescription.Property(uri = HttpRequestVocabulary.STR_RAW_REQUEST_BODY)
