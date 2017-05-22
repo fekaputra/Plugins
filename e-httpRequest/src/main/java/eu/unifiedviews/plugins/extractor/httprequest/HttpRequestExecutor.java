@@ -267,29 +267,40 @@ public class HttpRequestExecutor {
             } else if (schemaString.equals("http")) {
                 port = 80;
             } else {
-                LOG.warn("Port is not automatically derived for schema: {}. Port is automcatically derived only for http/https. Port may not be properly set.", schemaString);
+                LOG.warn("Port is not automatically derived for schema: {}. Port is automatically derived only for http/https. Port may not be properly set.", schemaString);
             }
         }
 
         LOG.info("Host, port, schema: {}, {}, {}", hostString, port, schemaString);
         HttpHost host = new HttpHost(hostString, port,schemaString);
 
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(
-                AuthScope.ANY,
-                new UsernamePasswordCredentials(config.getUserName(), config.getPassword()));
-
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setDefaultCredentialsProvider(credsProvider)
-                .build();
-
-        // Create AuthCache instance
-        AuthCache authCache = new BasicAuthCache();
-        BasicScheme basicAuth = new BasicScheme();
-        authCache.put(host, basicAuth);
         HttpClientContext localContext = HttpClientContext.create();
-        localContext.setAuthCache(authCache);
-        localContext.setCredentialsProvider(credsProvider);
+        CloseableHttpClient httpclient;
+
+        if (config.isUseAuthentication()) {
+            LOG.info("Caching credentials");
+            CredentialsProvider credsProvider = new BasicCredentialsProvider();
+            credsProvider.setCredentials(
+                    AuthScope.ANY,
+                    new UsernamePasswordCredentials(config.getUserName(), config.getPassword()));
+
+            httpclient = HttpClients.custom()
+                    .setDefaultCredentialsProvider(credsProvider)
+                    .build();
+
+            // Create AuthCache instance
+            AuthCache authCache = new BasicAuthCache();
+            BasicScheme basicAuth = new BasicScheme();
+            authCache.put(host, basicAuth);
+            localContext.setAuthCache(authCache);
+            localContext.setCredentialsProvider(credsProvider);
+
+        }
+        else {
+            LOG.info("No credentials provided");
+            httpclient = HttpClients.custom().build();
+
+        }
 
         return new HttpStateWrapper(host, httpclient, localContext);
     }

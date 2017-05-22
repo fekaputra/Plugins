@@ -11,5 +11,6 @@ public class HttpRequestVocabulary {
     public static final String PREFIX = "http://unifiedviews.eu/ontology/dpu/httpRequest/";
     public static final String STR_CONFIG_CLASS = PREFIX + "Config";
     public static final String STR_RAW_REQUEST_BODY = PREFIX + "requestBody";
+    public static final String STR_URL = PREFIX + "url";
 
 }
