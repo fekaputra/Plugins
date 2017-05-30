@@ -250,6 +250,11 @@ public class HttpRequestExecutor {
      */
     private HttpStateWrapper createHttpStateWithAuth(HttpRequestConfig_V1 config) throws DPUException {
 
+        //check that the configuration contains URL of the service
+        if (config.getRequestURL() == null || config.getRequestURL().isEmpty()) {
+            throw new DPUException("Request URL is not defined");
+        }
+
         //parse URI from config
         URI uri = null;
         try {
