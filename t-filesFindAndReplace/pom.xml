@@ -12,7 +12,7 @@
 	<artifactId>uv-t-filesFindAndReplace</artifactId>
 	<name>T-FilesFindAndReplace</name>
 	<description>Finds and replaces string in files</description>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>bundle</packaging>
 
 	<properties>
