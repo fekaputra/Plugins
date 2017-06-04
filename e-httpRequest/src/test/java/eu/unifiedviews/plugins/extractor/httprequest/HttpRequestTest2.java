@@ -16,6 +16,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 
+/**
+ * To try HTTPS - in particular to execute content API call to PPGS
+ * TODO finalize and make it re-runnable automatically
+ * Note: password is missing
+ */
 public class HttpRequestTest2 {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestTest2.class);
@@ -66,9 +71,6 @@ public class HttpRequestTest2 {
         this.env.release();
     }
 
-    //to try HTTPS - in particular to execute content API call to PPGS
-    //TODO finalize and make it re-runnable automatically
-    //Note: password is missing
     //@Test
     public void filePOSTRequestTest() throws Exception {
 

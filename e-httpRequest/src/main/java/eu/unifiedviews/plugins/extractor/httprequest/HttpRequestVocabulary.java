@@ -13,4 +13,14 @@ public class HttpRequestVocabulary {
     public static final String STR_RAW_REQUEST_BODY = PREFIX + "requestBody";
     public static final String STR_URL = PREFIX + "url";
 
+    public static final String STR_RAW_FORM_PARAMS_BODIES = PREFIX + "formParamBody";
+    public static final String STR_RAW_FORM_PARAMS_BODY_CLASS = PREFIX + "FormParamBody";
+    public static final String STR_RAW_FORM_PARAMS = PREFIX + "formParam";
+    public static final String STR_RAW_FORM_PARAM_CLASS = PREFIX + "FormParam";
+    public static final String STR_RAW_FORM_PARAM = PREFIX + "param";
+    public static final String STR_RAW_FORM_PARAM_VALUE = PREFIX + "value";
+
+
+
+
 }

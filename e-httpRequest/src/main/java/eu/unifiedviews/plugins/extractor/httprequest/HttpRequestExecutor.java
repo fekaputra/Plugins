@@ -1,6 +1,10 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
-import eu.unifiedviews.dpu.DPUException;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -25,10 +29,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import eu.unifiedviews.dpu.DPUException;
+import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParam;
+import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParamBody;
 
 public class HttpRequestExecutor {
 
@@ -53,9 +56,12 @@ public class HttpRequestExecutor {
             URIBuilder uriBuilder = new URIBuilder(config.getRequestURL());
             uriBuilder.setPath(uriBuilder.getPath());
             HttpGet request = new HttpGet(uriBuilder.build().normalize());
-//            if (config.isUseAuthentication()) {
-//                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
+//            if (rdfConfig.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, rdfConfig.getUserName(), rdfConfig.getPassword());
 //            }
+
+            LOG.info("Request: {}", request.toString());
+
             response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
 //            response = client.execute(request);
             checkHttpResponseStatus(response);
@@ -86,8 +92,8 @@ public class HttpRequestExecutor {
             uriBuilder.setPath(uriBuilder.getPath());
 
             HttpPost request = new HttpPost(uriBuilder.build().normalize());
-//            if (config.isUseAuthentication()) {
-//                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
+//            if (rdfConfig.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, rdfConfig.getUserName(), rdfConfig.getPassword());
 //            }
 
             EntityBuilder builder = EntityBuilder.create();
@@ -139,8 +145,8 @@ public class HttpRequestExecutor {
             uriBuilder.setPath(uriBuilder.getPath());
 
             HttpPost request = new HttpPost(uriBuilder.build().normalize());
-//            if (config.isUseAuthentication()) {
-//                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
+//            if (rdfConfig.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, rdfConfig.getUserName(), rdfConfig.getPassword());
 //            }
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -149,6 +155,8 @@ public class HttpRequestExecutor {
             }
             HttpEntity entity = builder.build();
             request.setEntity(entity);
+
+            LOG.info("Request: {}", request.toString());
 
             response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
 //            response = client.execute(request);
@@ -160,6 +168,48 @@ public class HttpRequestExecutor {
             throw new Exception(errorMsg, ex);
         }
         return response;
+    }
+
+
+    /**
+     * Executes FILE (binary) HTTP POST request based on configuration
+     *
+     * @param config
+     *            DPU configuration
+     * @param client
+     *            HTTP client used to execute request
+     * @return HTTP response
+     * @throws Exception
+     *             if request execution fails
+     */
+    public CloseableHttpResponse sendMultipartFormRequestFromRdf(HttpRequestConfig_V1 config, FormParamBody paramsBody, CloseableHttpClient client) throws Exception {
+
+        CloseableHttpResponse response = null;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(config.getRequestURL());
+            uriBuilder.setPath(uriBuilder.getPath());
+
+            HttpPost request = new HttpPost(uriBuilder.build().normalize());
+
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            for (FormParam param : paramsBody.getFormParams()) {
+                builder.addTextBody(param.getParam(), param.getValue());
+            }
+            HttpEntity entity = builder.build();
+            request.setEntity(entity);
+
+            LOG.info("Request: {}", request.toString());
+
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+            checkHttpResponseStatus(response);
+
+        } catch (URISyntaxException | IllegalStateException | IOException ex) {
+            String errorMsg = String.format("Failed to execute HTTP multipart POST request to URL %s", config.getRequestURL());
+            LOG.error(errorMsg);
+            throw new Exception(errorMsg, ex);
+        }
+        return response;
+
     }
 
     /**
@@ -180,8 +230,8 @@ public class HttpRequestExecutor {
             uriBuilder.setPath(uriBuilder.getPath());
 
             HttpPost request = new HttpPost(uriBuilder.build().normalize());
-//            if (config.isUseAuthentication()) {
-//                addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
+//            if (rdfConfig.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, rdfConfig.getUserName(), rdfConfig.getPassword());
 //            }
 
             EntityBuilder builder = EntityBuilder.create();
@@ -250,7 +300,7 @@ public class HttpRequestExecutor {
      */
     private HttpStateWrapper createHttpStateWithAuth(HttpRequestConfig_V1 config) throws DPUException {
 
-        //parse URI from config
+        //parse URI from rdfConfig
         URI uri = null;
         try {
             uri = new URI(config.getRequestURL());

@@ -195,6 +195,8 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
         this.dataTypeSelect.setItemCaption(DataType.FORM_DATA, this.ctx.tr("dialog.data.type.form"));
         this.dataTypeSelect.setItemCaption(DataType.RAW_DATA, this.ctx.tr("dialog.data.type.raw"));
         this.dataTypeSelect.setItemCaption(DataType.FILE, this.ctx.tr("dialog.data.type.file"));
+        this.dataTypeSelect.setItemCaption(DataType.FORM_DATA_RDF, this.ctx.tr("dialog.data.type.form-rdf"));
+
         this.dataTypeSelect.select(DataType.RAW_DATA);
         this.dataTypeSelect.setNullSelectionAllowed(false);
         this.dataTypeSelect.addValueChangeListener(createValueChangeListenerForPostDataType());
@@ -256,6 +258,12 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
                         break;
                     case FILE:
                         hideComponents(formDataLayout, rawDataArea, testButton);
+                        showComponents(contentTypeSelect, charsetSelect);
+                        fileNameField.setCaption(ctx.tr("dialog.file.name.file"));
+                        fileNameField.setDescription(ctx.tr("dialog.file.name.file.description"));
+                        break;
+                    case FORM_DATA_RDF:
+                        hideComponents(formDataLayout, rawDataArea, testButton, contentTypeSelect, charsetSelect);
                         fileNameField.setCaption(ctx.tr("dialog.file.name.file"));
                         fileNameField.setDescription(ctx.tr("dialog.file.name.file.description"));
                     default:
@@ -381,8 +389,11 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
                 for (String key : config.getFormDataRequestBody().keySet()) {
                     this.formDataTable.addItem(new Object[] { key, config.getFormDataRequestBody().get(key) }, null);
                 }
+            } else if (config.getPostRequestDataType() == DataType.FORM_DATA_RDF) {
+                //any rdfConfig from config to formular?? NO
+
             }
-        }
+    }
     }
 
     //TODO: dokoncit kontrolu konfiguracie
@@ -409,6 +420,9 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
             } else if (config.getPostRequestDataType() == DataType.FILE) {
                 config.setCharset((String) this.charsetSelect.getValue());
                 config.setContentType((RequestContentType) this.contentTypeSelect.getValue());
+            } else if (config.getPostRequestDataType() == DataType.FORM_DATA_RDF) {
+                //any rdfConfig from formular?? NO
+
             } else if (config.getPostRequestDataType() == DataType.FORM_DATA) {
                 checkFormDataConfiguration();
                 Map<String, String> formData = new HashMap<>();
