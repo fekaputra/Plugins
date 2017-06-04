@@ -4,10 +4,11 @@ This DPU allows executing HTTP requests (GET, POST methods) to web services and 
 
 This DPU targets to enable consuming web services, both. REST and SOAP.
 
-For POST HTTP requests, there are 3 possible modes (type of sent data)
-* multipart (form data)
-* raw text data (content type can be specified: XML, JSON, ...)
-* binary (file) - for each input file a separate HTTP request is executed
+For POST HTTP requests, there are 4 possible modes (type of sent data)
+* multipart (form data) body
+* raw data (content type can be specified: XML, JSON, ...)
+* raw data with bodies from input file(s)  - for each input file a separate HTTP request (raw data) is executed
+* multipart (form data) with bodies from an input RDF configuration - for each input set of form params a separate HTTP request is executed
 
 If sent data are multipart or raw, DPU offers possibility to preview the HTTP response in design time.
 
@@ -24,19 +25,19 @@ It also supports HTTPS requests.
 |Basic authentication | Sets BASIC authentication (user name, password) for HTTP request |
 |User name | (if authentication is on) User name for basic authentication |
 |Password | (if authentication is on) Password for basic authentication |
-|Data type | (POST method) Type of sent data in HTTP request: Form-data (multipart), Raw (text), File  |
-|Typ obsahu| (POST/raw) Type of sent raw data, set as HTTP header "Content-Type" (e.g. XML, JSON, SOAP, ...)|
+|Data type | (POST method) Type of sent data in HTTP request: Form-data (multipart), Raw (text), Raw bodies from input files, Form-data bodies from input RDF configuration  |
+|Content-type| (POST/raw) Type of sent raw data, set as HTTP header "Content-Type" (e.g. XML, JSON, SOAP, ...)|
 |Request body text encoding | (POST/text) Encoding of HTTP request body text |
-|Requesst body | (POST/text) Text sent in HTTP request body |
-|Form data | (POST/multipart) Table of sent form data in form of key - values |
+|Request body | (POST/text) Text sent in HTTP request body |
+|Form data | (POST/multipart) Table of sent form data in the form of key - values |
 
 ### Inputs and outputs
 
 |Name |Type | DataUnit | Description | Mandatory |
 |:--------|:------:|:------:|:-------------|:---------------------:|
 |requestOutput |o| FilesDataUnit | File(s) containing HTTP response(s) |x|
-|requestFilesConfig |i| FilesDataUnit | Files sent as HTTP request content | |
-|config |i| RDFDataUnit | RDF config input | |
+|requestFilesConfig |i| FilesDataUnit | Files sent as content of raw HTTP POST request | |
+|rdfConfig |i| RDFDataUnit | RDF configuration used to configure form-data bodies | |
 
 ### Advanced configuration
 
@@ -46,8 +47,41 @@ This is available only for raw mode and you can configure only the request.
 Configuration samples:
 
 ```turtle
+# to dynamically configure request URL and request body (raw data mode)
 <http://localhost/resource/config>
     <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://unifiedviews.eu/ontology/dpu/httpRequest/Config>;
     <http://unifiedviews.eu/ontology/dpu/httpRequest/requestBody> "..." ;
     <http://unifiedviews.eu/ontology/dpu/httpRequest/url> "http://semantic-web.com/service/x".
+```
+
+
+```turtle
+# two form-param bodies with the same set of three form params
+<http://localhost/resource/config>
+    <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://unifiedviews.eu/ontology/dpu/httpRequest/Config>;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/formParamBody> <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParamBody/1> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/formParamBody> <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParamBody/2> .
+
+<http://unifiedviews.eu/ontology/dpu/httpRequest/FormParamBody/1>  a <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParamBody> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/formParam> <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam1> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/formParam> <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam2> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/formParam> <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam3> .
+
+<http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam1> a <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/param> "corpusId" ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/value>  "corpus:307b420d-43ad-4771-be41-308199da95b1" .
+
+ <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam2> a <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/param> "text" ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/value>  "Test" .
+
+ <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam3> a <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/param> "title" ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/value>  "Test title" .
+
+
+ <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParamBody/2>  a <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParamBody> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/formParam> <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam1> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/formParam> <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam2> ;
+    <http://unifiedviews.eu/ontology/dpu/httpRequest/formParam> <http://unifiedviews.eu/ontology/dpu/httpRequest/FormParam3> .
 ```
