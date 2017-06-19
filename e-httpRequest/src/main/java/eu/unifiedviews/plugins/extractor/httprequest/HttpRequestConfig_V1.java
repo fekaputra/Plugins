@@ -1,15 +1,18 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
 import eu.unifiedviews.helpers.dpu.ontology.EntityDescription;
+import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParamBody;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @EntityDescription.Entity(type = HttpRequestVocabulary.STR_CONFIG_CLASS)
 public class HttpRequestConfig_V1 {
 
     public enum DataType {
-        RAW_DATA, FORM_DATA, FILE;
+        RAW_DATA, FORM_DATA, FILE, FORM_DATA_RDF;
     }
 
     public enum RequestType {
@@ -39,6 +42,17 @@ public class HttpRequestConfig_V1 {
     private Map<String, String> formDataRequestBody = new HashMap<>();
 
     private String fileName = "http_response";
+
+    @EntityDescription.Property(uri = HttpRequestVocabulary.STR_RAW_FORM_PARAMS_BODIES)
+    private List<FormParamBody> formParamBodies = new LinkedList<>();
+
+    public List<FormParamBody> getFormParamBodies() {
+        return formParamBodies;
+    }
+
+    public void setFormParamBodies(List<FormParamBody> formParamBodies) {
+        this.formParamBodies = formParamBodies;
+    }
 
     public DataType getPostRequestDataType() {
         return this.postRequestDataType;
