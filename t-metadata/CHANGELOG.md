@@ -1,6 +1,10 @@
 T-Metadata
 ----------
 
+v3.0.0
+---
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
 v2.1.4
 ---
 * Improved slovak translations

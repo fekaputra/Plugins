@@ -1,6 +1,12 @@
 E-SparqlEndpoint
 ----------
 
+v2.0.0
+---
+* Connections properly closed
+* Fault tolerance support removed (not used anyway)
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
 v1.1.0
 ---
 * Added support for chunked queries. The given query can be rewritten so that results are chunked in order to avoid timeouts, result sets max rows limitations, etc.

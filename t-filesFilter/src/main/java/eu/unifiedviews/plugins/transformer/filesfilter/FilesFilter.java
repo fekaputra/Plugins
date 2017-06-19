@@ -1,12 +1,6 @@
 package eu.unifiedviews.plugins.transformer.filesfilter;
 
-import java.util.List;
-import java.util.regex.Matcher;
-
-import org.openrdf.repository.RepositoryConnection;
-
 import eu.unifiedviews.dataunit.DataUnit;
-import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.files.FilesDataUnit;
 import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
@@ -19,11 +13,13 @@ import eu.unifiedviews.helpers.dpu.config.migration.ConfigurationUpdate;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
-import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
 import eu.unifiedviews.helpers.dpu.rdf.sparql.SparqlUtils;
-import java.util.logging.Level;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.regex.Matcher;
 
 @DPU.AsTransformer
 public class FilesFilter extends AbstractDpu<FilesFilterConfig_V1> {

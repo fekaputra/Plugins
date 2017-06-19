@@ -18,8 +18,11 @@ It supports [RDF Validation extension](https://grips.semantic-web.at/display/UDD
 |Generate table/row class | Class is generated for table entities statement with type |
 |Generate subject for table | Subject for each table that point to all rows in given table is created |
 |Generate labels | rdfs:labels are generated to column URIs |
-|Advanced key column | 'Key column' is interpreted as template. Experimental functionality! |
+|Advanced key column | 'Key column' is interpreted as template. An example of a template is http://localhost/{type}/content/{id}, where "type" and "id" are names of the columns in the input CSV file |
 |Auto type as string | All auto types are considered to be strings |
+
+Simple mapping tab allows to define how the CSV columns should be mapped to the resulting predicates, including also information about the datatypes.
+Note: Advanced mapping tab is equivalent to Simple mapping tab, but it allows to specify templates for values of the predicates. A sample template is http://localhost/{type}/content/{id}, where "type" and "id" are names of the columns in the input CSV file.
 
 ### Inputs and outputs
 

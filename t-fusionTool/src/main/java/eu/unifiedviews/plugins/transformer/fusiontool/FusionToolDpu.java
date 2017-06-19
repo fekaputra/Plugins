@@ -146,7 +146,7 @@ public class FusionToolDpu extends AbstractDpu<FusionToolConfig> {
                 throw new InvalidInputException("Invalid namespace prefix '" + prefixEntry.getKey() + "'");
             }
             if (!prefixEntry.getValue().isEmpty() && !ODCSUtils.isValidIRI(prefixEntry.getValue())) {
-                throw new InvalidInputException("Invalid namespace prefix definition for URI '" + prefixEntry.getValue() + "'");
+                throw new InvalidInputException("Invalid namespace prefix definition for IRI '" + prefixEntry.getValue() + "'");
             }
         }
     }

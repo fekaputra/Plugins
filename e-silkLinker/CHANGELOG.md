@@ -1,6 +1,10 @@
 E-SilkLinker
 ----------
 
+v3.0.0
+---
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
 v2.0.2
 ---
 * Improved handling of errors/warnings produced by the Silk process. Errors directly cause the DPU to fail. 

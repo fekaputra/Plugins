@@ -20,6 +20,16 @@ public class FilesDownloadConfig_V1 implements VersionedConfig<FilesDownloadConf
 
     private boolean checkForDuplicatedInputFiles = false;
 
+    private int waitBetweenCallsMs = 0;
+
+    public int getWaitBetweenCallsMs() {
+        return waitBetweenCallsMs;
+    }
+
+    public void setWaitBetweenCallsMs(int waitBetweenCallsMs) {
+        this.waitBetweenCallsMs = waitBetweenCallsMs;
+    }
+
     public List<VfsFile> getVfsFiles() {
         return vfsFiles;
     }

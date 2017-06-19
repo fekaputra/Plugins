@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import eu.unifiedviews.dataunit.DataUnit;
 import eu.unifiedviews.dataunit.files.FilesDataUnit;
 import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
+import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
 import eu.unifiedviews.dpu.DPU;
 import eu.unifiedviews.dpu.DPUContext;
 import eu.unifiedviews.dpu.DPUException;
@@ -28,8 +29,10 @@ import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
+import eu.unifiedviews.helpers.dpu.extension.rdf.RdfConfiguration;
 import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.DataType;
 import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.RequestType;
+import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParamBody;
 
 @DPU.AsExtractor
 public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
@@ -49,12 +52,21 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
     @DataUnit.AsInput(name = "requestFilesConfig", optional = true)
     public FilesDataUnit requestFilesConfig;
 
+    @RdfConfiguration.ContainsConfiguration
+    @DataUnit.AsInput(name = "rdfConfig", optional = true)
+    public RDFDataUnit rdfConfiguration;
+
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;
+
+    @ExtensionInitializer.Init
+    public RdfConfiguration _rdfConfiguration;
 
     private HttpRequestExecutor requestExecutor;
 
     protected CloseableHttpClient client;
+
+    protected HttpStateWrapper httpWrapper;
 
     public HttpRequest() {
         super(HttpRequestVaadinDialog.class, ConfigHistory.noHistory(HttpRequestConfig_V1.class));
@@ -68,7 +80,13 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
         String longMessage = String.valueOf(this.config);
         this.context.sendMessage(DPUContext.MessageType.INFO, shortMessage, longMessage);
         CloseableHttpResponse httpResponse = null;
+
+        //TODO Deprecated and should be removed (see line below where client is prepared)
         this.client = HttpClients.custom().disableContentCompression().build();
+
+        //initialize the request executor
+        requestExecutor.initialize(config);
+
         try {
             switch (this.config.getRequestType()) {
                 case GET:
@@ -89,6 +107,9 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
                             break;
                         case FILE:
                             executeFileHttpRequests(this.client);
+                            break;
+                        case FORM_DATA_RDF:
+                            executeFormDataHttpRequestsForInputRdfConfiguration(this.client);
                             break;
                         default:
                             String errorMsg = String.format("Unknown data type; Supported data types are: %s", String.valueOf(DataType.values()));
@@ -113,6 +134,7 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
             HttpRequestHelper.tryCloseHttpResponse(httpResponse);
         }
     }
+
 
     /**
      * Executes HTTP request for each input file
@@ -146,6 +168,7 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
                     HttpRequestHelper.tryCloseHttpResponse(httpResponse);
                 }
             }
+
             if (errorCounter == files.size()) {
                 ContextUtils.sendError(this.ctx, "dpu.errors.files.all", "dpu.errors.files.all.long");
                 return;
@@ -156,14 +179,54 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
 
     }
 
+    /**
+     * Executes HTTP request for each input file
+     *
+     * @param client
+     * @throws DPUException
+     */
+    private void executeFormDataHttpRequestsForInputRdfConfiguration(CloseableHttpClient client) throws DPUException {
+
+        CloseableHttpResponse httpResponse = null;
+        int errorCounter = 0;
+        int counter = 1;
+
+        if (config.getFormParamBodies() == null || config.getFormParamBodies().isEmpty()) {
+            throw new DPUException("RDF configuration with form param bodies is missing. The processing ends with an error");
+        }
+        LOG.info("Sending POST requests with bodies coming over RDF data unit");
+        LOG.info("Number of bodies: {}", config.getFormParamBodies().size());
+
+        for (FormParamBody paramBody : config.getFormParamBodies()) {
+            LOG.info("ParamBody: {}", paramBody);
+            try {
+                String targetFileName = String.format("%03d", counter++);
+                httpResponse = this.requestExecutor.sendMultipartFormRequestFromRdf(this.config, paramBody, client);
+                checkResponseAndCreateFile(httpResponse, targetFileName);
+            } catch (Exception e) {
+                ContextUtils.sendShortWarn(this.ctx, "dpu.errors.request.formParamRdf", paramBody);
+                errorCounter++;
+            } finally {
+                HttpRequestHelper.tryCloseHttpResponse(httpResponse);
+            }
+        }
+
+        if (errorCounter == config.getFormParamBodies().size()) {
+            ContextUtils.sendError(this.ctx, "dpu.errors.files.all", "dpu.errors.files.all.long");
+            return;
+        }
+
+    }
+
+
     private void checkResponseAndCreateFile(CloseableHttpResponse httpResponse, String fileName) throws DPUException {
         if (httpResponse == null) {
             throw ContextUtils.dpuException(this.ctx, "dpu.errors.response");
         }
 
-        LOG.info("Going to create file from HTTP response body");
+        LOG.debug("Going to create file from HTTP response body");
         createFileFromResponse(httpResponse, fileName);
-        LOG.info("File from HTTP response successfully created");
+        LOG.debug("File from HTTP response successfully created");
     }
 
     /**

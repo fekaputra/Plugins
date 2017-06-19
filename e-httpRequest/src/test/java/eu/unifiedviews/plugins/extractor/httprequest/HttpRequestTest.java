@@ -1,14 +1,12 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
+import cz.cuni.mff.xrg.odcs.dpu.test.TestEnvironment;
+import eu.unifiedviews.dataunit.files.FilesDataUnit;
+import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
+import eu.unifiedviews.dpu.DPUException;
+import eu.unifiedviews.helpers.dpu.test.config.ConfigurationBuilder;
+import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.DataType;
+import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.RequestType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -24,17 +22,14 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cz.cuni.mff.xrg.odcs.dpu.test.TestEnvironment;
-import eu.unifiedviews.dataunit.files.FilesDataUnit;
-import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
-import eu.unifiedviews.dpu.DPUException;
-import eu.unifiedviews.helpers.dpu.test.config.ConfigurationBuilder;
-import eu.unifiedviews.plugins.extractor.httprequest.HttpRequest;
-import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1;
-import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestExecutor;
-import eu.unifiedviews.plugins.extractor.httprequest.RequestContentType;
-import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.DataType;
-import eu.unifiedviews.plugins.extractor.httprequest.HttpRequestConfig_V1.RequestType;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class HttpRequestTest {
 

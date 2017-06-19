@@ -4,15 +4,15 @@
     <parent>
         <groupId>eu.unifiedviews</groupId>
         <artifactId>uv-pom-dpu</artifactId>
-        <version>2.1.4</version>
+        <version>3.0.0</version>
         <relativePath />
     </parent>
 
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-l-filesToVirtuoso</artifactId>
     <name>L-FilesToVirtuoso</name>
-    <description>VirtuosoLoader issues Virtuoso internal functions to load directory of RDF data.</description>
-    <version>2.1.5</version>
+    <description>Loader to Virtuoso RDF store. Uses Virtuoso internal functions to load directory of RDF data.</description>
+    <version>3.0.0</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -23,9 +23,9 @@
     <dependencies>
         <!-- Virtuoso. -->
         <dependency>
-            <groupId>eu.comsode</groupId>
-            <artifactId>com.openlinksw.virtuoso.virt_sesame2</artifactId>
-            <version>1.21-7-develop-SNAPSHOT</version>
+            <groupId>com.openlinksw.virtuoso</groupId>
+            <artifactId>virt_rdf4j</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>eu.comsode</groupId>
@@ -53,9 +53,12 @@
 
     <repositories>
         <repository>
-            <id>maven.eea.sk</id>
-            <name>maven.eea.sk-public</name>
-            <url>http://maven.eea.sk/artifactory/public/</url>
+            <id>uv-releases</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>uv-snapshots</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 

@@ -6,18 +6,18 @@ import cz.cuni.mff.odcleanstore.fusiontool.loaders.data.AllTriplesLoader;
 import cz.cuni.mff.odcleanstore.fusiontool.util.LDFusionToolUtils;
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
-import org.openrdf.OpenRDFException;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFHandler;
-import org.openrdf.rio.RDFHandlerException;
+import org.eclipse.rdf4j.OpenRDFException;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.TupleQueryResult;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFHandler;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
             + "\n LIMIT %2$s OFFSET %3$s";
 
     private RepositoryConnection _connection;
-    private final URI defaultContext;
+    private final IRI defaultContext;
     private final RDFDataUnit rdfInput;
     private int maxSparqlResultsSize = LDFTConfigConstants.DEFAULT_SPARQL_RESULT_MAX_ROWS;
 
@@ -96,7 +96,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
         }
     }
 
-    private int loadAllTriplesForGraph(URI dataGraphURI, RDFHandler rdfHandler) throws OpenRDFException, DataUnitException {
+    private int loadAllTriplesForGraph(IRI dataGraphURI, RDFHandler rdfHandler) throws OpenRDFException, DataUnitException {
         LOG.debug("Loading input quads from data unit for graph {}", dataGraphURI);
         int totalLoadedQuads = 0;
         int lastLoadedQuads = Integer.MAX_VALUE;
@@ -112,7 +112,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
         return totalLoadedQuads;
     }
 
-    private int addQuadsFromQuery(URI dataGraphURI, String sparqlQuery, RDFHandler rdfHandler) throws OpenRDFException, DataUnitException {
+    private int addQuadsFromQuery(IRI dataGraphURI, String sparqlQuery, RDFHandler rdfHandler) throws OpenRDFException, DataUnitException {
         int quadCount = 0;
         RepositoryConnection connection = getConnection();
         TupleQueryResult resultSet = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparqlQuery).evaluate();
@@ -122,7 +122,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
                 BindingSet bindings = resultSet.next();
                 Statement quad = valueFactory.createStatement(
                         (Resource) bindings.getValue("s"),
-                        (URI) bindings.getValue("p"),
+                        (IRI) bindings.getValue("p"),
                         bindings.getValue("o"),
                         dataGraphURI);
                 rdfHandler.handleStatement(quad);
@@ -159,7 +159,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
     //    }
     //}
 
-    private String formatQuery(URI graph, int limit, int offset) {
+    private String formatQuery(IRI graph, int limit, int offset) {
         return String.format(Locale.ROOT,
                 LOAD_SPARQL_QUERY,
                 graph.stringValue(),
@@ -168,7 +168,7 @@ public class AllTriplesDataUnitLoader implements AllTriplesLoader {
     }
 
     @Override
-    public URI getDefaultContext() throws LDFusionToolException {
+    public IRI getDefaultContext() throws LDFusionToolException {
         return defaultContext;
     }
 

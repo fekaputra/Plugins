@@ -1,6 +1,12 @@
 E-FilesDownload
 ----------
 
+v3.0.0
+---
+* Added support for custom delay (in ms)  between the HTTP calls
+* Adjusted creation of Virtual Path (see the user documentation)
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
 v2.1.6
 ---
 * Added support for soft failure when downloading files - so in case the soft failure is checked in the configuration dialog, when there is a problem processing certain VFS entry or file, warning is shown but the execution of the DPU continues. If unchecked (default), in case of problem processing any VFS entry/file, the execution fails.

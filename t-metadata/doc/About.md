@@ -1,6 +1,8 @@
 ### Description
 
-Generates metadata on output from input
+Generates metadata on output which describes input.
+
+**Deprecated. This DPU was mainly relevant for COMSODE project and will be removed from UnifiedViews Core DPUs in the future**
 
 ### Configuration parameters
 

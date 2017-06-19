@@ -21,7 +21,7 @@ import eu.unifiedviews.helpers.dpu.extension.rdf.simple.WritableSimpleRdf;
 import eu.unifiedviews.plugins.transformer.tabular.TabularVaadinDialog;
 import eu.unifiedviews.plugins.transformer.tabular.parser.ParseFailed;
 import eu.unifiedviews.plugins.transformer.tabular.parser.Parser;
-import org.openrdf.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
@@ -108,11 +108,11 @@ public class Tabular extends AbstractDpu<TabularConfig_V2> {
                 if (config.isUseTableSubject()) {
                     // Prepare subject for table.
                     // TODO: We can use better subject here!
-                    final URI tableURI = faultTolerance.execute(new FaultTolerance.ActionReturn<URI>() {
+                    final IRI tableURI = faultTolerance.execute(new FaultTolerance.ActionReturn<IRI>() {
 
                         @Override
-                        public URI action() throws Exception {
-                            return rdfTableWrap.getValueFactory().createURI(entry.getFileURIString());
+                        public IRI action() throws Exception {
+                            return rdfTableWrap.getValueFactory().createIRI(entry.getFileURIString());
                         }
                     });
                     // Set as a table subject.

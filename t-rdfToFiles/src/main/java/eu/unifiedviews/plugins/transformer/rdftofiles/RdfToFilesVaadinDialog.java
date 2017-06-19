@@ -3,11 +3,13 @@ package eu.unifiedviews.plugins.transformer.rdftofiles;
 import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import eu.unifiedviews.dpu.config.DPUConfigException;
-import org.openrdf.rio.RDFFormat;
+import eu.unifiedviews.helpers.dpu.vaadin.dialog.AbstractDialog;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParserRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.unifiedviews.helpers.dpu.vaadin.dialog.AbstractDialog;
+import java.util.Set;
 
 public class RdfToFilesVaadinDialog extends AbstractDialog<RdfToFilesConfig_V2> {
 
@@ -24,6 +26,9 @@ public class RdfToFilesVaadinDialog extends AbstractDialog<RdfToFilesConfig_V2> 
     private TextField txtOutGraphName;
 
     private TextField txtSingleFileOutputSymbolicName;
+
+    private Set<RDFFormat> rdfFormats = RDFParserRegistry.getInstance().getKeys();
+
 
     public RdfToFilesVaadinDialog() {
         super(RdfToFiles.class);
@@ -53,7 +58,8 @@ public class RdfToFilesVaadinDialog extends AbstractDialog<RdfToFilesConfig_V2> 
         mainLayout.setSpacing(true);
 
         selectRdfFormat = new NativeSelect(ctx.tr("rdfToFiles.dialog.format"));
-        for (RDFFormat item : RDFFormat.values()) {
+
+        for (RDFFormat item : rdfFormats) {
             selectRdfFormat.addItem(item);
             selectRdfFormat.setItemCaption(item, item.getName());
         }
@@ -101,7 +107,7 @@ public class RdfToFilesVaadinDialog extends AbstractDialog<RdfToFilesConfig_V2> 
 
     @Override
     protected void setConfiguration(RdfToFilesConfig_V2 c) throws DPUConfigException {
-        selectRdfFormat.setValue(RDFFormat.valueOf(c.getRdfFileFormat()));
+        selectRdfFormat.setValue((RDFFormat) RDFFormat.matchFileName(c.getRdfFileFormat(), rdfFormats).get());
         checkGenGraphFile.setValue(c.isGenGraphFile());
         if (c.isGenGraphFile()) {
             txtOutGraphName.setValue(c.getOutGraphName());

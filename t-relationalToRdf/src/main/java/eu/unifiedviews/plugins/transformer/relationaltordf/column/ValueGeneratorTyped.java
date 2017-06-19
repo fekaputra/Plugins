@@ -3,9 +3,9 @@ package eu.unifiedviews.plugins.transformer.relationaltordf.column;
 import java.util.List;
 import java.util.Map;
 
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
 
 import eu.unifiedviews.plugins.transformer.relationaltordf.ConversionFailed;
 
@@ -16,9 +16,9 @@ public class ValueGeneratorTyped extends ValueGeneratorReplace {
 
     private final String typeStr;
 
-    private URI typeUri;
+    private IRI typeUri;
 
-    public ValueGeneratorTyped(URI uri, String template, String typeStr) {
+    public ValueGeneratorTyped(IRI uri, String template, String typeStr) {
         super(uri, template);
         this.typeStr = typeStr;
     }
@@ -36,7 +36,7 @@ public class ValueGeneratorTyped extends ValueGeneratorReplace {
     @Override
     public void compile(Map<String, Integer> nameToIndex, ValueFactory valueFactory) throws ConversionFailed {
         super.compile(nameToIndex, valueFactory);
-        this.typeUri = valueFactory.createURI(this.typeStr);
+        this.typeUri = valueFactory.createIRI(this.typeStr);
     }
 
 }
