@@ -1,10 +1,8 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import eu.unifiedviews.dpu.DPUException;
+import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParam;
+import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParamBody;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -29,9 +27,10 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.unifiedviews.dpu.DPUException;
-import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParam;
-import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParamBody;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class HttpRequestExecutor {
 
@@ -153,6 +152,8 @@ public class HttpRequestExecutor {
             for (String key : config.getFormDataRequestBody().keySet()) {
                 builder.addTextBody(key, config.getFormDataRequestBody().get(key));
             }
+            ContentType contentType = ContentType.MULTIPART_FORM_DATA.withCharset(config.getCharset());
+            builder.setContentType(contentType);
             HttpEntity entity = builder.build();
             request.setEntity(entity);
 
@@ -195,6 +196,8 @@ public class HttpRequestExecutor {
             for (FormParam param : paramsBody.getFormParams()) {
                 builder.addTextBody(param.getParam(), param.getValue());
             }
+            ContentType contentType = ContentType.MULTIPART_FORM_DATA.withCharset(config.getCharset());
+            builder.setContentType(contentType);
             HttpEntity entity = builder.build();
             request.setEntity(entity);
 
