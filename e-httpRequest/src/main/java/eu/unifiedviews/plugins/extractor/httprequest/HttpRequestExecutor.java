@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 public class HttpRequestExecutor {
 
@@ -194,7 +196,7 @@ public class HttpRequestExecutor {
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             for (FormParam param : paramsBody.getFormParams()) {
-                builder.addTextBody(param.getParam(), param.getValue());
+                builder.addTextBody(param.getParam(), param.getValue(), ContentType.TEXT_PLAIN.withCharset(config.getCharset()));
             }
             ContentType contentType = ContentType.MULTIPART_FORM_DATA.withCharset(config.getCharset());
             builder.setContentType(contentType);
