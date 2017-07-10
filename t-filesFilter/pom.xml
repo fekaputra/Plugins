@@ -12,7 +12,7 @@
     <artifactId>uv-t-filesFilter</artifactId>
     <description>Filter files.</description>
     <packaging>bundle</packaging>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
     <name>T-FilesFilter</name>
 
     <properties>

@@ -12,7 +12,7 @@
 	<artifactId>uv-t-metadata</artifactId>
 	<name>T-Metadata</name>
 	<description>Generates metadata on output from input</description>
-	<version>3.0.0</version>
+	<version>3.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<properties>

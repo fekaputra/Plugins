@@ -12,7 +12,7 @@
     <artifactId>uv-t-tabularToRelational</artifactId>
     <name>T-TabularToRelational</name>
     <description>Parses tabular file to relational data unit</description>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
