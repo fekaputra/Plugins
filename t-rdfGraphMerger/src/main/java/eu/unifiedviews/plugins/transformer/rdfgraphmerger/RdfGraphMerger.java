@@ -38,6 +38,9 @@ public class RdfGraphMerger extends AbstractDpu<RdfGraphMergerConfig_V1> {
     public WritableRDFDataUnit rdfOutput;
 
     @ExtensionInitializer.Init
+    public RdfProfiler rdfProfiler;
+
+    @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;
 
     public RdfGraphMerger() {

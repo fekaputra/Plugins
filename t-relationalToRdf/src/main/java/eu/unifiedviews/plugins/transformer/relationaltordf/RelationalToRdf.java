@@ -45,6 +45,9 @@ public class RelationalToRdf extends AbstractDpu<RelationalToRdfConfig_V1> {
     public RdfValidation rdfValidation;
 
     @ExtensionInitializer.Init
+    public RdfProfiler rdfProfiler;
+
+    @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;
 
     public RelationalToRdf() {

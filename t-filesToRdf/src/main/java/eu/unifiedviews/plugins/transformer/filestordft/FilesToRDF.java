@@ -66,6 +66,9 @@ public class FilesToRDF extends AbstractDpu<FilesToRDFConfig_V1> {
     public RdfValidation rdfValidation;
 
     @ExtensionInitializer.Init
+    public RdfProfiler rdfProfiler;
+
+    @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;
 
     @ExtensionInitializer.Init(param = "eu.unifiedviews.plugins.transformer.filestordft.FilesToRDFConfig__V1")
