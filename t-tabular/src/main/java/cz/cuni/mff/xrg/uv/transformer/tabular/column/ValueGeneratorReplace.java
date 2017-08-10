@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
 
 import eu.unifiedviews.plugins.transformer.tabular.column.ValueGenerator;
 import eu.unifiedviews.plugins.transformer.tabular.column.ValueGeneratorString;
@@ -97,7 +97,7 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
     /**
      * Used URI for column.
      */
-    private final URI uri;
+    private final IRI uri;
 
     /**
      * Filed reference according to
@@ -115,7 +115,7 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
      * @param uri
      * @param template Replace template without type, language or \\ < > chars
      */
-    protected ValueGeneratorReplace(URI uri, String template) {
+    protected ValueGeneratorReplace(IRI uri, String template) {
         this.uri = uri;
         this.template = template;
     }
@@ -180,7 +180,7 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
 
 
     @Override
-    public URI getUri() {
+    public IRI getUri() {
         return uri;
     }
 
@@ -237,7 +237,7 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
      * @return
      * @throws ParseFailed
      */
-    public static ValueGeneratorReplace create(URI uri, String template)
+    public static ValueGeneratorReplace create(IRI uri, String template)
             throws ParseFailed {
         if (template.startsWith("\"")) {
             // string

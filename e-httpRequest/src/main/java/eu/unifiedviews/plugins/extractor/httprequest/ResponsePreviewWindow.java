@@ -1,7 +1,10 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
-import java.io.IOException;
-
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import eu.unifiedviews.dpu.DPUException;
+import eu.unifiedviews.helpers.dpu.vaadin.dialog.UserDialogContext;
 import org.apache.http.Header;
 import org.apache.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -11,15 +14,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-
-import eu.unifiedviews.helpers.dpu.vaadin.dialog.UserDialogContext;
+import java.io.IOException;
 
 public class ResponsePreviewWindow extends Window {
 
@@ -28,6 +23,8 @@ public class ResponsePreviewWindow extends Window {
     private static final Logger LOG = LoggerFactory.getLogger(ResponsePreviewWindow.class);
 
     private HttpRequestExecutor requestExecutor;
+
+
 
     private TextArea httpHeadersArea;
 
@@ -44,6 +41,13 @@ public class ResponsePreviewWindow extends Window {
     public ResponsePreviewWindow(UserDialogContext context, HttpRequestConfig_V1 config) {
         this.context = context;
         this.requestExecutor = new HttpRequestExecutor();
+        try {
+            this.requestExecutor.initialize(config);
+        } catch (DPUException ex) {
+            LOG.error("Cannot run test service call because: {}, details: {}", ex.getLocalizedMessage(), ex.getStackTrace());
+        }
+        //prepare host, http client, context (to cache credentials)
+        //furthermore such objects should be used when calling services
         buildLayout();
         setCaption(config.getRequestType() + " | " + config.getRequestURL());
         sendHttpRequest(config);

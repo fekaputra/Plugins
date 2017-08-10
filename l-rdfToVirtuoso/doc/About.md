@@ -1,6 +1,6 @@
 ### Description
 
-Loads RDF graphs to external Virtuoso instance.
+Loads RDF graphs to external Virtuoso instance (using OpenRDF Repository API (VirtuosoRepository))
 Optionally, it copies input data to optional output data unit `rdfOutput`, including metadata about stored graphs, target graph names.
 
 ### Configuration parameters

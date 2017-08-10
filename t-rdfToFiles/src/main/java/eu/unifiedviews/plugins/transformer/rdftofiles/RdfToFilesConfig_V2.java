@@ -1,8 +1,7 @@
 package eu.unifiedviews.plugins.transformer.rdftofiles;
 
-import org.openrdf.rio.RDFFormat;
-
 import eu.unifiedviews.helpers.dpu.ontology.EntityDescription;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 @EntityDescription.Entity(type = RdfToFilesVocabulary.STR_CONFIG_CLASS)
 public class RdfToFilesConfig_V2 {

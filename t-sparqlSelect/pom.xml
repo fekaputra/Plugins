@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.unifiedviews</groupId>
         <artifactId>uv-pom-dpu</artifactId>
-        <version>2.1.4</version>
+        <version>3.0.0</version>
         <relativePath />
     </parent>
 
@@ -12,7 +12,7 @@
     <artifactId>uv-t-sparqlSelect</artifactId>
     <name>T-SparqlSelect</name>
     <description>SPARQL select transformer ~ RDF to csv. Does not validate query!</description>
-    <version>2.1.6-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -22,9 +22,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openrdf.sesame</groupId>
-            <artifactId>sesame-queryresultio-text</artifactId>
-            <version>${sesame.version}</version>
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-queryresultio-text</artifactId>
+            <version>${rdf4j.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -44,17 +44,20 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.openrdf.sesame</groupId>
-            <artifactId>sesame-queryparser-sparql</artifactId>
-            <version>${sesame.version}</version>
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-queryparser-sparql</artifactId>
+            <version>${rdf4j.version}</version>
         </dependency>
     </dependencies>
 
     <repositories>
         <repository>
-            <id>maven.eea.sk</id>
-            <name>maven.eea.sk-public</name>
-            <url>http://maven.eea.sk/artifactory/public/</url>
+            <id>uv-releases</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>uv-snapshots</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 

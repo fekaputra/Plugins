@@ -1,12 +1,11 @@
 package eu.unifiedviews.plugins.transformer.tabular.column;
 
-import java.util.List;
-
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-
 import cz.cuni.mff.xrg.uv.transformer.tabular.column.ValueGeneratorReplace;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+
+import java.util.List;
 
 /**
  * Create URI.
@@ -15,7 +14,7 @@ import cz.cuni.mff.xrg.uv.transformer.tabular.column.ValueGeneratorReplace;
  */
 public class ValueGeneratorUri extends ValueGeneratorReplace {
 
-    public ValueGeneratorUri(URI uri, String template) {
+    public ValueGeneratorUri(IRI uri, String template) {
         super(uri, template);
     }
 
@@ -27,7 +26,7 @@ public class ValueGeneratorUri extends ValueGeneratorReplace {
         }
 
         // the replace thing is done as a part of ValueGeneratorReplace
-        return valueFactory.createURI(rawResult);
+        return valueFactory.createIRI(rawResult);
     }
 
 }

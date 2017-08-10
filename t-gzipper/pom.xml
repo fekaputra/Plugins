@@ -4,15 +4,15 @@
 	<parent>
 		<groupId>eu.unifiedviews</groupId>
 		<artifactId>uv-pom-dpu</artifactId>
-		<version>2.1.4</version>
+		<version>3.0.0</version>
 		<relativePath />
 	</parent>
 
 	<groupId>eu.unifiedviews.plugins</groupId>
 	<artifactId>uv-t-gzipper</artifactId>
-	<description>Transform any file to archive using GZIP compression.</description>
+	<description>Transforms any file to archive using GZIP compression.</description>
 	<packaging>bundle</packaging>
-	<version>1.0.5-SNAPSHOT</version>
+	<version>2.0.1-SNAPSHOT</version>
 	<name>T-Gzipper</name>
 
 	<properties>
@@ -46,9 +46,12 @@
 
 	<repositories>
 		<repository>
-			<id>maven.eea.sk</id>
-			<name>maven.eea.sk-public</name>
-			<url>http://maven.eea.sk/artifactory/public/</url>
+			<id>uv-releases</id>
+			<url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>uv-snapshots</id>
+			<url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 

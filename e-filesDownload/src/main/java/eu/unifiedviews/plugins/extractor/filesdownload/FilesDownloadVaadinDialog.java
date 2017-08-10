@@ -25,10 +25,12 @@ public class FilesDownloadVaadinDialog extends AbstractDialog<FilesDownloadConfi
     private final Container container = new BeanItemContainer<>(VfsFile.class);
 
     private ObjectProperty<Integer> defaultTimeout = new ObjectProperty<Integer>(0);
+    private ObjectProperty<Integer> waitBeetweenCallsMs = new ObjectProperty<Integer>(0);
 
     private ObjectProperty<Boolean> ignoreTlsErrors = new ObjectProperty<Boolean>(Boolean.FALSE);
 
     TextField txtDefaultTimeout;
+    TextField txtWaitBetweenCallsMs;
 
     private CheckBox chkSoftFail;
     private CheckBox chkCheckDuplicates;
@@ -147,6 +149,28 @@ public class FilesDownloadVaadinDialog extends AbstractDialog<FilesDownloadConfi
         chkCheckDuplicates.setDescription(ctx.tr("FilesDownloadVaadinDialog.chkCheckDuplicates.description"));
         bottomLayout.addComponent(chkCheckDuplicates);
 
+        txtWaitBetweenCallsMs = new TextField(ctx.tr("FilesDownloadVaadinDialog.waitBetweenCallsMs.caption"), waitBeetweenCallsMs);
+        txtWaitBetweenCallsMs.setNullRepresentation("");
+        txtWaitBetweenCallsMs.setConversionError(ctx.tr("FilesDownloadVaadinDialog.defaultTimeout.conversionError"));
+        txtWaitBetweenCallsMs.setImmediate(true);
+        txtWaitBetweenCallsMs.setLocale(ctx.getDialogMasterContext().getDialogContext().getLocale());
+        txtWaitBetweenCallsMs.addValidator(new Validator() {
+
+            @Override
+            public void validate(Object value) throws InvalidValueException {
+                if (value != null) {
+                    if (value instanceof Integer) {
+                        if (((Integer) value) < 0) {
+                            throw new InvalidValueException(ctx.tr("FilesDownloadVaadinDialog.defaultTimeout.nonnegative"));
+                        }
+                    }
+                } else {
+                    throw new InvalidValueException(ctx.tr("FilesDownloadVaadinDialog.defaultTimeout.nonnegative"));
+                }
+            }
+        });
+        bottomLayout.addComponent(txtWaitBetweenCallsMs);
+
         mainLayout.addComponent(bottomLayout);
 
         setCompositionRoot(mainLayout);
@@ -217,6 +241,10 @@ public class FilesDownloadVaadinDialog extends AbstractDialog<FilesDownloadConfi
         result.setIgnoreTlsErrors(ignoreTlsErrors.getValue());
         result.setSoftFail(chkSoftFail.getValue());
         result.setCheckForDuplicatedInputFiles(chkCheckDuplicates.getValue());
+        if (!txtWaitBetweenCallsMs.isValid()) {
+            throw new DPUConfigException(ctx.tr("FilesDownloadVaadinDialog.getConfiguration.invalid"));
+        }
+        result.setWaitBetweenCallsMs(waitBeetweenCallsMs.getValue());
         return result;
     }
 
@@ -289,6 +317,7 @@ public class FilesDownloadVaadinDialog extends AbstractDialog<FilesDownloadConfi
         ignoreTlsErrors.setValue(config.isIgnoreTlsErrors());
         chkSoftFail.setValue(config.isSoftFail());
         chkCheckDuplicates.setValue(config.isCheckForDuplicatedInputFiles());
+        waitBeetweenCallsMs.setValue(config.getWaitBetweenCallsMs());
     }
 
     @Override

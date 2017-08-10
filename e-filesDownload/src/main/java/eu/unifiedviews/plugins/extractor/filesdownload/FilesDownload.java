@@ -4,12 +4,13 @@ import cz.cuni.mff.xrg.uv.extractor.filesfromlocal.FilesFromLocalConfig_V1;
 import cz.cuni.mff.xrg.uv.extractor.httpdownload.HttpDownloadConfig_V2;
 import cz.cuni.mff.xrg.uv.extractor.scp.FilesFromScpConfig_V1;
 import eu.unifiedviews.dataunit.DataUnit;
+import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.files.FilesDataUnit;
 import eu.unifiedviews.dataunit.files.WritableFilesDataUnit;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
 import eu.unifiedviews.dpu.DPU;
 import eu.unifiedviews.dpu.DPUException;
-import eu.unifiedviews.helpers.dataunit.files.FilesDataUnitUtils;
+import eu.unifiedviews.helpers.dataunit.files.FilesHelper;
 import eu.unifiedviews.helpers.dataunit.resource.Resource;
 import eu.unifiedviews.helpers.dataunit.resource.ResourceHelpers;
 import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
@@ -40,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -107,7 +110,7 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
         try {
             standardFileSystemManager.setFilesCache(new NullFilesCache());
             standardFileSystemManager.init();
-        } catch (FileSystemException ex) {
+        } catch (org.apache.commons.vfs2.FileSystemException ex) {
             throw ContextUtils.dpuException(ctx, ex, "FilesDownload.execute.exception");
         }
         // For each file in configuration.
@@ -169,7 +172,7 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
             try {
                 fileObjects = standardFileSystemManager.resolveFile(vfsFile.getUri(), fileSystemOptions)
                         .findFiles(new AllFileSelector());
-            } catch (FileSystemException ex) {
+            } catch (org.apache.commons.vfs2.FileSystemException ex) {
 
                 if (config.isSoftFail()) {
                     ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.processingproblem", ex, vfsFile.getUri());
@@ -180,6 +183,7 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                 }
             }
 
+
             if (fileObjects == null) {
                 // null files
 
@@ -188,7 +192,8 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                     continue;
                 }
                 else {
-                    throw ContextUtils.dpuException(ctx, "FilesDownload.execute.exception.nofile", vfsFile.getUri());
+                    ContextUtils.sendError(ctx,"FilesDownload.execute.exception.nofile", "FilesDownload.execute.exception.nofile.detail", vfsFile.getFileName(), vfsFile.getUri());
+                    return;
                 }
             }
 
@@ -209,10 +214,18 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
             boolean errorInFileForVfsEntry = false;
             for (FileObject fileObject : fileObjects) {
 
+                if (config.getWaitBetweenCallsMs() > 0) {
+                    try {
+                        Thread.sleep(config.getWaitBetweenCallsMs());
+                    } catch (InterruptedException e) {
+                        LOG.warn(e.getLocalizedMessage(),e);
+                    }
+                }
+
                 boolean isFile = false;
                 try {
                     isFile = FileType.FILE.equals(fileObject.getType());
-                } catch (FileSystemException ex) {
+                } catch (org.apache.commons.vfs2.FileSystemException ex) {
 
                     if (config.isSoftFail()) {
                         ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.processingproblem", ex, vfsFile.getUri());
@@ -227,43 +240,43 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                     //we process only files, not folders
                     fileProgress++;
                     totalNumberOfFiles++;
-//                    if (fileProgress % (int) Math.ceil(fileObjects.length / 10.0) == 0) {
-//                        LOG.info("Downloading progress (percentage of files for the given entry): {}%", numberFormat.format((double) fileProgress / (double) fileObjects.length * 100));
-//                    }
-                    LOG.info("Processing file with name: {}", fileObject.getName());
-                    // Get file name.
-                    final String fileName;
+
+                    LOG.info("Processing file with name: {}, original entry: {}", fileObject.getName(), vfsFile.getUri().toString());
+                    final String symbolicName;
+                    final String virtualPath = getVirtualPathForFile(vfsFile.getUri(), fileObject.getName(), fileObjects.length > 1);
                     if (StringUtils.isNotBlank(vfsFile.getFileName())) {
                         if (useFileNameAsPrefixOnly) {
-                            fileName = vfsFile.getFileName()+DigestUtils.sha1Hex(vfsFile.getUri()+fileObject.getName());;
+                            symbolicName = vfsFile.getFileName()+DigestUtils.sha1Hex(vfsFile.getUri()+fileObject.getName());;
                         }
                         else {
-                            fileName = vfsFile.getFileName();
+                            symbolicName = vfsFile.getFileName();
                         }
                     } else {
                         //in this case file name is not available from config dialog
                         //combination of vfsFile + fileObject name (as vfs URI may point to a folder, but I need different symbolic name for each file within that folder)
-                        fileName = DigestUtils.sha1Hex(vfsFile.getUri()+fileObject.getName());
+                        symbolicName = DigestUtils.sha1Hex(vfsFile.getUri()+fileObject.getName());
                     }
-                    LOG.info("Filename is: {}", fileName);
-                    // Prepare new output file record.
-                    final FilesDataUnit.Entry destinationFile = faultTolerance.execute(new FaultTolerance.ActionReturn<FilesDataUnit.Entry>() {
+                    LOG.info("Symbolic name/actual filename: {}, Virtual path: {}", symbolicName, virtualPath);
 
-                        @Override
-                        public FilesDataUnit.Entry action() throws Exception {
-                            return FilesDataUnitUtils.createFile(filesOutput, fileName);
-                        }
-                    });
+                    // Prepare new output file record.
+
+                    FilesDataUnit.Entry destinationFile;
+                    try {
+                        destinationFile = FilesHelper.createFile(filesOutput, symbolicName, virtualPath);
+                    } catch (DataUnitException ex) {
+                        throw ContextUtils.dpuException(ctx, ex, "FilesDownload.execute.exception");
+                    }
+
                     // Add some metadata, TODO: Improve this code!
                     faultTolerance.execute(new FaultTolerance.Action() {
 
                         @Override
                         public void action() throws Exception {
-                            final Resource resource = ResourceHelpers.getResource(filesOutput, fileName);
+                            final Resource resource = ResourceHelpers.getResource(filesOutput, symbolicName);
                             final Date now = new Date();
                             resource.setCreated(now);
                             resource.setLast_modified(now);
-                            ResourceHelpers.setResource(filesOutput, fileName, resource);
+                            ResourceHelpers.setResource(filesOutput, symbolicName, resource);
                         }
                     }, "FilesDownload.execute.exception");
                     // Copy file.
@@ -291,6 +304,37 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
 
         ContextUtils.sendInfo(ctx, "FilesDownload.stats.processedentries", "FilesDownload.stats.processedentries.detail", totalNumberOfCorrectlyProcessedVfsFiles, totalNumberOfVfsFiles);
         ContextUtils.sendInfo(ctx, "FilesDownload.stats.correctlydownloadedfiles", "FilesDownload.stats.correctlydownloadedfiles.detail", totalNumberOfCorrectlyProcessedFiles, totalNumberOfFiles);
+    }
+
+    /**
+     * Gets virtual path string for the file
+     * @param uri URI of the vfs entry (Can be either folder or file directly, as contained in the dialog of the DPU)
+     * @param name Name of the actual file (if it was originally folder, now we process just the expanded file!), full path
+     * @param isDirectory
+     * @return
+     */
+    private String getVirtualPathForFile(String uri, FileName name, boolean isDirectory) {
+
+        //return relativePath of the file, relative to the initial folder! If there is no initial folder, but the file directly, we can just return the file name!
+        if (isDirectory) {
+
+            Path path1 = Paths.get(uri).normalize();
+            Path path2 = Paths.get(name.getURI()).normalize();
+            Path relativePath = path1.relativize(path2);
+
+            LOG.info("Relative path: {}", relativePath.toString());
+            return relativePath.toString();
+
+
+        }
+        else {
+            //get just the filename as virtualPath (so e.g. if it is file:///tmp/a.txt then return a.txt)
+            return name.getBaseName();
+
+        }
+
+
+
     }
 
     private boolean checkURIProtocolSupported(String uri) {

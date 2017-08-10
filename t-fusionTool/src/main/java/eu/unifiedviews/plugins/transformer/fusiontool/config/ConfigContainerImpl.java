@@ -2,8 +2,8 @@ package eu.unifiedviews.plugins.transformer.fusiontool.config;
 
 import cz.cuni.mff.odcleanstore.conflictresolution.ResolutionStrategy;
 import cz.cuni.mff.odcleanstore.conflictresolution.impl.ResolutionStrategyImpl;
-import org.openrdf.model.URI;
-import org.openrdf.rio.ParserConfig;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.rio.ParserConfig;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,11 +18,11 @@ public class ConfigContainerImpl implements ConfigContainer {
     private String resultDataURIPrefix = FTConfigConstants.DEFAULT_RESULT_DATA_URI_PREFIX;
     private Map<String, String> prefixes = new HashMap<>();
     private ResolutionStrategy defaultResolutionStrategy = new ResolutionStrategyImpl();
-    private Map<URI, ResolutionStrategy> propertyResolutionStrategies = new HashMap<>();
+    private Map<IRI, ResolutionStrategy> propertyResolutionStrategies = new HashMap<>();
 
     private boolean isProfilingOn = false;
     private Long memoryLimit = null;
-    private URI requiredClassOfProcessedResources = null;
+    private IRI requiredClassOfProcessedResources = null;
     private ParserConfig parserConfig = FTConfigConstants.DEFAULT_FILE_PARSER_CONFIG;
     private String dataGraphSymbolicName = FTConfigConstants.DEFAULT_DATA_GRAPH_NAME;
     private String metadataGraphSymbolicName = FTConfigConstants.DEFAULT_METADATA_GRAPH_NAME;
@@ -34,7 +34,7 @@ public class ConfigContainerImpl implements ConfigContainer {
 
     /**
      * Sets prefix of named graphs and URIs where query results and metadata in the output are placed.
-     * @param resultDataURIPrefix named graph URI prefix
+     * @param resultDataURIPrefix named graph IRI prefix
      */
     public void setResultDataURIPrefix(String resultDataURIPrefix) {
         this.resultDataURIPrefix = resultDataURIPrefix;
@@ -59,7 +59,7 @@ public class ConfigContainerImpl implements ConfigContainer {
     }
 
     @Override
-    public URI getRequiredClassOfProcessedResources() {
+    public IRI getRequiredClassOfProcessedResources() {
         return requiredClassOfProcessedResources;
     }
 
@@ -67,7 +67,7 @@ public class ConfigContainerImpl implements ConfigContainer {
      * Sets value for {@link #getRequiredClassOfProcessedResources()}.
      * @param requiredClassOfProcessedResources see {@link #getRequiredClassOfProcessedResources()}
      */
-    public void setRequiredClassOfProcessedResources(URI requiredClassOfProcessedResources) {
+    public void setRequiredClassOfProcessedResources(IRI requiredClassOfProcessedResources) {
         this.requiredClassOfProcessedResources = requiredClassOfProcessedResources;
     }
 
@@ -85,7 +85,7 @@ public class ConfigContainerImpl implements ConfigContainer {
     }
 
     @Override
-    public Map<URI, ResolutionStrategy> getPropertyResolutionStrategies() {
+    public Map<IRI, ResolutionStrategy> getPropertyResolutionStrategies() {
         return propertyResolutionStrategies;
     }
 
@@ -93,7 +93,7 @@ public class ConfigContainerImpl implements ConfigContainer {
      * Setter for value of {@link #getDefaultResolutionStrategy()}.
      * @param strategies per-property conflict resolution strategies
      */
-    public void setPropertyResolutionStrategies(Map<URI, ResolutionStrategy> strategies) {
+    public void setPropertyResolutionStrategies(Map<IRI, ResolutionStrategy> strategies) {
         this.propertyResolutionStrategies = strategies;
     }
 
@@ -182,7 +182,7 @@ public class ConfigContainerImpl implements ConfigContainer {
     }
 
     @Override
-    public Set<URI> getSameAsLinkTypes() {
+    public Set<IRI> getSameAsLinkTypes() {
         return FTConfigConstants.SAME_AS_LINK_TYPES;
     }
 

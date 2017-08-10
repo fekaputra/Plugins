@@ -1,6 +1,6 @@
 ### Description
 
-Merges RDF input graphs into single RDF output graph (all triples from input graphs are put into single output graph)
+Merges RDF input graphs into a single new RDF output graph (all triples from input graphs are put into a single new output graph)
 
 ### Configuration parameters
 

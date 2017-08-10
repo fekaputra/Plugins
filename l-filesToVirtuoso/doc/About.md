@@ -1,6 +1,6 @@
 ### Description
 
-Loads RDF data serialized in the files into Virtuoso
+Loads RDF data serialized as files into Virtuoso RDF store. Uses Virtuoso internal functions to load directory of RDF data.
 
 This DPU has no input data unit. The input for this DPU (the RDF data serialized in a file) has to be specified in the configuration of this DPU as a directory on the target file system where the target Virtuoso is. All files in this directory must be in the formats Virtuoso supports - the recommended formats are either `application/rdf+xml` or `text/turtle` (filenames suffix `.rdf` or `.ttl` respectively). Please make sure that Virtuoso can load data from such directory, i.e., the directory to be loaded is among 'DirsAllowed' option in virtuoso.ini.
 

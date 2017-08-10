@@ -1,6 +1,15 @@
 package eu.unifiedviews.plugins.transformer.relationaltordf;
 
-import static org.junit.Assert.assertEquals;
+import cz.cuni.mff.xrg.odcs.dpu.test.TestEnvironment;
+import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
+import eu.unifiedviews.dataunit.relational.WritableRelationalDataUnit;
+import eu.unifiedviews.helpers.dpu.test.config.ConfigurationBuilder;
+import eu.unifiedviews.plugins.transformer.relationaltordf.column.ColumnInfo_V1;
+import eu.unifiedviews.plugins.transformer.relationaltordf.column.ColumnType;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.eclipse.rdf4j.model.IRI;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,17 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.openrdf.model.URI;
-
-import cz.cuni.mff.xrg.odcs.dpu.test.TestEnvironment;
-import eu.unifiedviews.dataunit.rdf.WritableRDFDataUnit;
-import eu.unifiedviews.dataunit.relational.WritableRelationalDataUnit;
-import eu.unifiedviews.helpers.dpu.test.config.ConfigurationBuilder;
-import eu.unifiedviews.plugins.transformer.relationaltordf.column.ColumnInfo_V1;
-import eu.unifiedviews.plugins.transformer.relationaltordf.column.ColumnType;
+import static org.junit.Assert.assertEquals;
 
 public class RelationalToRdfTest {
 
@@ -48,6 +47,7 @@ public class RelationalToRdfTest {
 
         dataUnitConn = relationalInput.getDatabaseConnection();
         createAndFillUsersSourceTable(dataUnitConn);
+        relationalInput.addExistingDatabaseTable(TABLE_NAME_USERS,TABLE_NAME_USERS);
     }
 
     @AfterClass
@@ -70,7 +70,7 @@ public class RelationalToRdfTest {
 
         this.testEnv.run(this.dpu);
 
-        final Set<URI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
+        final Set<IRI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
         assertEquals(1, graphsURIs.size());
     }
 
@@ -88,7 +88,7 @@ public class RelationalToRdfTest {
 
         this.testEnv.run(this.dpu);
 
-        final Set<URI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
+        final Set<IRI> graphsURIs = this.rdfOutput.getMetadataGraphnames();
         assertEquals(1, graphsURIs.size());
 
     }

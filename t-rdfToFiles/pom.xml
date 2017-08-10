@@ -4,15 +4,15 @@
     <parent>
         <groupId>eu.unifiedviews</groupId>
         <artifactId>uv-pom-dpu</artifactId>
-        <version>2.1.4</version>
+        <version>3.0.0</version>
         <relativePath />
     </parent>
 
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-t-rdfToFiles</artifactId>
     <name>T-RdfToFiles</name>
-    <description>Transform RDF graphs into files.</description>
-    <version>2.1.6-SNAPSHOT</version>
+    <description>Transforms RDF graphs into files</description>
+    <version>3.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -42,9 +42,12 @@
 
     <repositories>
         <repository>
-            <id>maven.eea.sk</id>
-            <name>maven.eea.sk-public</name>
-            <url>http://maven.eea.sk/artifactory/public/</url>
+            <id>uv-releases</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>uv-snapshots</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
