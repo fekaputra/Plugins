@@ -67,6 +67,8 @@ public class JsonToXml extends AbstractDpu<eu.unifiedviews.plugins.JsonToXmlConf
                 JSONObject json = new JSONObject(inputString);
                 String outputString = XML.toString(json);
 
+                outputString = "<root>" + outputString + "</root>";
+
                 //prepare output data unit (with the same symbolic name)
                 FilesDataUnit.Entry createdEntry = FilesHelper.createFile(output, sn);
 
