@@ -47,12 +47,12 @@ import eu.unifiedviews.plugins.transformer.fusiontool.io.DataUnitRDFWriter;
 import eu.unifiedviews.plugins.transformer.fusiontool.io.DataUnitRDFWriterWithMetadata;
 import eu.unifiedviews.plugins.transformer.fusiontool.io.DataUnitSameAsLinkLoader;
 import eu.unifiedviews.plugins.transformer.fusiontool.io.NoOpRDFWriter;
-import org.openrdf.model.Model;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.TreeModel;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.impl.TreeModel;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -200,10 +200,10 @@ public class FusionToolDpuComponentFactory implements FusionComponentFactory {
     protected Set<String> getPreferredURIs() throws IOException {
         Collection<String> preferredCanonicalURIs = config.getPreferredCanonicalURIs();
         File canonicalURIsInputFile = getCanonicalUrisFile();
-        Set<URI> settingsPreferredURIs = config.getPropertyResolutionStrategies().keySet();
+        Set<IRI> settingsPreferredURIs = config.getPropertyResolutionStrategies().keySet();
 
         Set<String> preferredURIs = new HashSet<>(settingsPreferredURIs.size());
-        for (URI uri : settingsPreferredURIs) {
+        for (IRI uri : settingsPreferredURIs) {
             preferredURIs.add(uri.stringValue());
         }
         if (canonicalURIsInputFile != null) {

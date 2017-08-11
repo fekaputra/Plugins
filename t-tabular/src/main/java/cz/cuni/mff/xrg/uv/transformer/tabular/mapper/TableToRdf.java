@@ -7,10 +7,10 @@ import cz.cuni.mff.xrg.uv.transformer.tabular.TabularOntology;
 import java.util.List;
 import java.util.Map;
 
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +45,11 @@ public class TableToRdf {
 
     Map<String, Integer> nameToIndex = null;
 
-    URI rowClass = null;
+    IRI rowClass = null;
 
-    private final URI typeUri;
+    private final IRI typeUri;
 
-    URI tableSubject = null;
+    IRI tableSubject = null;
 
     boolean tableInfoGenerated = false;
 
@@ -58,7 +58,7 @@ public class TableToRdf {
         this.config = config;
         this.outRdf = outRdf;
         this.valueFactory = valueFactory;
-        this.typeUri = valueFactory.createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+        this.typeUri = valueFactory.createIRI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
     }
 
     public void paserRow(List<Object> row, int rowNumber) throws DPUException {
@@ -88,7 +88,7 @@ public class TableToRdf {
         //
         // get subject - key
         //
-        final URI subj = prepareUri(row, rowNumber);
+        final IRI subj = prepareUri(row, rowNumber);
         if (subj == null) {
             LOG.error("Row ({}) has null key, row skipped.", rowNumber);
         }
@@ -96,7 +96,7 @@ public class TableToRdf {
         // parse the line, based on configuration
         //
         for (ValueGenerator item : infoMap) {
-            final URI predicate = item.getUri();
+            final IRI predicate = item.getUri();
             final Value value = item.generateValue(row, valueFactory);
             if (value == null) {
                 if (config.ignoreBlankCells) {
@@ -134,7 +134,7 @@ public class TableToRdf {
      *
      * @param newTableSubject Null to turn this functionality off.
      */
-    public void setTableSubject(URI newTableSubject) {
+    public void setTableSubject(IRI newTableSubject) {
         tableSubject = newTableSubject;
         tableInfoGenerated = false;
     }
@@ -146,11 +146,11 @@ public class TableToRdf {
      * @param rowNumber
      * @return
      */
-    protected URI prepareUri(List<Object> row, int rowNumber) {
+    protected IRI prepareUri(List<Object> row, int rowNumber) {
         if (keyColumn == null) {
-            return valueFactory.createURI(baseUri + Integer.toString(rowNumber));
+            return valueFactory.createIRI(baseUri + Integer.toString(rowNumber));
         } else {
-            return (URI)keyColumn.generateValue(row, valueFactory);
+            return (IRI)keyColumn.generateValue(row, valueFactory);
         }
     }
 

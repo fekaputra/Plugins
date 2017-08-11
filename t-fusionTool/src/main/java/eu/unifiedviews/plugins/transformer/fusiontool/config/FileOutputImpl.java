@@ -4,7 +4,7 @@
 package eu.unifiedviews.plugins.transformer.fusiontool.config;
 
 import cz.cuni.mff.odcleanstore.fusiontool.io.EnumSerializationFormat;
-import org.openrdf.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 
 import java.io.File;
 
@@ -16,8 +16,8 @@ import java.io.File;
 public class FileOutputImpl implements FileOutput {
     private final File path;
     private final EnumSerializationFormat format;
-    private URI metadataContext;
-    private URI dataContext;
+    private IRI metadataContext;
+    private IRI dataContext;
     
     /**
      * @param path output path
@@ -28,7 +28,7 @@ public class FileOutputImpl implements FileOutput {
         this.format = format;
     }
 
-    public FileOutputImpl(File path, EnumSerializationFormat format, URI dataContext, URI metadataContext) {
+    public FileOutputImpl(File path, EnumSerializationFormat format, IRI dataContext, IRI metadataContext) {
         this.path = path;
         this.format = format;
         this.dataContext = dataContext;
@@ -46,28 +46,28 @@ public class FileOutputImpl implements FileOutput {
     }
 
     @Override
-    public URI getMetadataContext() {
+    public IRI getMetadataContext() {
         return metadataContext;
     }
     
     /**
      * Sets value for {@link #getMetadataContext()}.
-     * @param metadataContext named graph URI
+     * @param metadataContext named graph IRI
      */
-    public void setMetadataContext(URI metadataContext) {
+    public void setMetadataContext(IRI metadataContext) {
         this.metadataContext = metadataContext;
     }
     
     @Override
-    public URI getDataContext() {
+    public IRI getDataContext() {
         return dataContext;
     }
     
     /**
      * Sets value for {@link #getDataContext()}.
-     * @param dataContext named graph URI
+     * @param dataContext named graph IRI
      */
-    public void setDataContext(URI dataContext) {
+    public void setDataContext(IRI dataContext) {
         this.dataContext = dataContext;
     }
 }

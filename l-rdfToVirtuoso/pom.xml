@@ -4,15 +4,15 @@
     <parent>
         <groupId>eu.unifiedviews</groupId>
         <artifactId>uv-pom-dpu</artifactId>
-        <version>2.1.3</version>
+        <version>3.0.1-SNAPSHOT</version>
         <relativePath />
     </parent>
 
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-l-rdfToVirtuoso</artifactId>
     <name>L-RdfToVirtuoso</name>
-    <description>Loads RDF data to Virtuoso using OpenRDF Repository API (VirtuosoRepository).</description>
-    <version>1.0.4-SNAPSHOT</version>
+    <description>Loads RDF data to Virtuoso RDF store</description>
+    <version>2.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -23,14 +23,14 @@
     <dependencies>
         <!-- Virtuoso. -->
         <dependency>
-            <groupId>eu.comsode</groupId>
-            <artifactId>com.openlinksw.virtuoso.virt_sesame2</artifactId>
-            <version>1.26-7-develop-SNAPSHOT</version>
+            <groupId>com.openlinksw.virtuoso</groupId>
+            <artifactId>virt_rdf4j</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>eu.comsode</groupId>
             <artifactId>com.openlinksw.virtuoso.virtjdbc4_1</artifactId>
-            <version>3.77-7-develop-SNAPSHOT</version>
+            <version>3.77-7</version>
         </dependency>
         <!-- Provided by Core. -->
         <dependency>
@@ -53,9 +53,12 @@
 
     <repositories>
         <repository>
-            <id>maven.eea.sk</id>
-            <name>maven.eea.sk-public</name>
-            <url>http://maven.eea.sk/artifactory/public/</url>
+            <id>uv-releases</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>uv-snapshots</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 

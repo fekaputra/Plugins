@@ -36,3 +36,5 @@ bin/
 
 build.bat
 eclipse.bat
+
+*.versionsBackup

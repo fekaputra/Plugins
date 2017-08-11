@@ -1,13 +1,14 @@
 package eu.unifiedviews.plugins.transformer.filestordft;
 
-import com.vaadin.ui.*;
-import org.openrdf.rio.RDFFormat;
-
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
-
+import com.vaadin.ui.*;
 import eu.unifiedviews.dpu.config.DPUConfigException;
 import eu.unifiedviews.helpers.dpu.vaadin.dialog.AbstractDialog;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParserRegistry;
+
+import java.util.Set;
 
 /**
  * DPU's configuration dialog. User can use this dialog to configure DPU
@@ -59,7 +60,10 @@ public class FilesToRDFVaadinDialog extends AbstractDialog<FilesToRDFConfig_V1> 
 
         comboTypeOfGraph = new ComboBox(ctx.tr("FilesToRDFVaadinDialog.comboTypeOfGraph"));
         comboTypeOfGraph.addItem("AUTO");
-        for (RDFFormat o : RDFFormat.values()) {
+
+        Set<RDFFormat> rdfFormats = RDFParserRegistry.getInstance().getKeys();
+
+        for (RDFFormat o : rdfFormats) {  //RDFFormat.values()
             comboTypeOfGraph.addItem(o.getDefaultMIMEType());
             comboTypeOfGraph.setItemCaption(o.getDefaultMIMEType(), o.getName());
         }

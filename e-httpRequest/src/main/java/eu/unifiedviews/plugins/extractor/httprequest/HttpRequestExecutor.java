@@ -305,7 +305,11 @@ public class HttpRequestExecutor {
      */
     private HttpStateWrapper createHttpStateWithAuth(HttpRequestConfig_V1 config) throws DPUException {
 
-        //parse URI from rdfConfig
+        //check that the configuration contains URL of the service
+        if (config.getRequestURL() == null || config.getRequestURL().isEmpty()) {
+            throw new DPUException("Request URL is not defined");
+        }
+
         URI uri = null;
         try {
             uri = new URI(config.getRequestURL());

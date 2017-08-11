@@ -16,11 +16,11 @@ import eu.unifiedviews.plugins.transformer.fusiontool.util.MockRDFDataUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.repository.RepositoryConnection;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 
 import java.util.Collection;
 import java.util.List;
@@ -73,10 +73,10 @@ public class DataUnitRDFWriterWithMetadataTest {
         writer.write(resolvedStatement);
 
         // Assert
-        Collection<URI> addedGraphs = dataUnit.getAddedGraphs().values(); // must be first before calling dataUnit.addNewDataGraph()
+        Collection<IRI> addedGraphs = dataUnit.getAddedGraphs().values(); // must be first before calling dataUnit.addNewDataGraph()
 
-        URI metadataGraph = dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_METADATA_GRAPH_NAME);
-        URI statementGraph = dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_DATA_GRAPH_NAME + "-1");
+        IRI metadataGraph = dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_METADATA_GRAPH_NAME);
+        IRI statementGraph = dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_DATA_GRAPH_NAME + "-1");
         assertThat(addedGraphs, containsInAnyOrder(
                 dataUnit.addNewDataGraph(FTConfigConstants.DEFAULT_DATA_GRAPH_NAME),
                 metadataGraph,

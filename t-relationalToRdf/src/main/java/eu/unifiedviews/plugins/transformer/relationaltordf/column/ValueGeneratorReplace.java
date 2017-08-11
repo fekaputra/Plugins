@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
 
 import eu.unifiedviews.plugins.transformer.relationaltordf.ConversionFailed;
 import eu.unifiedviews.plugins.transformer.relationaltordf.Utils;
@@ -65,7 +65,7 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
 
     /**
      * As {@link TokenReplace} but also encode the value so it can be used in
-     * URI.
+     * IRI.
      */
     private class TokenReplaceUri extends TokenReplace {
 
@@ -86,9 +86,9 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
     }
 
     /**
-     * Used URI for column.
+     * Used IRI for column.
      */
-    private final URI uri;
+    private final IRI uri;
 
     /**
      * Filed reference according to
@@ -106,7 +106,7 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
      * @param template
      *            Replace template without type, language or \\ < > chars
      */
-    protected ValueGeneratorReplace(URI uri, String template) {
+    protected ValueGeneratorReplace(IRI uri, String template) {
         this.uri = uri;
         this.template = template;
     }
@@ -169,7 +169,7 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
     }
 
     @Override
-    public URI getUri() {
+    public IRI getUri() {
         return this.uri;
     }
 
@@ -226,7 +226,7 @@ public abstract class ValueGeneratorReplace implements ValueGenerator {
      * @return
      * @throws ConversionFailed
      */
-    public static ValueGeneratorReplace create(URI uri, String template)
+    public static ValueGeneratorReplace create(IRI uri, String template)
             throws ConversionFailed {
         if (template.startsWith("\"")) {
             // string

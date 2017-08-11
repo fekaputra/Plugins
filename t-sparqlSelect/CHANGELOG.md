@@ -1,11 +1,15 @@
 T-SPARQLSelect
 ----------
 
-2.1.5
+v3.0.0
+---
+* Updated to use UnifiedViews helpers 3.X with rdf4j support
+
+v2.1.5
 ---
 * Improved slovak translation
 
-2.1.4
+v2.1.4
 ---
 * Documentation (About) improved
 * Update to helpers 2.1.4

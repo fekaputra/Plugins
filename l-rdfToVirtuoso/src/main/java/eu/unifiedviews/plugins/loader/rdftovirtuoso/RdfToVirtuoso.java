@@ -1,37 +1,5 @@
 package eu.unifiedviews.plugins.loader.rdftovirtuoso;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.Update;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import virtuoso.sesame2.driver.VirtuosoRepository;
 import eu.unifiedviews.dataunit.DataUnit;
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
@@ -50,6 +18,24 @@ import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
 import eu.unifiedviews.helpers.dpu.context.ContextUtils;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.exec.UserExecContext;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.Update;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import virtuoso.rdf4j.driver.VirtuosoRepository;
+
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @DPU.AsLoader
 public class RdfToVirtuoso extends AbstractDpu<RdfToVirtuosoConfig_V1> {
@@ -101,7 +87,7 @@ public class RdfToVirtuoso extends AbstractDpu<RdfToVirtuosoConfig_V1> {
         if (config.getPassword() == null || config.getPassword().isEmpty()) {
             config.setPassword(password);
         }
-        final URI globalOutGraphURI = org.apache.commons.lang3.StringUtils.isEmpty(config.getTargetGraphName()) ? null : new URIImpl(config.getTargetGraphName());
+        final IRI globalOutGraphURI = org.apache.commons.lang3.StringUtils.isEmpty(config.getTargetGraphName()) ? null : SimpleValueFactory.getInstance().createIRI(config.getTargetGraphName());
         if (config.getThreadCount() == 0) {
             config.setThreadCount(1);
         }
@@ -145,12 +131,12 @@ public class RdfToVirtuoso extends AbstractDpu<RdfToVirtuosoConfig_V1> {
                 Work work = new Work();
                 work.inEntry = inEntry;
                 if (globalOutGraphURI == null) {
-                    URI outGraphURI = null;
+                    IRI outGraphURI = null;
                     String outGraphURIString = inVirtualGraphHelper.getVirtualGraph(inEntry.getSymbolicName());
                     if (outGraphURIString == null) {
                         outGraphURI = inEntry.getDataGraphURI();
                     } else {
-                        outGraphURI = new URIImpl(outGraphURIString);
+                        outGraphURI = SimpleValueFactory.getInstance().createIRI(outGraphURIString);
                     }
                     work.clearGraphBeforeLoad = config.isClearDestinationGraph();
                     work.outDataGraphURI = outGraphURI;
@@ -262,7 +248,7 @@ public class RdfToVirtuoso extends AbstractDpu<RdfToVirtuosoConfig_V1> {
     static class Work {
         RDFDataUnit.Entry inEntry;
 
-        URI outDataGraphURI;
+        IRI outDataGraphURI;
 
         boolean clearGraphBeforeLoad;
 

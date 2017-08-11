@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.unifiedviews</groupId>
         <artifactId>uv-pom-dpu</artifactId>
-        <version>2.1.7</version>
+        <version>3.0.1-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -12,7 +12,7 @@
     <artifactId>uv-e-filesDownload</artifactId>
     <name>E-FilesDownload</name>
     <description>Downloads list of files. Replaces E-FilesFromLocal and E-HttpDownload.</description>
-    <version>2.1.7-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -38,8 +38,7 @@
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <!--version>0.1.51</version -->
-            <version>0.1.49</version>
+            <version>0.1.54</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -128,15 +127,11 @@
             <id>uv-releases</id>
             <url>http://repository.unifiedviews.eu/nexus/content/repositories/releases</url>
        	</repository>
-	<repository>
-            <id>uv-snapshots</id>
-	    <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
-	</repository>
         <repository>
-            <id>maven.eea.sk</id>
-            <name>maven.eea.sk-public</name>
-            <url>http://maven.eea.sk/artifactory/public/</url>
+            <id>uv-snapshots</id>
+            <url>http://repository.unifiedviews.eu/nexus/content/repositories/snapshots/</url>
         </repository>
+
     </repositories>
 
 </project>
