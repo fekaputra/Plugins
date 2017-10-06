@@ -128,7 +128,13 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
                     case GET:
                         hideComponents(requestDataLayout);
                         break;
+                    case DELETE:
+                        hideComponents(requestDataLayout);
+                        break;
                     case POST:
+                        showComponents(requestDataLayout);
+                        break;
+                    case PUT:
                         showComponents(requestDataLayout);
                         break;
                     default:
@@ -376,7 +382,7 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
         this.passwordField.setValue(config.getPassword());
         this.fileNameField.setValue(config.getFileName());
 
-        if (config.getRequestType() == RequestType.POST) {
+        if (config.getRequestType() == RequestType.POST || config.getRequestType() == RequestType.PUT) {
             this.dataTypeSelect.select(config.getPostRequestDataType());
 
             if (config.getPostRequestDataType() == DataType.RAW_DATA) {
@@ -395,7 +401,7 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
                 this.charsetSelect.select(config.getCharset());
 
             }
-    }
+        }
     }
 
     //TODO: dokoncit kontrolu konfiguracie
@@ -412,7 +418,7 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
         config.setPassword(this.passwordField.getValue());
         config.setRequestType((RequestType) this.requestMethodSelect.getValue());
 
-        if (config.getRequestType() == RequestType.POST) {
+        if (config.getRequestType() == RequestType.POST || config.getRequestType() == RequestType.PUT) {
             config.setPostRequestDataType((DataType) this.dataTypeSelect.getValue());
             if (config.getPostRequestDataType() == DataType.RAW_DATA) {
                 checkRawDataConfiguration();

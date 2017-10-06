@@ -94,6 +94,11 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
                     httpResponse = this.requestExecutor.sendGetRequest(this.config, this.client);
                     checkResponseAndCreateFile(httpResponse, this.config.getFileName());
                     break;
+                case DELETE:
+                    LOG.info("Going to send HTTP DELETE request to URL {}", this.config.getRequestURL());
+                    httpResponse = this.requestExecutor.sendDeleteRequest(this.config, this.client);
+                    checkResponseAndCreateFile(httpResponse, this.config.getFileName());
+                    break;
                 case POST:
                     LOG.info("Going to send HTTP POST request to URL {}", this.config.getRequestURL());
                     switch (this.config.getPostRequestDataType()) {
@@ -103,6 +108,31 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
                             break;
                         case RAW_DATA:
                             httpResponse = this.requestExecutor.sendRawDataPostRequest(this.config, this.client);
+                            checkResponseAndCreateFile(httpResponse, this.config.getFileName());
+                            break;
+                        case FILE:
+                            executeFileHttpRequests(this.client);
+                            break;
+                        case FORM_DATA_RDF:
+                            executeFormDataHttpRequestsForInputRdfConfiguration(this.client);
+                            break;
+                        default:
+                            String errorMsg = String.format("Unknown data type; Supported data types are: %s", String.valueOf(DataType.values()));
+                            LOG.error(errorMsg);
+                            throw new DPUException(errorMsg);
+
+                    }
+
+                    break;
+                case PUT:
+                    LOG.info("Going to send HTTP PUT request to URL {}", this.config.getRequestURL());
+                    switch (this.config.getPostRequestDataType()) {
+                        case FORM_DATA:
+                            httpResponse = this.requestExecutor.sendMultipartPutRequest(this.config, this.client);
+                            checkResponseAndCreateFile(httpResponse, this.config.getFileName());
+                            break;
+                        case RAW_DATA:
+                            httpResponse = this.requestExecutor.sendRawDataPutRequest(this.config, this.client);
                             checkResponseAndCreateFile(httpResponse, this.config.getFileName());
                             break;
                         case FILE:
@@ -159,7 +189,17 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
                 try {
                     inputFile = new File(URI.create(entry.getFileURIString()));
                     String targetFileName = String.format("%03d", counter++) + "_" + this.config.getFileName();
-                    httpResponse = this.requestExecutor.sendFilePostRequest(this.config, inputFile, client);
+                    switch (this.config.getRequestType()) {
+                        case POST:
+                            httpResponse = this.requestExecutor.sendFilePostRequest(this.config, inputFile, client);
+                            break;
+                        case PUT:
+                            httpResponse = this.requestExecutor.sendFilePutRequest(this.config, inputFile, client);
+                            break;
+                        default:
+                            ContextUtils.sendError(this.ctx, "dpu.errors.request.unknown", "dpu.errors.request.unknown.long", String.valueOf(RequestType.values()));
+                    }
+
                     checkResponseAndCreateFile(httpResponse, targetFileName);
                 } catch (Exception e) {
                     ContextUtils.sendShortWarn(this.ctx, "dpu.errors.request.file", (inputFile != null) ? inputFile.getName() : "NULL");
@@ -194,14 +234,18 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
         if (config.getFormParamBodies() == null || config.getFormParamBodies().isEmpty()) {
             throw new DPUException("RDF configuration with form param bodies is missing. The processing ends with an error");
         }
-        LOG.info("Sending POST requests with bodies coming over RDF data unit");
+        LOG.info("Sending POST/PUT requests with bodies coming over RDF data unit");
         LOG.info("Number of bodies: {}", config.getFormParamBodies().size());
 
         for (FormParamBody paramBody : config.getFormParamBodies()) {
             LOG.info("ParamBody: {}", paramBody);
             try {
                 String targetFileName = String.format("%03d", counter++);
-                httpResponse = this.requestExecutor.sendMultipartFormRequestFromRdf(this.config, paramBody, client);
+                if (this.config.getRequestType() == RequestType.PUT) {
+                    httpResponse = this.requestExecutor.sendMultipartFormPutRequestFromRdf(this.config, paramBody, client);
+                } else {
+                    httpResponse = this.requestExecutor.sendMultipartFormPostRequestFromRdf(this.config, paramBody, client);
+                }
                 checkResponseAndCreateFile(httpResponse, targetFileName);
             } catch (Exception e) {
                 ContextUtils.sendShortWarn(this.ctx, "dpu.errors.request.formParamRdf", paramBody);
