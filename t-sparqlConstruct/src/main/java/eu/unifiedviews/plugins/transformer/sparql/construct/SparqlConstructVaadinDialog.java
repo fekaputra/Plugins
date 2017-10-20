@@ -1,5 +1,7 @@
 package eu.unifiedviews.plugins.transformer.sparql.construct;
 
+import com.vaadin.ui.Notification;
+import eu.unifiedviews.plugins.transformer.sparql.construct.editor.SparqlEditorComponent;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.parser.QueryParserUtil;
@@ -23,6 +25,8 @@ public class SparqlConstructVaadinDialog extends AbstractDialog<SparqlConstructC
 
     private CheckBox checkPerGraph;
 
+    private SparqlEditorComponent sparqlEditorComponent;
+
     public SparqlConstructVaadinDialog() {
         super(SparqlConstruct.class);
     }
@@ -31,6 +35,8 @@ public class SparqlConstructVaadinDialog extends AbstractDialog<SparqlConstructC
     public void setConfiguration(SparqlConstructConfig_V1 c) throws DPUConfigException {
         txtQuery.setValue(c.getQuery());
         checkPerGraph.setValue(c.isPerGraph());
+
+        sparqlEditorComponent.setQuery(c.getQuery());
     }
 
     @Override
@@ -44,6 +50,8 @@ public class SparqlConstructVaadinDialog extends AbstractDialog<SparqlConstructC
         }
         c.setQuery(txtQuery.getValue());
         c.setPerGraph(checkPerGraph.getValue());
+
+        c.setQuery(sparqlEditorComponent.getQuery());
         return c;
     }
 
@@ -59,13 +67,35 @@ public class SparqlConstructVaadinDialog extends AbstractDialog<SparqlConstructC
         mainLayout.addComponent(checkPerGraph);
         mainLayout.setExpandRatio(checkPerGraph, 0.0f);
 
+
+        sparqlEditorComponent = new SparqlEditorComponent();
+
+        //mycomponent.setWidth("100%");
+        sparqlEditorComponent.setSizeFull();
+//        mycomponent.setImmediate(true);
+
+        // Set the value from server-side
+        //sparqlEditorComponent.setValue("Server-side value");
+
+        // Process a value input by the user from the client-side
+        sparqlEditorComponent.addValueChangeListener(
+                new SparqlEditorComponent.ValueChangeListener() {
+                    @Override
+                    public void valueChange() {
+                        //Notification.show("Value: " + sparqlEditorComponent.getQuery());
+                    }
+                });
+
+        mainLayout.addComponent(sparqlEditorComponent);
+        mainLayout.setExpandRatio(sparqlEditorComponent, 1.0f);
+
         txtQuery = new TextArea(ctx.tr("SparqlConstructVaadinDialog.constructQuery"));
         txtQuery.setSizeFull();
         txtQuery.setRequired(true);
         txtQuery.addValidator(createSparqlQueryValidator());
         txtQuery.setImmediate(true);
-        mainLayout.addComponent(txtQuery);
-        mainLayout.setExpandRatio(txtQuery, 1.0f);
+//        mainLayout.addComponent(txtQuery);
+//        mainLayout.setExpandRatio(txtQuery, 1.0f);
 
         setCompositionRoot(mainLayout);
     }
