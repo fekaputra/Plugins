@@ -59,7 +59,9 @@ public class JsonToXml extends AbstractDpu<eu.unifiedviews.plugins.JsonToXmlConf
 
                 try {
                     inputString = readFile(FilesHelper.asFile(entry).getAbsolutePath());
-                    log.info("Input (first 1000 chars): {}", inputString.substring(0,1000));
+                    if (inputString != null) {
+                        log.info("Input (first 1000 chars): {}", inputString.substring(0,1000));
+                    }
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(),e);
                 }
@@ -74,7 +76,9 @@ public class JsonToXml extends AbstractDpu<eu.unifiedviews.plugins.JsonToXmlConf
 
                 try {
                     writeFile(FilesHelper.asFile(createdEntry).getAbsolutePath(),outputString);
-                    log.info("Output (first 1000 chars): {}", outputString.substring(0,1000));
+                    if (outputString!= null) {
+                        log.info("Output (first 1000 chars): {}", outputString.substring(0,1000));
+                    }
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(),e);
                 }
