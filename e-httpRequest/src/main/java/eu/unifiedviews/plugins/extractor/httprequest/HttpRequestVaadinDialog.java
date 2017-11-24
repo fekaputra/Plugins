@@ -35,6 +35,10 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
 
     private PasswordField passwordField;
 
+    private TextField tfHeaderKey;
+
+    private TextField tfHeaderValue;
+
     private TextArea rawDataArea;
 
     private Table formDataTable;
@@ -107,10 +111,34 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
         this.fileNameField.setWidth("50%");
         this.mainLayout.addComponent(this.fileNameField);
 
+        buildOptionalHeader();
         buildAuthenticationDialog();
         buildDataLayout();
 
         setCompositionRoot(this.mainLayout);
+    }
+
+    private void buildOptionalHeader() {
+
+        final HorizontalLayout headerLayout = new HorizontalLayout();
+        headerLayout.setSpacing(true);
+        headerLayout.setVisible(true);
+
+        tfHeaderKey = new TextField();
+        tfHeaderKey.setCaption(this.ctx.tr("dialog.header.key"));
+        tfHeaderKey.setNullRepresentation("");
+        tfHeaderKey.setWidth("250px");
+        headerLayout.addComponent(tfHeaderKey);
+
+        tfHeaderValue = new TextField();
+        tfHeaderValue.setCaption(this.ctx.tr("dialog.header.value"));
+        tfHeaderValue.setNullRepresentation("");
+        tfHeaderValue.setWidth("250px");
+        headerLayout.addComponent(tfHeaderValue);
+
+        this.mainLayout.addComponent(headerLayout);
+
+
     }
 
     /**
@@ -368,6 +396,8 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
         this.userNameField.setValue(config.getUserName());
         this.passwordField.setValue(config.getPassword());
         this.fileNameField.setValue(config.getFileName());
+        this.tfHeaderKey.setValue(config.getCustomHeaderName());
+        this.tfHeaderValue.setValue(config.getCustomHeaderValue());
 
         if (config.getRequestType() == RequestType.POST) {
             this.dataTypeSelect.select(config.getPostRequestDataType());
@@ -397,6 +427,8 @@ public class HttpRequestVaadinDialog extends AbstractDialog<HttpRequestConfig_V1
         config.setUserName(this.userNameField.getValue());
         config.setPassword(this.passwordField.getValue());
         config.setRequestType((RequestType) this.requestMethodSelect.getValue());
+        config.setCustomHeaderName(this.tfHeaderKey.getValue());
+        config.setCustomHeaderValue(this.tfHeaderValue.getValue());
 
         if (config.getRequestType() == RequestType.POST) {
             config.setPostRequestDataType((DataType) this.dataTypeSelect.getValue());

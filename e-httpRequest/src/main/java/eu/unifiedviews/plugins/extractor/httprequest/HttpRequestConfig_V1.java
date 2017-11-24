@@ -37,6 +37,26 @@ public class HttpRequestConfig_V1 {
 
     private String fileName = FILE_NAME_DEFAULT;
 
+    private String customHeaderName;
+
+    private String customHeaderValue;
+
+    public String getCustomHeaderName() {
+        return customHeaderName;
+    }
+
+    public void setCustomHeaderName(String customHeaderName) {
+        this.customHeaderName = customHeaderName;
+    }
+
+    public String getCustomHeaderValue() {
+        return customHeaderValue;
+    }
+
+    public void setCustomHeaderValue(String customHeaderValue) {
+        this.customHeaderValue = customHeaderValue;
+    }
+
     public DataType getPostRequestDataType() {
         return this.postRequestDataType;
     }

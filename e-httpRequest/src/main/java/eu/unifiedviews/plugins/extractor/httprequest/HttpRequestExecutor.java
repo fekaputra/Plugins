@@ -44,6 +44,12 @@ public class HttpRequestExecutor {
             if (config.isUseAuthentication()) {
                 addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
             }
+
+            if (config.getCustomHeaderName() != null && config.getCustomHeaderValue() != null) {
+                //add custom header
+                request.addHeader(config.getCustomHeaderName(), config.getCustomHeaderValue());
+            }
+
             response = client.execute(request);
             checkHttpResponseStatus(response);
         } catch (URISyntaxException | IllegalStateException | IOException ex) {
@@ -86,6 +92,11 @@ public class HttpRequestExecutor {
             request.setEntity(entity);
             request.addHeader("Content-Type", contentType.toString());
 
+            if (config.getCustomHeaderName() != null && config.getCustomHeaderValue() != null) {
+                //add custom header
+                request.addHeader(config.getCustomHeaderName(), config.getCustomHeaderValue());
+            }
+
             response = client.execute(request);
             checkHttpResponseStatus(response);
 
@@ -125,6 +136,11 @@ public class HttpRequestExecutor {
             }
             HttpEntity entity = builder.build();
             request.setEntity(entity);
+
+            if (config.getCustomHeaderName() != null && config.getCustomHeaderValue() != null) {
+                //add custom header
+                request.addHeader(config.getCustomHeaderName(), config.getCustomHeaderValue());
+            }
 
             response = client.execute(request);
             checkHttpResponseStatus(response);
@@ -169,6 +185,11 @@ public class HttpRequestExecutor {
             HttpEntity entity = builder.build();
             request.setEntity(entity);
             request.addHeader("Content-Type", contentType.toString());
+
+            if (config.getCustomHeaderName() != null && config.getCustomHeaderValue() != null) {
+                //add custom header
+                request.addHeader(config.getCustomHeaderName(), config.getCustomHeaderValue());
+            }
 
             response = client.execute(request);
             checkHttpResponseStatus(response);
