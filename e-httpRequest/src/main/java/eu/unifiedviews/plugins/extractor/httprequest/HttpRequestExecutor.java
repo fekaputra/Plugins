@@ -194,6 +194,10 @@ public class HttpRequestExecutor {
             HttpEntity entity = builder.build();
             request.setEntity(entity);
 
+            for ( Header h : request.getAllHeaders()) {
+                LOG.info("Request header with name {}, value {}", h.getName(), h.getValue());
+            }
+
             response = client.execute(request);
             checkHttpResponseStatus(response);
 
