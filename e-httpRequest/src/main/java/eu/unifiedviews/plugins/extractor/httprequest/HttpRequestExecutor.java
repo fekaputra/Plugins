@@ -83,19 +83,21 @@ public class HttpRequestExecutor {
                 addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
             }
 
-            EntityBuilder builder = EntityBuilder.create();
             ContentType contentType = ContentType.DEFAULT_BINARY;
-            builder.setFile(file);
-            builder.setContentType(contentType);
-
-            HttpEntity entity = builder.build();
-            request.setEntity(entity);
-            request.addHeader("Content-Type", contentType.toString());
+            if (contentType != null) {
+                request.addHeader("Content-Type", contentType.toString());
+            }
 
             if (config.getCustomHeaderName() != null && config.getCustomHeaderValue() != null) {
                 //add custom header
                 request.addHeader(config.getCustomHeaderName(), config.getCustomHeaderValue());
             }
+
+            EntityBuilder builder = EntityBuilder.create();
+            builder.setFile(file);
+            builder.setContentType(contentType);
+            HttpEntity entity = builder.build();
+            request.setEntity(entity);
 
             response = client.execute(request);
             checkHttpResponseStatus(response);
@@ -130,17 +132,17 @@ public class HttpRequestExecutor {
                 addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
             }
 
+            if (config.getCustomHeaderName() != null && config.getCustomHeaderValue() != null) {
+                //add custom header
+                request.addHeader(config.getCustomHeaderName(), config.getCustomHeaderValue());
+            }
+
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             for (String key : config.getFormDataRequestBody().keySet()) {
                 builder.addTextBody(key, config.getFormDataRequestBody().get(key));
             }
             HttpEntity entity = builder.build();
             request.setEntity(entity);
-
-            if (config.getCustomHeaderName() != null && config.getCustomHeaderValue() != null) {
-                //add custom header
-                request.addHeader(config.getCustomHeaderName(), config.getCustomHeaderValue());
-            }
 
             response = client.execute(request);
             checkHttpResponseStatus(response);
@@ -175,21 +177,22 @@ public class HttpRequestExecutor {
                 addBasiAuthenticationForHttpRequest(request, config.getUserName(), config.getPassword());
             }
 
-            EntityBuilder builder = EntityBuilder.create();
-            builder.setContentEncoding(config.getCharset());
-
             ContentType contentType = ContentType.create(config.getContentType().getDescription()).withCharset(config.getCharset());
-            builder.setText(config.getRawRequestBody());
-            builder.setContentType(contentType);
-
-            HttpEntity entity = builder.build();
-            request.setEntity(entity);
-            request.addHeader("Content-Type", contentType.toString());
+            if (contentType != null) {
+                request.addHeader("Content-Type", contentType.toString());
+            }
 
             if (config.getCustomHeaderName() != null && config.getCustomHeaderValue() != null) {
                 //add custom header
                 request.addHeader(config.getCustomHeaderName(), config.getCustomHeaderValue());
             }
+
+            EntityBuilder builder = EntityBuilder.create();
+            builder.setContentEncoding(config.getCharset());
+            builder.setText(config.getRawRequestBody());
+            builder.setContentType(contentType);
+            HttpEntity entity = builder.build();
+            request.setEntity(entity);
 
             response = client.execute(request);
             checkHttpResponseStatus(response);
