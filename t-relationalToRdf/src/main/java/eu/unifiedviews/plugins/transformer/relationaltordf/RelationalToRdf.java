@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import eu.unifiedviews.helpers.dpu.extension.rdf.profiler.RdfProfiler;
 import org.eclipse.rdf4j.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,9 @@ public class RelationalToRdf extends AbstractDpu<RelationalToRdfConfig_V1> {
 
     @ExtensionInitializer.Init
     public RdfValidation rdfValidation;
+
+    @ExtensionInitializer.Init
+    public RdfProfiler rdfProfiler;
 
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;

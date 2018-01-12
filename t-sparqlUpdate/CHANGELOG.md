@@ -1,6 +1,10 @@
 T-SparqlUpdate
 ----------
 
+v3.0.1
+---
+* Added support for [RDF Profiler extension](https://grips.semantic-web.at/display/UDDOC/RDF+Profiler)
+
 v3.0.0
 ---
 * Support for [RDF Data Processing Performance Optimization](https://grips.semantic-web.at/display/UDDOC/RDF+Data+Processing+Performance+Optimization)

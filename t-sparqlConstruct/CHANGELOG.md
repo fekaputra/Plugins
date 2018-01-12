@@ -1,6 +1,11 @@
 T-SparqlConstruct
 ----------
 
+v3.0.1
+---
+* Added support for [RDF Profiler extension](https://grips.semantic-web.at/display/UDDOC/RDF+Profiler)
+
+
 v3.0.0
 ---
 * Updated to use UnifiedViews helpers 3.X with rdf4j support
