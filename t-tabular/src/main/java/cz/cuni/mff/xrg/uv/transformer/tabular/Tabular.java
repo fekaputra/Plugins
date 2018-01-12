@@ -17,6 +17,7 @@ import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
+import eu.unifiedviews.helpers.dpu.extension.rdf.profiler.RdfProfiler;
 import eu.unifiedviews.helpers.dpu.extension.rdf.simple.WritableSimpleRdf;
 import eu.unifiedviews.plugins.transformer.tabular.TabularVaadinDialog;
 import eu.unifiedviews.plugins.transformer.tabular.parser.ParseFailed;
