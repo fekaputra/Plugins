@@ -16,7 +16,7 @@ public class HttpRequestConfig_V1 {
     }
 
     public enum RequestType {
-        GET, POST;
+        GET, POST, PUT, DELETE
     }
 
     private DataType postRequestDataType = DataType.RAW_DATA;

@@ -43,6 +43,8 @@ public class HttpRequestTest {
 
     private static final String GET_RESPONSE_FILE = "get_response.json";
 
+    private static final String DELETE_RESPONSE_FILE = "delete_response.json";
+
     private static final String POST_RAW_RESPONSE_FILE = "post_raw_response.xml";
 
     private static final String POST_MULTIPART_RESPONSE_FILE = "post_multipart_response.json";
@@ -71,6 +73,8 @@ public class HttpRequestTest {
         URI responseResource = null;
         if (config.getRequestType() == RequestType.GET) {
             responseResource = this.getClass().getClassLoader().getResource(GET_RESPONSE_FILE).toURI();
+        } else if (config.getRequestType() == RequestType.DELETE) {
+            responseResource = this.getClass().getClassLoader().getResource(DELETE_RESPONSE_FILE).toURI();
         } else {
             if (config.getPostRequestDataType() == DataType.FORM_DATA) {
                 responseResource = this.getClass().getClassLoader().getResource(POST_MULTIPART_RESPONSE_FILE).toURI();
@@ -83,9 +87,13 @@ public class HttpRequestTest {
         Mockito.when(response.getEntity()).thenReturn(httpEntity);
 
         Mockito.when(executor.sendGetRequest(Matchers.any(HttpRequestConfig_V1.class), Matchers.any(CloseableHttpClient.class))).thenReturn(response);
+        Mockito.when(executor.sendDeleteRequest(Matchers.any(HttpRequestConfig_V1.class), Matchers.any(CloseableHttpClient.class))).thenReturn(response);
         Mockito.when(executor.sendMultipartPostRequest(Matchers.any(HttpRequestConfig_V1.class), Matchers.any(CloseableHttpClient.class))).thenReturn(response);
         Mockito.when(executor.sendRawDataPostRequest(Matchers.any(HttpRequestConfig_V1.class), Matchers.any(CloseableHttpClient.class))).thenReturn(response);
         Mockito.when(executor.sendFilePostRequest(Matchers.any(HttpRequestConfig_V1.class), Matchers.any(File.class), Matchers.any(CloseableHttpClient.class))).thenReturn(response);
+        Mockito.when(executor.sendMultipartPutRequest(Matchers.any(HttpRequestConfig_V1.class), Matchers.any(CloseableHttpClient.class))).thenReturn(response);
+        Mockito.when(executor.sendRawDataPutRequest(Matchers.any(HttpRequestConfig_V1.class), Matchers.any(CloseableHttpClient.class))).thenReturn(response);
+        Mockito.when(executor.sendFilePutRequest(Matchers.any(HttpRequestConfig_V1.class), Matchers.any(File.class), Matchers.any(CloseableHttpClient.class))).thenReturn(response);
 
         return executor;
     }
@@ -123,8 +131,26 @@ public class HttpRequestTest {
     }
 
     @Test(expected = DPUException.class)
+    public void rawPUTRequestResponseErrorCodeTest() throws Exception {
+        HttpRequestConfig_V1 config = createPutRawRequestConfig();
+        this.dpu.configure((new ConfigurationBuilder()).setDpuConfiguration(config).toString());
+        HttpRequestExecutor executor = mockHttpExecutorWithErrorResponses();
+        this.dpu.setRequestExecutor(executor);
+        this.env.run(this.dpu);
+    }
+
+    @Test(expected = DPUException.class)
     public void multipartPOSTResponseErrorCodeTest() throws Exception {
         HttpRequestConfig_V1 config = createPostMultipartRequestConfig();
+        this.dpu.configure((new ConfigurationBuilder()).setDpuConfiguration(config).toString());
+        HttpRequestExecutor executor = mockHttpExecutorWithErrorResponses();
+        this.dpu.setRequestExecutor(executor);
+        this.env.run(this.dpu);
+    }
+
+    @Test(expected = DPUException.class)
+    public void multipartPUTResponseErrorCodeTest() throws Exception {
+        HttpRequestConfig_V1 config = createPutMultipartRequestConfig();
         this.dpu.configure((new ConfigurationBuilder()).setDpuConfiguration(config).toString());
         HttpRequestExecutor executor = mockHttpExecutorWithErrorResponses();
         this.dpu.setRequestExecutor(executor);
@@ -151,8 +177,46 @@ public class HttpRequestTest {
     }
 
     @Test
+    public void DELETERequestTest() throws Exception {
+        HttpRequestConfig_V1 config = createDeleteRequestConfig();
+
+        URI sentResponse = this.getClass().getClassLoader().getResource(DELETE_RESPONSE_FILE).toURI();
+        String sentResponseContent = readFile(new File(sentResponse));
+
+        this.dpu.configure((new ConfigurationBuilder()).setDpuConfiguration(config).toString());
+        HttpRequestExecutor executor = mockHttpExecutorWithResponses(config);
+        this.dpu.setRequestExecutor(executor);
+        this.env.run(this.dpu);
+
+        FilesDataUnit.Entry entry = this.output.getIteration().next();
+        File receivedResponse = new File(URI.create(entry.getFileURIString()));
+        String receivedResponseContent = readFile(receivedResponse);
+
+        assertEquals(sentResponseContent, receivedResponseContent);
+    }
+
+    @Test
     public void rawPOSTRequestTest() throws Exception {
         HttpRequestConfig_V1 config = createPostRawRequestConfig();
+
+        URI sentResponse = this.getClass().getClassLoader().getResource(POST_RAW_RESPONSE_FILE).toURI();
+        String sentResponseContent = readFile(new File(sentResponse));
+
+        this.dpu.configure((new ConfigurationBuilder()).setDpuConfiguration(config).toString());
+        HttpRequestExecutor executor = mockHttpExecutorWithResponses(config);
+        this.dpu.setRequestExecutor(executor);
+        this.env.run(this.dpu);
+
+        FilesDataUnit.Entry entry = this.output.getIteration().next();
+        File receivedResponse = new File(URI.create(entry.getFileURIString()));
+        String receivedResponseContent = readFile(receivedResponse);
+
+        assertEquals(sentResponseContent, receivedResponseContent);
+    }
+
+    @Test
+    public void rawPUTRequestTest() throws Exception {
+        HttpRequestConfig_V1 config = createPutRawRequestConfig();
 
         URI sentResponse = this.getClass().getClassLoader().getResource(POST_RAW_RESPONSE_FILE).toURI();
         String sentResponseContent = readFile(new File(sentResponse));
@@ -188,11 +252,39 @@ public class HttpRequestTest {
         assertEquals(sentResponseContent, receivedResponseContent);
     }
 
+    @Test
+    public void multipartPUTRequestTest() throws Exception {
+        HttpRequestConfig_V1 config = createPutMultipartRequestConfig();
+
+        URI sentResponse = this.getClass().getClassLoader().getResource(POST_MULTIPART_RESPONSE_FILE).toURI();
+        String sentResponseContent = readFile(new File(sentResponse));
+
+        this.dpu.configure((new ConfigurationBuilder()).setDpuConfiguration(config).toString());
+        HttpRequestExecutor executor = mockHttpExecutorWithResponses(config);
+        this.dpu.setRequestExecutor(executor);
+        this.env.run(this.dpu);
+
+        FilesDataUnit.Entry entry = this.output.getIteration().next();
+        File receivedResponse = new File(URI.create(entry.getFileURIString()));
+        String receivedResponseContent = readFile(receivedResponse);
+
+        assertEquals(sentResponseContent, receivedResponseContent);
+    }
+
     private static HttpRequestConfig_V1 createGetRequestConfig() {
         HttpRequestConfig_V1 config = new HttpRequestConfig_V1();
         config.setRequestType(RequestType.GET);
         config.setRequestURL("http://echo.jsontest.com/key/value/one/two");
         config.setFileName("get_response.json");
+
+        return config;
+    }
+
+    private static HttpRequestConfig_V1 createDeleteRequestConfig() {
+        HttpRequestConfig_V1 config = new HttpRequestConfig_V1();
+        config.setRequestType(RequestType.DELETE);
+        config.setRequestURL("http://httpbin.org/delete");
+        config.setFileName("delete_response.json");
 
         return config;
     }
@@ -209,9 +301,39 @@ public class HttpRequestTest {
         return config;
     }
 
+    private static HttpRequestConfig_V1 createPutRawRequestConfig() {
+        HttpRequestConfig_V1 config = new HttpRequestConfig_V1();
+        config.setRequestType(RequestType.PUT);
+        config.setRequestURL("http://www.webservicex.net/globalweather.asmx");
+        config.setContentType(RequestContentType.SOAP);
+        config.setPostRequestDataType(DataType.RAW_DATA);
+        config.setRawRequestBody("SOAP ENVELOPE TEXT");
+        config.setFileName("raw_response.xml");
+
+        return config;
+    }
+
     private static HttpRequestConfig_V1 createPostMultipartRequestConfig() {
         HttpRequestConfig_V1 config = new HttpRequestConfig_V1();
         config.setRequestType(RequestType.POST);
+        config.setRequestURL("https://data.gov.sk/api/action/internal_api");
+        config.setPostRequestDataType(DataType.FORM_DATA);
+        config.setFileName("multipart_response.xml");
+
+        Map<String, String> formData = new HashMap<String, String>();
+        formData.put("action", "resource_show");
+        formData.put("token", "ee^sd5&78");
+        formData.put("user_id", "8EEBA23B-6BFE-4F76-A3B5-D9B627823137");
+        formData.put("data", "{\"id\":\"0bb71eaf-775f-4dac-bcf6-cfa457f816fa\"}");
+
+        config.setFormDataRequestBody(formData);
+
+        return config;
+    }
+
+    private static HttpRequestConfig_V1 createPutMultipartRequestConfig() {
+        HttpRequestConfig_V1 config = new HttpRequestConfig_V1();
+        config.setRequestType(RequestType.PUT);
         config.setRequestURL("https://data.gov.sk/api/action/internal_api");
         config.setPostRequestDataType(DataType.FORM_DATA);
         config.setFileName("multipart_response.xml");

@@ -1,0 +1,21 @@
+{
+  "args": {},
+  "data": "",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en,zh-CN;q=0.8,zh;q=0.6",
+    "Connection": "close",
+    "Content-Length": "0",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Host": "httpbin.org",
+    "Origin": "https://resttesttest.com",
+    "Referer": "https://resttesttest.com/",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
+  },
+  "json": null,
+  "origin": "212.186.178.202",
+  "url": "https://httpbin.org/delete"
+}

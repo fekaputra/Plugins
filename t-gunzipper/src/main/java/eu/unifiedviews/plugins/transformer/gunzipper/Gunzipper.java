@@ -62,7 +62,10 @@ public class Gunzipper extends AbstractDpu<GunzipperConfig_V1> {
                     try (GZIPInputStream inputStream = new GZIPInputStream(new FileInputStream(inputFile)); FileOutputStream outputStream = new FileOutputStream(outputFile)) {
                         IOUtils.copyLarge(inputStream, outputStream);
                     }
+                    FilesHelper.addFile(filesOutput, outputFile,entry.getSymbolicName());
                     CopyHelpers.copyMetadata(entry.getSymbolicName(), filesInput, filesOutput);
+
+                    //set virtual path
                     String virtualPath = VirtualPathHelpers.getVirtualPath(filesOutput, entry.getSymbolicName());
                     if (StringUtils.isEmpty(virtualPath)) {
                         virtualPath = entry.getSymbolicName();

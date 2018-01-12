@@ -1,5 +1,7 @@
-UnifiedViews Plugins [![Build Status](https://travis-ci.org/UnifiedViews/Plugins.svg)](https://travis-ci.org/UnifiedViews/Plugins)
+UnifiedViews Plugins
 ---
+
+Master branch: ![Build Status](https://travis-ci.org/UnifiedViews/Plugins.svg?branch=master) Develop branch: ![Build Status](https://travis-ci.org/UnifiedViews/Plugins.svg?branch=develop)
 
 This repository is used for source code of general purpose UnifiedViews Plugins (DPUs).
 

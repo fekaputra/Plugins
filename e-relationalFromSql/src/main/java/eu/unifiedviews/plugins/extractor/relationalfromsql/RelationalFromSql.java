@@ -55,9 +55,6 @@ public class RelationalFromSql extends AbstractDpu<RelationalFromSqlConfig_V2> {
     @DataUnit.AsOutput(name = "outputTables")
     public WritableRelationalDataUnit outputTables;
 
-    @ExtensionInitializer.Init
-    public FaultTolerance faultTolerance;
-
     @ExtensionInitializer.Init(param = "eu.unifiedviews.plugins.extractor.relationalfromsql.RelationalFromSqlConfig__V2")
     public ConfigurationUpdate _ConfigurationUpdate;
 
@@ -122,46 +119,41 @@ public class RelationalFromSql extends AbstractDpu<RelationalFromSqlConfig_V2> {
 
                 LOG.debug("Creating internal db representation as " + createTableQuery);
                 executeSqlQueryInInternalDatabase(createTableQuery);
-                LOG.debug("Database table in internal database successfully created");
+                LOG.info("Database table in internal database successfully created");
 
                 // For now, symbolic name and real table name are the same - user inserted
                 this.outputTables.addExistingDatabaseTable(symbolicName, tableName);
-                LOG.debug("New database table {} added to relational data unit", tableName);
+                LOG.info("New database table {} added to relational data unit", tableName);
 
                 LOG.debug("Inserting data from source table into internal table");
                 insertDataFromSelect(tableColumns, rs, tableName);
-                LOG.debug("Inserting data from source table into internal table successful");
+                LOG.info("Inserting data from source table into internal table successful");
 
                 if (this.config.getPrimaryKeyColumns() == null || this.config.getPrimaryKeyColumns().isEmpty()) {
-                    LOG.debug("No primary keys defined for table, nothing to do");
+                    LOG.info("Primary keys: No primary keys defined for table");
                 } else {
-                    LOG.debug("Going to add primary keys to the output database table");
+                    LOG.info("Primary keys: Going to add primary keys to the output database table");
                     String alterQuery = QueryBuilder.getPrimaryKeysQuery(tableName, this.config.getPrimaryKeyColumns());
                     executeSqlQueryInInternalDatabase(alterQuery);
-                    LOG.debug("Primary keys successfully added to the output table");
+                    LOG.info("Primary keys: Successfully added to the output table");
                 }
                 if (this.config.getIndexedColumns() == null || this.config.getIndexedColumns().isEmpty()) {
-                    LOG.debug("No indexed columns defined for target table, nothing to do");
+                    LOG.info("No indexed columns defined for target table, nothing to do");
                 } else {
-                    LOG.debug("Going to create indexes in internal database table");
+                    LOG.info("Going to create indexes in internal database table");
                     for (String indexColumn : this.config.getIndexedColumns()) {
                         String indexQuery = QueryBuilder.getCreateIndexQuery(tableName, indexColumn);
                         executeSqlQueryInInternalDatabase(indexQuery);
                     }
-                    LOG.debug("Indexes created successfully");
+                    LOG.info("Indexes created successfully");
                 }
 
-                faultTolerance.execute(new FaultTolerance.Action() {
+                Resource resource = ResourceHelpers.getResource(outputTables, symbolicName);
+                Date now = new Date();
+                resource.setCreated(now);
+                resource.setLast_modified(now);
+                ResourceHelpers.setResource(outputTables, symbolicName, resource);
 
-                    @Override
-                    public void action() throws Exception {
-                        Resource resource = ResourceHelpers.getResource(outputTables, symbolicName);
-                        Date now = new Date();
-                        resource.setCreated(now);
-                        resource.setLast_modified(now);
-                        ResourceHelpers.setResource(outputTables, symbolicName, resource);
-                    }
-                });
                 LOG.debug("Resource parameters for table updated");
             } catch (SQLTransformException e) {
                 switch (e.getErrorCode()) {
@@ -208,8 +200,8 @@ public class RelationalFromSql extends AbstractDpu<RelationalFromSqlConfig_V2> {
             while (rs.next()) {
                 fillInsertData(ps, tableColumns, rs);
                 ps.execute();
+                conn.commit();
             }
-            conn.commit();
         } catch (SQLException e) {
             LOG.error("Failed to load data into internal table", e);
             RelationalFromSqlHelper.tryRollbackConnection(conn);
