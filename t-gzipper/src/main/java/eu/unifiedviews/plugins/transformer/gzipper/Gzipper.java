@@ -57,6 +57,7 @@ public class Gzipper extends AbstractDpu<GzipperConfig_V1> {
                     try (FileInputStream inputStream = new FileInputStream(inputFile); GZIPOutputStream outputStream = new GZIPOutputStream(new FileOutputStream(outputFile))) {
                         IOUtils.copyLarge(inputStream, outputStream);
                     }
+                    FilesHelper.addFile(filesOutput, outputFile,entry.getSymbolicName());
                     CopyHelpers.copyMetadata(entry.getSymbolicName(), filesInput, filesOutput);
                     String virtualPath = VirtualPathHelpers.getVirtualPath(filesOutput, entry.getSymbolicName());
                     if (StringUtils.isEmpty(virtualPath)) {
