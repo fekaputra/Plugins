@@ -107,7 +107,10 @@ public class RdfToFilesVaadinDialog extends AbstractDialog<RdfToFilesConfig_V2> 
 
     @Override
     protected void setConfiguration(RdfToFilesConfig_V2 c) throws DPUConfigException {
-        selectRdfFormat.setValue((RDFFormat) RDFFormat.matchFileName(c.getRdfFileFormat(), rdfFormats).get());
+
+        //select the right format based on its name
+        RDFFormat format = selectFormat(c.getRdfFileFormat());
+        selectRdfFormat.setValue(format);
         checkGenGraphFile.setValue(c.isGenGraphFile());
         if (c.isGenGraphFile()) {
             txtOutGraphName.setValue(c.getOutGraphName());
@@ -116,6 +119,15 @@ public class RdfToFilesVaadinDialog extends AbstractDialog<RdfToFilesConfig_V2> 
             txtOutGraphName.setEnabled(false);
         }
         txtSingleFileOutputSymbolicName.setValue(c.getOutFileName());
+    }
+
+    private RDFFormat selectFormat(String rdfFileFormat) {
+        for (RDFFormat format : rdfFormats) {
+            if (format.getName().equals(rdfFileFormat)) {
+                return format;
+            }
+        }
+        return  RDFFormat.TURTLE;
     }
 
     @Override
