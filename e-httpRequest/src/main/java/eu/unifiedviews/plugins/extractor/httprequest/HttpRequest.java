@@ -144,11 +144,12 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
      */
     private void executeFileHttpRequests(CloseableHttpClient client) throws DPUException {
         List<FilesDataUnit.Entry> files;
+        int processedFiles = 0;
         int errorCounter = 0;
         try {
             files = FaultToleranceUtils.getEntries(this.faultTolerance, this.requestFilesConfig, FilesDataUnit.Entry.class);
             if (files.isEmpty()) {
-                ContextUtils.sendError(this.ctx, "dpu.errors.files.empty", "dpu.errors.files.empty.long");
+                ContextUtils.sendInfo(this.ctx, "dpu.errors.files.empty", "dpu.errors.files.empty.long");
                 return;
             }
             CloseableHttpResponse httpResponse = null;
@@ -157,6 +158,7 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
             File inputFile = null;
             for (FilesDataUnit.Entry entry : files) {
                 try {
+                    processedFiles++;
                     inputFile = new File(URI.create(entry.getFileURIString()));
                     String targetFileName = String.format("%03d", counter++) + "_" + this.config.getFileName();
                     httpResponse = this.requestExecutor.sendFilePostRequest(this.config, inputFile, client);
@@ -172,7 +174,10 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
             if (errorCounter == files.size()) {
                 ContextUtils.sendError(this.ctx, "dpu.errors.files.all", "dpu.errors.files.all.long");
                 return;
+            } else {
+                ContextUtils.sendShortInfo(this.ctx, "dpu.errors.files.result", processedFiles - errorCounter, processedFiles);
             }
+
         } catch (Exception e) {
             throw ContextUtils.dpuException(this.ctx, "dpu.errors.files.input");
         }
