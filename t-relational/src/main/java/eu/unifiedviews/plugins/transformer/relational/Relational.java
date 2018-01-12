@@ -103,10 +103,10 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
             }
 
             LOG.debug("Going to create database user {} who will execute SELECT queries in internal DB", dbUserName);
-            executeSqlQueryInInternalDatabaseAsAdmin(DatabaseHelper.createDropUserQuery(dbUserName));
-            executeSqlQueryInInternalDatabaseAsAdmin(DatabaseHelper.createDatabaseUserQuery(dbUserName, DB_PASSWORD));
+            executeSqlQueryInInternalDatabaseAsAdmin(DatabaseHelper.createDropUserQuery(dbUserName),inputTables);
+            executeSqlQueryInInternalDatabaseAsAdmin(DatabaseHelper.createDatabaseUserQuery(dbUserName, DB_PASSWORD),inputTables);
             LOG.debug("Database user {} successfully created", dbUserName);
-            grantSelectOnAllInputTables(tables, dbUserName);
+            grantSelectOnAllInputTables(tables, dbUserName, inputTables);
 
             LOG.debug("Going to create SQL connection to internal database for user {}", dbUserName);
             conn = this.inputTables.getDatabaseConnectionForUser(dbUserName, DB_PASSWORD);
@@ -128,7 +128,7 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
             String createTableQuery = DatabaseHelper.getCreateTableQueryFromMetaData(tableColumns, targetTableName);
 
             LOG.debug("Creating internal db representation as " + createTableQuery);
-            executeSqlQueryInInternalDatabaseAsAdmin(createTableQuery);
+            executeSqlQueryInInternalDatabaseAsAdmin(createTableQuery, outputTable);
             LOG.debug("Database table in internal database successfully created");
 
             // For now, symbolic name and real table name are the same - user inserted
@@ -145,10 +145,10 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
             } else {
                 LOG.debug("Going to create primary keys for table {}", targetTableName);
                 for (String primaryKey : this.config.getPrimaryKeyColumns()) {
-                    executeSqlQueryInInternalDatabaseAsAdmin(DatabaseHelper.createAlterColumnSetNotNullQuery(targetTableName, primaryKey));
+                    executeSqlQueryInInternalDatabaseAsAdmin(DatabaseHelper.createAlterColumnSetNotNullQuery(targetTableName, primaryKey), outputTable);
                 }
                 String alterTablesQuery = DatabaseHelper.createPrimaryKeysQuery(targetTableName, this.config.getPrimaryKeyColumns());
-                executeSqlQueryInInternalDatabaseAsAdmin(alterTablesQuery);
+                executeSqlQueryInInternalDatabaseAsAdmin(alterTablesQuery, outputTable);
             }
 
             // Create indexes
@@ -158,7 +158,7 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
                 LOG.debug("Going to create indexes for table {}", targetTableName);
                 for (String indexedColumn : this.config.getIndexedColumns()) {
                     String indexQuery = DatabaseHelper.getCreateIndexQuery(targetTableName, indexedColumn);
-                    executeSqlQueryInInternalDatabaseAsAdmin(indexQuery);
+                    executeSqlQueryInInternalDatabaseAsAdmin(indexQuery, outputTable);
                 }
             }
             this.faultTolerance.execute(new FaultTolerance.Action() {
@@ -194,18 +194,18 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
             DatabaseHelper.tryCloseStatement(stmnt);
             DatabaseHelper.tryCloseConnection(conn);
             try {
-                executeSqlQueryInInternalDatabaseAsAdmin(DatabaseHelper.createDropUserQuery(dbUserName));
+                executeSqlQueryInInternalDatabaseAsAdmin(DatabaseHelper.createDropUserQuery(dbUserName), inputTables);
             } catch (DataUnitException e) {
                 LOG.warn("Failed to drop DPU database user");
             }
         }
     }
 
-    private void grantSelectOnAllInputTables(Set<Entry> tables, String dbUserName) throws DataUnitException {
+    private void grantSelectOnAllInputTables(Set<Entry> tables, String dbUserName, RelationalDataUnit du) throws DataUnitException {
         LOG.debug("Going to GRANT SELECT on all input tables to user {}", dbUserName);
         for (RelationalDataUnit.Entry table : tables) {
             String grantSelectQuery = DatabaseHelper.createGrantSelectOnTableQuery(table.getTableName(), dbUserName);
-            executeSqlQueryInInternalDatabaseAsAdmin(grantSelectQuery);
+            executeSqlQueryInInternalDatabaseAsAdmin(grantSelectQuery, du);
         }
         LOG.debug("GRANT SELECT on input tables successful");
     }
@@ -214,7 +214,7 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
         boolean result = false;
         Connection conn = null;
         try {
-            conn = getAdminConnectionInternal();
+            conn = getOutputConnectionInternal();
             result = DatabaseHelper.checkTableExists(conn, tableName);
         } catch (SQLException e) {
             DatabaseHelper.tryRollbackConnection(conn);
@@ -230,7 +230,7 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
         PreparedStatement ps = null;
         Connection conn = null;
         try {
-            conn = getAdminConnectionInternal();
+            conn = getOutputConnectionInternal();
             String insertQuery = DatabaseHelper.getInsertQueryForPreparedStatement(tableColumns, tableName);
             LOG.debug("Insert query for inserting into internal DB table: {}", insertQuery);
             ps = conn.prepareStatement(insertQuery);
@@ -249,11 +249,11 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
         }
     }
 
-    private void executeSqlQueryInInternalDatabaseAsAdmin(String query) throws DataUnitException {
+    private void executeSqlQueryInInternalDatabaseAsAdmin(String query, RelationalDataUnit du) throws DataUnitException {
         Statement stmnt = null;
         Connection conn = null;
         try {
-            conn = getAdminConnectionInternal();
+            conn = du.getDatabaseConnection();
             stmnt = conn.createStatement();
             stmnt.executeUpdate(query);
             conn.commit();
@@ -275,8 +275,8 @@ public class Relational extends AbstractDpu<RelationalConfig_V1> {
         }
     }
 
-    private Connection getAdminConnectionInternal() throws DataUnitException {
-        return this.inputTables.getDatabaseConnection();
+    private Connection getOutputConnectionInternal() throws DataUnitException {
+        return this.outputTable.getDatabaseConnection();
     }
 
 }
