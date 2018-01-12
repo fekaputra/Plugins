@@ -111,6 +111,9 @@ public class ResponsePreviewWindow extends Window {
                 case GET:
                     httpResponse = this.requestExecutor.sendGetRequest(config, client);
                     break;
+                case DELETE:
+                    httpResponse = this.requestExecutor.sendDeleteRequest(config, client);
+                    break;
                 case POST:
                     switch (config.getPostRequestDataType()) {
                         case RAW_DATA:
@@ -118,6 +121,18 @@ public class ResponsePreviewWindow extends Window {
                             break;
                         case FORM_DATA:
                             httpResponse = this.requestExecutor.sendMultipartPostRequest(config, client);
+                            break;
+                        default:
+                            return;
+                    }
+                    break;
+                case PUT:
+                    switch (config.getPostRequestDataType()) {
+                        case RAW_DATA:
+                            httpResponse = this.requestExecutor.sendRawDataPutRequest(config, client);
+                            break;
+                        case FORM_DATA:
+                            httpResponse = this.requestExecutor.sendMultipartPutRequest(config, client);
                             break;
                         default:
                             return;
