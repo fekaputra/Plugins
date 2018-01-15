@@ -11,7 +11,7 @@
 	<artifactId>uv-l-relationalToSql</artifactId>
 	<name>L-RelationalToSql</name>
 	<description>Loads data from internal relational data unit into external SQL database</description>
-	<version>3.0.1-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>bundle</packaging>
 
 	<properties>
