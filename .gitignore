@@ -2,6 +2,8 @@
 frontend/src/main/webapp/WEB-INF/config.properties
 *.local.xml
 
+.DS_Store
+
 *.class
 
 # Log files #
