@@ -12,7 +12,7 @@
     <artifactId>uv-e-filesDownload</artifactId>
     <name>E-FilesDownload</name>
     <description>Downloads list of files. Replaces E-FilesFromLocal and E-HttpDownload.</description>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>bundle</packaging>
 
     <properties>

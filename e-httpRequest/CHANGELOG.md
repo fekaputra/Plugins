@@ -1,7 +1,7 @@
 E-HttpRequest
 ----------
 
-v2.0.1
+v2.1.0
 ---
 * Support for HTTP PUT/DELETE added
 * Accept also empty list of files in case of HTTP POST, do not fail because of that

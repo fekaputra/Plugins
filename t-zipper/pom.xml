@@ -12,7 +12,7 @@
 	<artifactId>uv-t-zipper</artifactId>
 	<name>T-Zipper</name>
 	<description>Zips input files into zip file of given name.</description>
-	<version>3.0.1-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>bundle</packaging>
 
 	<properties>
