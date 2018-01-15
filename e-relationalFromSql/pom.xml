@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>eu.unifiedviews</groupId>
 		<artifactId>uv-pom-dpu</artifactId>
-		<version>3.0.1-SNAPSHOT</version>
+		<version>3.0.1</version>
 		<relativePath />
 	</parent>
 
@@ -12,7 +12,7 @@
 	<artifactId>uv-e-relationalFromSql</artifactId>
 	<name>E-RelationalFromSql</name>
 	<description>Extracts data from relational database using SQL queries and stores them into internal data unit relational database</description>
-	<version>3.0.1-SNAPSHOT</version>
+	<version>3.0.1</version>
 	<packaging>bundle</packaging>
 
 	<properties>

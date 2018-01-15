@@ -5,7 +5,7 @@
     <parent>
         <groupId>eu.unifiedviews</groupId>
         <artifactId>uv-pom-dpu</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.0.1</version>
         <relativePath />
     </parent>
 
@@ -18,7 +18,7 @@
         output is written to two output data units of the DPU - "links_confirmed", "links_to_be_verified".
         DPU configuration may also specify thresholds for the two outputs created.
     </description>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>bundle</packaging>
 
     <properties>

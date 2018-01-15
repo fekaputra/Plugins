@@ -57,14 +57,15 @@ public class Gzipper extends AbstractDpu<GzipperConfig_V1> {
                     try (FileInputStream inputStream = new FileInputStream(inputFile); GZIPOutputStream outputStream = new GZIPOutputStream(new FileOutputStream(outputFile))) {
                         IOUtils.copyLarge(inputStream, outputStream);
                     }
-                    FilesHelper.addFile(filesOutput, outputFile,entry.getSymbolicName());
-                    CopyHelpers.copyMetadata(entry.getSymbolicName(), filesInput, filesOutput);
-                    String virtualPath = VirtualPathHelpers.getVirtualPath(filesOutput, entry.getSymbolicName());
-                    if (StringUtils.isEmpty(virtualPath)) {
-                        virtualPath = entry.getSymbolicName();
+                    String sourceVirtualPath = VirtualPathHelpers.getVirtualPath(filesInput, entry.getSymbolicName());
+                    String targetVirtualPath;
+                    if (StringUtils.isEmpty(sourceVirtualPath)) {
+                        targetVirtualPath = entry.getSymbolicName() + ".gz";
+
+                    } else {
+                        targetVirtualPath = sourceVirtualPath + ".gz";
                     }
-                    VirtualPathHelpers.setVirtualPath(filesOutput, entry.getSymbolicName(), virtualPath + ".gz");
-                    filesOutput.updateExistingFileURI(entry.getSymbolicName(), outputFile.toURI().toASCIIString());
+                    FilesHelper.addFile(filesOutput, outputFile,entry.getSymbolicName(), targetVirtualPath );
                 } catch (IOException ex) {
                     if (skipOnError) {
                         LOG.warn("Skipping file: '{}' because of error.", entry.toString(), ex);
