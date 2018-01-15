@@ -1,5 +1,14 @@
 package eu.unifiedviews.plugins.extractor.sparqlendpoint;
 
+import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.query.*;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.unifiedviews.dataunit.DataUnit;
 import eu.unifiedviews.dataunit.DataUnitException;
 import eu.unifiedviews.dataunit.rdf.RDFDataUnit;
@@ -13,15 +22,9 @@ import eu.unifiedviews.helpers.dpu.config.migration.ConfigurationUpdate;
 import eu.unifiedviews.helpers.dpu.context.ContextUtils;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
+import eu.unifiedviews.helpers.dpu.extension.rdf.profiler.RdfProfiler;
 import eu.unifiedviews.helpers.dpu.extension.rdf.simple.WritableSimpleRdf;
 import eu.unifiedviews.plugins.extractor.rdffromsparql.RdfFromSparqlEndpointConfig_V1;
-import  org.eclipse.rdf4j.model.Statement;
-import  org.eclipse.rdf4j.model.IRI;
-import  org.eclipse.rdf4j.query.*;
-import  org.eclipse.rdf4j.repository.RepositoryConnection;
-import  org.eclipse.rdf4j.repository.RepositoryException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Main data processing unit class.
@@ -37,6 +40,12 @@ public class SparqlEndpoint extends AbstractDpu<SparqlEndpointConfig_V1> {
 
     @ExtensionInitializer.Init(param = "rdfOutput")
     public WritableSimpleRdf output;
+
+    @ExtensionInitializer.Init
+    public RdfProfiler rdfProfiler;
+
+    @ExtensionInitializer.Init
+    public RdfValidation rdfValidator;
 
     @ExtensionInitializer.Init(param = "eu.unifiedviews.plugins.extractor.rdffromsparql.RdfFromSparqlEndpointConfig_V1")
     public ConfigurationUpdate _ConfigurationUpdate;

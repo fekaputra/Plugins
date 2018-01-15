@@ -18,6 +18,7 @@ import eu.unifiedviews.helpers.dpu.config.migration.ConfigurationUpdate;
 import eu.unifiedviews.helpers.dpu.context.ContextUtils;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
+import eu.unifiedviews.helpers.dpu.extension.rdf.profiler.RdfProfiler;
 import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
 import eu.unifiedviews.plugins.transformer.sparql.SPARQLConfig_V1;
 import org.eclipse.rdf4j.model.IRI;
@@ -58,6 +59,9 @@ public class SparqlUpdate extends AbstractDpu<SparqlUpdateConfig_V1> {
 
     @ExtensionInitializer.Init
     public RdfValidation rdfValidation;
+
+    @ExtensionInitializer.Init
+    public RdfProfiler rdfProfiler;
 
     @ExtensionInitializer.Init(param = "eu.unifiedviews.plugins.transformer.sparql.SPARQLConfig__V1")
     public ConfigurationUpdate _ConfigurationUpdate;

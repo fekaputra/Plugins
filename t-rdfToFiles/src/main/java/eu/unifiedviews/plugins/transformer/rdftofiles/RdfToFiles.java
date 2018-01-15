@@ -75,7 +75,7 @@ public class RdfToFiles extends AbstractDpu<RdfToFilesConfig_V2> {
 
         Set<RDFFormat> rdfFormats = RDFParserRegistry.getInstance().getKeys();
 
-        rdfFormat = (RDFFormat) RDFFormat.matchFileName(config.getRdfFileFormat(), rdfFormats).get();
+        rdfFormat = selectFormat(config.getRdfFileFormat(), rdfFormats); //RDFFormat.matchFileName(config.getRdfFileFormat(), rdfFormats).get();
         if (rdfFormat == null) {
             throw ContextUtils.dpuException(ctx, "rdfToFiles.error.rdfFortmat.null");
         }
@@ -102,6 +102,15 @@ public class RdfToFiles extends AbstractDpu<RdfToFilesConfig_V2> {
             ContextUtils.sendMessage(ctx, MessageType.INFO, "rdfToFiles.nodata", "");
         }
 
+    }
+
+    private RDFFormat selectFormat(String rdfFileFormat, Set<RDFFormat> rdfFormats) {
+        for (RDFFormat format : rdfFormats) {
+            if (format.getName().equals(rdfFileFormat)) {
+                return format;
+            }
+        }
+        return  RDFFormat.TURTLE;
     }
 
     /**

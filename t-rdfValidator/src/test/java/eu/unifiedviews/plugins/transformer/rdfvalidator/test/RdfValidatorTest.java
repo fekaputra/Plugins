@@ -275,57 +275,6 @@ public class RdfValidatorTest {
         }
     }
 
-    @Test
-    public void testSelect() throws Exception {
-        // Prepare config.
-        RdfValidatorConfig_V1 config = new RdfValidatorConfig_V1();
-        config.setFailExecution(false);
-        config.setOutputGraphSymbolicName("output1");
-        config.setPerGraph(false);
-        config.setQuery("SELECT  ?s ?p ?o WHERE {?s ?p ?o }");
-
-        // Prepare DPU.
-        RdfValidator rdfDataValidator = new RdfValidator();
-        rdfDataValidator.configure((new ConfigurationBuilder()).setDpuConfiguration(config).toString());
-
-        // Prepare test environment.
-        TestEnvironment environment = new TestEnvironment();
-
-        // Prepare data unit.
-        WritableRDFDataUnit input = environment.createRdfInput("rdfInput", false);
-        WritableRDFDataUnit output = environment.createRdfOutput("rdfCopyOfInput", false);
-
-        InputStream inputStream = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("metadata.ttl");
-
-        RepositoryConnection connection = null;
-        try {
-            connection = input.getConnection();
-            IRI graph = input.addNewDataGraph("test");
-            connection.add(inputStream, "", RDFFormat.TURTLE, graph);
-            StringWriter swInput = new StringWriter();
-            connection.export(Rio.createWriter(RDFFormat.TURTLE, swInput), graph);
-            // some triples has been loaded
-            assertTrue(connection.size(graph) > 0);
-            // Run.
-            environment.run(rdfDataValidator);
-            
-            StringWriter sw = new StringWriter();
-            connection.export(Rio.createWriter(RDFFormat.TURTLE, sw), RDFHelper.getGraphsURIArray(output));
-            assertEquals(swInput.toString(), sw.toString());
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (RepositoryException ex) {
-
-                }
-            }
-            // Release resources.
-            environment.release();
-        }
-    }
-
     @Test(expected = DPUException.class)
     public void testSelectFailExec() throws Exception {
         // Prepare config.

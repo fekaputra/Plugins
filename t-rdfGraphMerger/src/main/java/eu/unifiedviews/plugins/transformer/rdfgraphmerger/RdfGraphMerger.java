@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import eu.unifiedviews.helpers.dpu.extension.rdf.profiler.RdfProfiler;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,9 @@ public class RdfGraphMerger extends AbstractDpu<RdfGraphMergerConfig_V1> {
 
     @DataUnit.AsOutput(name = "output", optional = true)
     public WritableRDFDataUnit rdfOutput;
+
+    @ExtensionInitializer.Init
+    public RdfProfiler rdfProfiler;
 
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;

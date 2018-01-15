@@ -25,11 +25,11 @@ It also supports HTTPS requests.
 |Basic authentication | Sets BASIC authentication (user name, password) for HTTP request |
 |User name | (if authentication is on) User name for basic authentication |
 |Password | (if authentication is on) Password for basic authentication |
-|Data type | (POST method) Type of sent data in HTTP request: Form-data (multipart), Raw (text), Raw bodies from input files, Form-data bodies from input RDF configuration  |
-|Content-type| (POST/raw) Type of sent raw data, set as HTTP header "Content-Type" (e.g. XML, JSON, SOAP, ...)|
-|Request body text encoding | (POST/text) Encoding of HTTP request body text |
-|Request body | (POST/text) Text sent in HTTP request body |
-|Form data | (POST/multipart) Table of sent form data in the form of key - values |
+|Data type | (only for POST HTTP method) Type of sent data in HTTP request: Raw body (text), Form-data body (multipart), Raw bodies from input files, Form-data bodies from input RDF configuration  |
+|Content-type| (only for POST HTTP method) Type of sent raw data, set as HTTP header "Content-Type" (e.g. XML, JSON, SOAP, ...)|
+|Request body text encoding | (only for POST HTTP method) Encoding of HTTP request body text |
+|Request body | (only for POST HTTP method - raw body) Text sent in HTTP request body |
+|Form data | (only for POST HTTP method - form-data body) Table of sent form data in the form of key - values |
 
 ### Inputs and outputs
 

@@ -17,6 +17,7 @@ import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import eu.unifiedviews.helpers.dpu.extension.ExtensionInitializer;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultTolerance;
 import eu.unifiedviews.helpers.dpu.extension.faulttolerance.FaultToleranceUtils;
+import eu.unifiedviews.helpers.dpu.extension.rdf.profiler.RdfProfiler;
 import eu.unifiedviews.helpers.dpu.extension.rdf.simple.WritableSimpleRdf;
 import eu.unifiedviews.plugins.transformer.tabular.TabularVaadinDialog;
 import eu.unifiedviews.plugins.transformer.tabular.parser.ParseFailed;
@@ -28,6 +29,10 @@ import eu.unifiedviews.helpers.dpu.extension.rdf.validation.RdfValidation;
 
 
 import java.util.List;
+
+import static cz.cuni.mff.xrg.uv.transformer.tabular.parser.ParserType.CSV;
+import static cz.cuni.mff.xrg.uv.transformer.tabular.parser.ParserType.DBF;
+import static cz.cuni.mff.xrg.uv.transformer.tabular.parser.ParserType.XLS;
 
 @DPU.AsTransformer
 public class Tabular extends AbstractDpu<TabularConfig_V2> {
@@ -45,6 +50,9 @@ public class Tabular extends AbstractDpu<TabularConfig_V2> {
 
     @ExtensionInitializer.Init
     public RdfValidation rdfValidation;
+
+    @ExtensionInitializer.Init
+    public RdfProfiler rdfProfiler;
 
     @ExtensionInitializer.Init
     public FaultTolerance faultTolerance;

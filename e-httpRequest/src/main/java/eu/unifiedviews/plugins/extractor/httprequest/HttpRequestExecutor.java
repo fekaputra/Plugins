@@ -1,10 +1,8 @@
 package eu.unifiedviews.plugins.extractor.httprequest;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import eu.unifiedviews.dpu.DPUException;
+import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParam;
+import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParamBody;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -13,12 +11,11 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
@@ -29,9 +26,11 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.unifiedviews.dpu.DPUException;
-import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParam;
-import eu.unifiedviews.plugins.extractor.httprequest.rdfConfig.FormParamBody;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 public class HttpRequestExecutor {
 
@@ -67,6 +66,41 @@ public class HttpRequestExecutor {
             checkHttpResponseStatus(response);
         } catch (URISyntaxException | IllegalStateException | IOException ex) {
             String errorMsg = String.format("Failed to execute HTTP GET request to URL %s", config.getRequestURL());
+            LOG.error(errorMsg);
+            throw new Exception(errorMsg, ex);
+        }
+
+        return response;
+    }
+
+    /**
+     * Executes DELETE HTTP request based on configuration
+     *
+     * @param config
+     *            DPU configuration
+     * @param client
+     *            HTTP client used to execute request
+     * @return HTTP response
+     * @throws Exception
+     *             if request execution fails
+     */
+    public CloseableHttpResponse sendDeleteRequest(HttpRequestConfig_V1 config, CloseableHttpClient client) throws Exception {
+        CloseableHttpResponse response = null;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(config.getRequestURL());
+            uriBuilder.setPath(uriBuilder.getPath());
+            HttpDelete request = new HttpDelete(uriBuilder.build().normalize());
+//            if (rdfConfig.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, rdfConfig.getUserName(), rdfConfig.getPassword());
+//            }
+
+            LOG.info("Request: {}", request.toString());
+
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+//            response = client.execute(request);
+            checkHttpResponseStatus(response);
+        } catch (URISyntaxException | IllegalStateException | IOException ex) {
+            String errorMsg = String.format("Failed to execute HTTP DELETE request to URL %s", config.getRequestURL());
             LOG.error(errorMsg);
             throw new Exception(errorMsg, ex);
         }
@@ -123,7 +157,54 @@ public class HttpRequestExecutor {
 
     }
 
+    /**
+     * Executes FILE (binary) HTTP PUT request based on configuration
+     *
+     * @param config
+     *            DPU configuration
+     * @param client
+     *            HTTP client used to execute request
+     * @return HTTP response
+     * @throws Exception
+     *             if request execution fails
+     */
+    public CloseableHttpResponse sendFilePutRequest(HttpRequestConfig_V1 config, File file, CloseableHttpClient client) throws Exception {
+        CloseableHttpResponse response = null;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(config.getRequestURL());
+            uriBuilder.setPath(uriBuilder.getPath());
 
+            HttpPut request = new HttpPut(uriBuilder.build().normalize());
+//            if (rdfConfig.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, rdfConfig.getUserName(), rdfConfig.getPassword());
+//            }
+
+            EntityBuilder builder = EntityBuilder.create();
+            builder.setContentEncoding(config.getCharset());
+
+            //ContentType contentType = ContentType.DEFAULT_BINARY;
+            ContentType contentType = ContentType.create(config.getContentType().getDescription()).withCharset(config.getCharset());
+            builder.setFile(file);
+            builder.setContentType(contentType);
+
+            HttpEntity entity = builder.build();
+            request.setEntity(entity);
+            request.addHeader("Content-Type", contentType.toString());
+
+            LOG.info("Request: {}", request.toString());
+
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+            //response = client.execute(request);
+            checkHttpResponseStatus(response);
+
+        } catch (URISyntaxException | IllegalStateException | IOException ex) {
+            String errorMsg = String.format("Failed to execute HTTP file PUT request to URL %s", config.getRequestURL());
+            LOG.error(errorMsg, ex);
+            throw new Exception(errorMsg, ex);
+        }
+        return response;
+
+    }
 
 
 
@@ -153,6 +234,8 @@ public class HttpRequestExecutor {
             for (String key : config.getFormDataRequestBody().keySet()) {
                 builder.addTextBody(key, config.getFormDataRequestBody().get(key));
             }
+            ContentType contentType = ContentType.MULTIPART_FORM_DATA.withCharset(config.getCharset());
+            builder.setContentType(contentType);
             HttpEntity entity = builder.build();
             request.setEntity(entity);
 
@@ -164,6 +247,51 @@ public class HttpRequestExecutor {
 
         } catch (URISyntaxException | IllegalStateException | IOException ex) {
             String errorMsg = String.format("Failed to execute HTTP multipart POST request to URL %s", config.getRequestURL());
+            LOG.error(errorMsg);
+            throw new Exception(errorMsg, ex);
+        }
+        return response;
+    }
+
+    /**
+     * Executes MULTIPART (form data) HTTP PUT request based on configuration
+     *
+     * @param config
+     *            DPU configuration
+     * @param client
+     *            HTTP client used to execute request
+     * @return HTTP response
+     * @throws Exception
+     *             if request execution fails
+     */
+    public CloseableHttpResponse sendMultipartPutRequest(HttpRequestConfig_V1 config, CloseableHttpClient client) throws Exception {
+        CloseableHttpResponse response = null;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(config.getRequestURL());
+            uriBuilder.setPath(uriBuilder.getPath());
+
+            HttpPut request = new HttpPut(uriBuilder.build().normalize());
+//            if (rdfConfig.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, rdfConfig.getUserName(), rdfConfig.getPassword());
+//            }
+
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            for (String key : config.getFormDataRequestBody().keySet()) {
+                builder.addTextBody(key, config.getFormDataRequestBody().get(key));
+            }
+            ContentType contentType = ContentType.MULTIPART_FORM_DATA.withCharset(config.getCharset());
+            builder.setContentType(contentType);
+            HttpEntity entity = builder.build();
+            request.setEntity(entity);
+
+            LOG.info("Request: {}", request.toString());
+
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+//            response = client.execute(request);
+            checkHttpResponseStatus(response);
+
+        } catch (URISyntaxException | IllegalStateException | IOException ex) {
+            String errorMsg = String.format("Failed to execute HTTP multipart PUT request to URL %s", config.getRequestURL());
             LOG.error(errorMsg);
             throw new Exception(errorMsg, ex);
         }
@@ -182,7 +310,7 @@ public class HttpRequestExecutor {
      * @throws Exception
      *             if request execution fails
      */
-    public CloseableHttpResponse sendMultipartFormRequestFromRdf(HttpRequestConfig_V1 config, FormParamBody paramsBody, CloseableHttpClient client) throws Exception {
+    public CloseableHttpResponse sendMultipartFormPostRequestFromRdf(HttpRequestConfig_V1 config, FormParamBody paramsBody, CloseableHttpClient client) throws Exception {
 
         CloseableHttpResponse response = null;
         try {
@@ -193,8 +321,10 @@ public class HttpRequestExecutor {
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             for (FormParam param : paramsBody.getFormParams()) {
-                builder.addTextBody(param.getParam(), param.getValue());
+                builder.addTextBody(param.getParam(), param.getValue(), ContentType.TEXT_PLAIN.withCharset(config.getCharset()));
             }
+            ContentType contentType = ContentType.MULTIPART_FORM_DATA.withCharset(config.getCharset());
+            builder.setContentType(contentType);
             HttpEntity entity = builder.build();
             request.setEntity(entity);
 
@@ -205,6 +335,49 @@ public class HttpRequestExecutor {
 
         } catch (URISyntaxException | IllegalStateException | IOException ex) {
             String errorMsg = String.format("Failed to execute HTTP multipart POST request to URL %s", config.getRequestURL());
+            LOG.error(errorMsg);
+            throw new Exception(errorMsg, ex);
+        }
+        return response;
+
+    }
+
+    /**
+     * Executes FILE (binary) HTTP PUT request based on configuration
+     *
+     * @param config
+     *            DPU configuration
+     * @param client
+     *            HTTP client used to execute request
+     * @return HTTP response
+     * @throws Exception
+     *             if request execution fails
+     */
+    public CloseableHttpResponse sendMultipartFormPutRequestFromRdf(HttpRequestConfig_V1 config, FormParamBody paramsBody, CloseableHttpClient client) throws Exception {
+
+        CloseableHttpResponse response = null;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(config.getRequestURL());
+            uriBuilder.setPath(uriBuilder.getPath());
+
+            HttpPut request = new HttpPut(uriBuilder.build().normalize());
+
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            for (FormParam param : paramsBody.getFormParams()) {
+                builder.addTextBody(param.getParam(), param.getValue(), ContentType.TEXT_PLAIN.withCharset(config.getCharset()));
+            }
+            ContentType contentType = ContentType.MULTIPART_FORM_DATA.withCharset(config.getCharset());
+            builder.setContentType(contentType);
+            HttpEntity entity = builder.build();
+            request.setEntity(entity);
+
+            LOG.info("Request: {}", request.toString());
+
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+            checkHttpResponseStatus(response);
+
+        } catch (URISyntaxException | IllegalStateException | IOException ex) {
+            String errorMsg = String.format("Failed to execute HTTP multipart PUT request to URL %s", config.getRequestURL());
             LOG.error(errorMsg);
             throw new Exception(errorMsg, ex);
         }
@@ -257,9 +430,55 @@ public class HttpRequestExecutor {
         return response;
     }
 
+    /**
+     * Executes RAW data (text data) HTTP PUT request based on configuration
+     *
+     * @param config
+     *            DPU configuration
+     * @param client
+     *            HTTP client used to execute request
+     * @return HTTP response
+     * @throws Exception
+     *             if request execution fails
+     */
+    public CloseableHttpResponse sendRawDataPutRequest(HttpRequestConfig_V1 config, CloseableHttpClient client) throws Exception {
+        CloseableHttpResponse response = null;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(config.getRequestURL());
+            uriBuilder.setPath(uriBuilder.getPath());
+
+            HttpPut request = new HttpPut(uriBuilder.build().normalize());
+//            if (rdfConfig.isUseAuthentication()) {
+//                addBasiAuthenticationForHttpRequest(request, rdfConfig.getUserName(), rdfConfig.getPassword());
+//            }
+
+            EntityBuilder builder = EntityBuilder.create();
+            builder.setContentEncoding(config.getCharset());
+
+            ContentType contentType = ContentType.create(config.getContentType().getDescription()).withCharset(config.getCharset());
+            builder.setText(config.getRawRequestBody());
+            builder.setContentType(contentType);
+
+            HttpEntity entity = builder.build();
+            request.setEntity(entity);
+            request.addHeader("Content-Type", contentType.toString());
+
+            response = this.httpWrapper.getClient().execute(this.httpWrapper.getHost(), request, this.httpWrapper.getContext());
+//            response = client.execute(request);
+            checkHttpResponseStatus(response);
+
+        } catch (URISyntaxException | IllegalStateException | IOException ex) {
+            String errorMsg = String.format("Failed to execute HTTP raw PUT request to URL %s", config.getRequestURL());
+            LOG.error(errorMsg);
+            throw new Exception(errorMsg, ex);
+        }
+        return response;
+    }
+
     private static void checkHttpResponseStatus(CloseableHttpResponse response) throws Exception {
-        LOG.info("HTTP Response code {}", response.getStatusLine().getStatusCode());
-        if (response.getStatusLine().getStatusCode() != 200) {
+        int statusCode = response.getStatusLine().getStatusCode();
+        LOG.info("HTTP Response code {}", statusCode);
+        if (statusCode >= 200 && statusCode < 300) {
             StringBuilder responseAsString = new StringBuilder();
             responseAsString.append(response.getStatusLine().toString()).append('\n');
             for (Header h : response.getAllHeaders()) {
