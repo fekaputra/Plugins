@@ -12,7 +12,7 @@
 	<artifactId>uv-t-rdfValidator</artifactId>
 	<name>T-RdfValidator</name>
 	<description>Validates RDF data</description>
-	<version>3.0.0</version>
+	<version>3.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<properties>

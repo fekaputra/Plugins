@@ -12,7 +12,7 @@
     <artifactId>uv-t-filesToRdf</artifactId>
     <name>T-FilesToRdf</name>
     <description>Extracts RDF data from Files (any file format) and adds them to RDF.</description>
-    <version>3.0.1</version>
+    <version>3.0.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>

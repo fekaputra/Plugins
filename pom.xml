@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.unifiedviews.plugins</groupId>
     <artifactId>uv-plugin-dpus</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven aggregation project for general purpose DPU implementations.</description>
 
@@ -57,15 +57,6 @@
     </modules>
 
     <profiles>
-        <profile>
-            <id>debian</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>debian</module>
-            </modules>
-        </profile>
 		<profile>
 			<id>oracle</id>
 			<activation>

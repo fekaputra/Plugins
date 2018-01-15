@@ -12,7 +12,7 @@
     <artifactId>uv-t-sparqlConstruct</artifactId>
     <name>T-SparqlConstruct</name>
     <description>Executes a single SPARQL construct query. Does not support quads!</description>
-    <version>3.0.1</version>
+    <version>3.0.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>

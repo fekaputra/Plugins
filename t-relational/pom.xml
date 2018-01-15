@@ -12,7 +12,7 @@
 	<artifactId>uv-t-relational</artifactId>
 	<name>T-Relational</name>
 	<description>Transforms input database tables using SQL into one output table</description>
-	<version>3.0.1</version>
+	<version>3.0.2-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<properties>
