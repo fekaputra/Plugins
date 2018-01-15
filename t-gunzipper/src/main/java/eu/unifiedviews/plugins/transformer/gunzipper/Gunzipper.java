@@ -62,17 +62,15 @@ public class Gunzipper extends AbstractDpu<GunzipperConfig_V1> {
                     try (GZIPInputStream inputStream = new GZIPInputStream(new FileInputStream(inputFile)); FileOutputStream outputStream = new FileOutputStream(outputFile)) {
                         IOUtils.copyLarge(inputStream, outputStream);
                     }
-                    FilesHelper.addFile(filesOutput, outputFile,entry.getSymbolicName());
-                    CopyHelpers.copyMetadata(entry.getSymbolicName(), filesInput, filesOutput);
 
-                    //set virtual path
-                    String virtualPath = VirtualPathHelpers.getVirtualPath(filesOutput, entry.getSymbolicName());
-                    if (StringUtils.isEmpty(virtualPath)) {
-                        virtualPath = entry.getSymbolicName();
+                    String sourceVirtualPath = VirtualPathHelpers.getVirtualPath(filesInput, entry.getSymbolicName());
+                    String targetVirtualPath;
+                    if (StringUtils.isEmpty(sourceVirtualPath)) {
+                        sourceVirtualPath = entry.getSymbolicName();
                     }
-                    VirtualPathHelpers.setVirtualPath(filesOutput, entry.getSymbolicName(), virtualPath.toLowerCase().endsWith(".gz") ? virtualPath.substring(0, virtualPath.lastIndexOf('.')) : virtualPath);
+                    targetVirtualPath = (sourceVirtualPath.toLowerCase().endsWith(".gz") ? sourceVirtualPath.substring(0, sourceVirtualPath.lastIndexOf('.')) : sourceVirtualPath);
+                    FilesHelper.addFile(filesOutput, outputFile,entry.getSymbolicName(), targetVirtualPath );
 
-                    filesOutput.updateExistingFileURI(entry.getSymbolicName(), outputFile.toURI().toASCIIString());
                 } catch (IOException ex) {
                     if (skipOnError) {
                         LOG.warn("Skipping file: '{}' because of error.", entry.toString(), ex);
