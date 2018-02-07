@@ -100,7 +100,7 @@ public class SparqlEndpoint extends AbstractDpu<SparqlEndpointConfig_V1> {
                 LOG.error(e.getLocalizedMessage(), e.getStackTrace());
             }
             try {
-                LOG.info("Executing query.");
+                LOG.info("Executing query for {}", config.getEndpoint());
                 GraphQueryResult result = query.evaluate();
                 LOG.info("Storing result to the working store");
                 long counter = 0;
@@ -154,16 +154,20 @@ public class SparqlEndpoint extends AbstractDpu<SparqlEndpointConfig_V1> {
                 }
                 LOG.info("Storing result.");
                 try {
-                    while (result.hasNext()) {
-                        returnedSomeTriples = true;
-                        final Statement st = result.next();
-                        // Add to out output.
-                        output.add(st.getSubject(), st.getPredicate(), st.getObject());
-                        // Print info.
-                        ++counter;
-                        if (counter % 100000 == 0) {
-                            LOG.info("{} triples extracted", counter);
+                    if (result != null) {
+                        while (result.hasNext()) {
+                            returnedSomeTriples = true;
+                            final Statement st = result.next();
+                            // Add to out output.
+                            output.add(st.getSubject(), st.getPredicate(), st.getObject());
+                            // Print info.
+                            ++counter;
+                            if (counter % 100000 == 0) {
+                                LOG.info("{} triples extracted", counter);
+                            }
                         }
+                    } else {
+                        LOG.info("No result to be stored.");
                     }
                 } catch (QueryEvaluationException e) {
                     LOG.error(e.getLocalizedMessage(), e.getStackTrace());

@@ -120,15 +120,25 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
         int totalNumberOfCorrectlyProcessedFiles = 0;
         Set<String> vfsUrisProcessed = new HashSet<>();
         for (final VfsFile vfsFile : config.getVfsFiles()) {
-            LOG.info("Processing entry: {}/{}", ++totalNumberOfVfsFiles, config.getVfsFiles().size());
-            LOG.info("Entry name: {}, uri: {}", vfsFile.getFileName(), vfsFile.getUri());
             if (ctx.canceled()) {
                 throw ContextUtils.dpuExceptionCancelled(ctx);
             }
 
-            if (!checkURIProtocolSupported(vfsFile.getUri())) {
+            LOG.info("Processing entry: {}/{}", ++totalNumberOfVfsFiles, config.getVfsFiles().size());
+            String fileUriString = vfsFile.getUri();
+            LOG.info("Entry name: {}, uri: {}", vfsFile.getFileName(), fileUriString);
+
+            //replace {{execId}} in the file URI (if such macro is used)
+            if (fileUriString.contains("%7B%7BexecId%7D%7D")) {
+                Long pipelineId = ctx.getExecMasterContext().getDpuContext().getPipelineId();
+                String pipelineIdString = String.valueOf(pipelineId);
+                fileUriString = fileUriString.replace("%7B%7BexecId%7D%7D", pipelineIdString );
+                LOG.info("Entry uri after uri replacement: {}", fileUriString);
+            }
+
+            if (!checkURIProtocolSupported(fileUriString)) {
                 ContextUtils.sendWarn(this.ctx, "FilesDownload.protocol.not.supported", "FilesDownload.protocol.not.supported.long",
-                        vfsFile.getUri(),
+                        fileUriString,
                         getSupportedProtocols());
                 continue;
             }
@@ -138,7 +148,7 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                 final StaticUserAuthenticator staticUserAuthenticator;
                 try {
                     staticUserAuthenticator = new StaticUserAuthenticator(
-                            URI.create(vfsFile.getUri()).getHost(),
+                            URI.create(fileUriString).getHost(),
                             vfsFile.getUsername(),
                             vfsFile.getPassword());
 
@@ -146,7 +156,7 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                 } catch (Exception ex) {
 
                     if (config.isSoftFail()) {
-                        ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.auth", ex, vfsFile.getUri());
+                        ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.auth", ex, fileUriString);
                         continue;
                     }
 
@@ -157,25 +167,25 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
             if (config.isCheckForDuplicatedInputFiles()){
                 //check whether we are not trying to process certain URI more times, in that case just skip processing and log warning
                 //this may happen when we configure fileDownloader dynamically
-                if (vfsUrisProcessed.contains(vfsFile.getUri())) {
+                if (vfsUrisProcessed.contains(fileUriString)) {
                     //the uri was already processed
-                    ContextUtils.sendInfo(ctx, "FilesDownload.softfail.alreadyprocessed", "FilesDownload.softfail.alreadyprocessed.detail", vfsFile.getUri());
+                    ContextUtils.sendInfo(ctx, "FilesDownload.softfail.alreadyprocessed", "FilesDownload.softfail.alreadyprocessed.detail", fileUriString);
                     continue;
                 }
             }
 
             //the entry is not there, just add it
-            vfsUrisProcessed.add(vfsFile.getUri());
+            vfsUrisProcessed.add(fileUriString);
 
             // One path can be resolved in multiple files (like directory.
             final FileObject[] fileObjects;
             try {
-                fileObjects = standardFileSystemManager.resolveFile(vfsFile.getUri(), fileSystemOptions)
+                fileObjects = standardFileSystemManager.resolveFile(fileUriString, fileSystemOptions)
                         .findFiles(new AllFileSelector());
             } catch (org.apache.commons.vfs2.FileSystemException ex) {
 
                 if (config.isSoftFail()) {
-                    ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.processingproblem", ex, vfsFile.getUri());
+                    ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.processingproblem", ex, fileUriString);
                     continue;
                 }
                 else {
@@ -188,23 +198,23 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                 // null files
 
                 if (config.isSoftFail()) {
-                    ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.nofile", vfsFile.getUri());
+                    ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.nofile", fileUriString);
                     continue;
                 }
                 else {
-                    ContextUtils.sendError(ctx,"FilesDownload.execute.exception.nofile", "FilesDownload.execute.exception.nofile.detail", vfsFile.getFileName(), vfsFile.getUri());
+                    ContextUtils.sendError(ctx,"FilesDownload.execute.exception.nofile", "FilesDownload.execute.exception.nofile.detail", vfsFile.getFileName(), fileUriString);
                     return;
                 }
             }
 
-//            LOG.info("Downloadable entry {} resolves to {} files (in case of folders, this may include the the folder as well)", vfsFile.getUri(), fileObjects.length);
+//            LOG.info("Downloadable entry {} resolves to {} files (in case of folders, this may include the the folder as well)", fileUriString, fileObjects.length);
 
             //if it resolves to more than one file, it is directory. So in that case, we have to use the suggested filename only as a prefix
             boolean useFileNameAsPrefixOnly = false;
             if (fileObjects.length > 1) {
                 if (StringUtils.isNotBlank(vfsFile.getFileName())) {
                     //there is some file name suggested by the user
-                    ContextUtils.sendInfo(ctx,"FilesDownload.multiplefiles", "FilesDownload.multiplefiles.detail", vfsFile.getUri(), vfsFile.getFileName());
+                    ContextUtils.sendInfo(ctx,"FilesDownload.multiplefiles", "FilesDownload.multiplefiles.detail", fileUriString, vfsFile.getFileName());
                     useFileNameAsPrefixOnly = true;
                 }
             }
@@ -228,7 +238,7 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                 } catch (org.apache.commons.vfs2.FileSystemException ex) {
 
                     if (config.isSoftFail()) {
-                        ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.processingproblem", ex, vfsFile.getUri());
+                        ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.processingproblem", ex, fileUriString);
                         errorInFileForVfsEntry = true;
                         continue;
                     }
@@ -241,12 +251,12 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                     fileProgress++;
                     totalNumberOfFiles++;
 
-                    LOG.info("Processing file with name: {}, original entry: {}", fileObject.getName(), vfsFile.getUri().toString());
+                    LOG.info("Processing file with name: {}, original entry: {}", fileObject.getName(), fileUriString.toString());
                     final String symbolicName;
-                    final String virtualPath = getVirtualPathForFile(vfsFile.getUri(), fileObject.getName(), fileObjects.length > 1);
+                    final String virtualPath = getVirtualPathForFile(fileUriString, fileObject.getName(), fileObjects.length > 1);
                     if (StringUtils.isNotBlank(vfsFile.getFileName())) {
                         if (useFileNameAsPrefixOnly) {
-                            symbolicName = vfsFile.getFileName()+DigestUtils.sha1Hex(vfsFile.getUri()+fileObject.getName());;
+                            symbolicName = vfsFile.getFileName()+DigestUtils.sha1Hex(fileUriString+fileObject.getName());;
                         }
                         else {
                             symbolicName = vfsFile.getFileName();
@@ -254,7 +264,7 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                     } else {
                         //in this case file name is not available from config dialog
                         //combination of vfsFile + fileObject name (as vfs URI may point to a folder, but I need different symbolic name for each file within that folder)
-                        symbolicName = DigestUtils.sha1Hex(vfsFile.getUri()+fileObject.getName());
+                        symbolicName = DigestUtils.sha1Hex(fileUriString+fileObject.getName());
                     }
                     LOG.info("Symbolic name/actual filename: {}, Virtual path: {}", symbolicName, virtualPath);
 
@@ -285,7 +295,7 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
                                 FaultToleranceUtils.asFile(faultTolerance, destinationFile));
                     } catch (IOException ex) {
                         if (config.isSoftFail()) {
-                            ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.processingproblem", ex, vfsFile.getUri());
+                            ContextUtils.sendShortWarn(ctx, "FilesDownload.softfail.processingproblem", ex, fileUriString);
                             errorInFileForVfsEntry = true;
                             continue;
                         }

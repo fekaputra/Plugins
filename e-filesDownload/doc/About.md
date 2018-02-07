@@ -12,6 +12,8 @@ you do not need to specify a file name.
 This DPU also sets virtual path metadata for each file extracted. In case of files it is equal to the file name (local file name from the file path, e.g. example.txt from a/b/c/example.txt).
 In case of directories, virtual path metadata for each extracted file is equal to the relative path to the original directory.
 
+URI of a file may contain macro {{execId}}, which is replaced during pipeline execution with the actual pipeline execution ID.
+
 
 ### Configuration parameters
 

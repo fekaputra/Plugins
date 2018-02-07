@@ -1,6 +1,10 @@
 E-FilesDownload
 ----------
 
+v3.0.1
+---
+* Added support for {{execId}} macro in the uri of the file
+
 v3.0.0
 ---
 * Added support for custom delay (in ms)  between the HTTP calls
