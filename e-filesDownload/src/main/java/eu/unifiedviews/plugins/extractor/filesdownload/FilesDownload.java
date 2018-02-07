@@ -46,16 +46,15 @@ import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
 
-/**
- * TODO Add support for caching.
- * TODO Add support for soft failure.
- */
+
 @DPU.AsExtractor
 public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilesDownload.class);
 
     public static final String SUPPORTED_PROTOCOLS = "dpu.uv-e-filesDownload.allowed.protocols";
+
+    public static final String EXEC_ID_MACRO = "%7B%7BexecId%7D%7D";
 
     @RdfConfiguration.ContainsConfiguration
     @DataUnit.AsInput(name = "config", optional = true)
@@ -129,10 +128,10 @@ public class FilesDownload extends AbstractDpu<FilesDownloadConfig_V1> {
             LOG.info("Entry name: {}, uri: {}", vfsFile.getFileName(), fileUriString);
 
             //replace {{execId}} in the file URI (if such macro is used)
-            if (fileUriString.contains("%7B%7BexecId%7D%7D")) {
+            if (fileUriString.contains(EXEC_ID_MACRO)) {
                 Long pipelineId = ctx.getExecMasterContext().getDpuContext().getPipelineId();
                 String pipelineIdString = String.valueOf(pipelineId);
-                fileUriString = fileUriString.replace("%7B%7BexecId%7D%7D", pipelineIdString );
+                fileUriString = fileUriString.replace(EXEC_ID_MACRO, pipelineIdString );
                 LOG.info("Entry uri after uri replacement: {}", fileUriString);
             }
 
