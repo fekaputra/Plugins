@@ -11,6 +11,7 @@ import eu.unifiedviews.helpers.dpu.config.ConfigHistory;
 import eu.unifiedviews.helpers.dpu.context.ContextUtils;
 import eu.unifiedviews.helpers.dpu.exec.AbstractDpu;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,32 +56,51 @@ public class JsonToXml extends AbstractDpu<eu.unifiedviews.plugins.JsonToXmlConf
                 String uri = entry.getFileURIString();
                 String inputString = null;
 
-                log.info("Processing file: {}, uri: {}", sn, uri );
+                log.info("Processing file: {}, uri: {}", sn, uri);
 
                 try {
                     inputString = readFile(FilesHelper.asFile(entry).getAbsolutePath());
-                    log.info("Input (first 1000 chars): {}", inputString.substring(0,1000));
+                    log.info("Input (first 1000 chars): {}", inputString.substring(0, 1000));
                 } catch (IOException e) {
-                    log.error(e.getLocalizedMessage(),e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
 
-                JSONObject json = new JSONObject(inputString);
-                String outputString = XML.toString(json);
+                if (inputString.startsWith("[")) {
+                    JSONArray json = new JSONArray(inputString);
+                    String outputString = XML.toString(json);
 
-                outputString = "<root>" + outputString + "</root>";
+                    outputString = "<root>" + outputString + "</root>";
 
-                //prepare output data unit (with the same symbolic name)
-                FilesDataUnit.Entry createdEntry = FilesHelper.createFile(output, sn);
+                    FilesDataUnit.Entry createdEntry = FilesHelper.createFile(output, sn);
 
-                try {
-                    writeFile(FilesHelper.asFile(createdEntry).getAbsolutePath(),outputString);
-                    log.info("Output (first 1000 chars): {}", outputString.substring(0,1000));
-                } catch (IOException e) {
-                    log.error(e.getLocalizedMessage(),e);
+                    try {
+                        writeFile(FilesHelper.asFile(createdEntry).getAbsolutePath(), outputString);
+                        log.info("Output (first 1000 chars): {}", outputString.substring(0, 1000));
+                    } catch (IOException e) {
+                        log.error(e.getLocalizedMessage(), e);
+                    }
+
+                    totalNumberOfCorrectlyProcessedFiles++;
+
+                } else {
+
+                    JSONObject json = new JSONObject(inputString);
+                    String outputString = XML.toString(json);
+
+                    outputString = "<root>" + outputString + "</root>";
+
+                    //prepare output data unit (with the same symbolic name)
+                    FilesDataUnit.Entry createdEntry = FilesHelper.createFile(output, sn);
+
+                    try {
+                        writeFile(FilesHelper.asFile(createdEntry).getAbsolutePath(), outputString);
+                        log.info("Output (first 1000 chars): {}", outputString.substring(0, 1000));
+                    } catch (IOException e) {
+                        log.error(e.getLocalizedMessage(), e);
+                    }
+
+                    totalNumberOfCorrectlyProcessedFiles++;
                 }
-
-                totalNumberOfCorrectlyProcessedFiles++;
-
                 //TODO copy any input metadata
             }
         } catch (DataUnitException ex) {
@@ -88,7 +108,6 @@ public class JsonToXml extends AbstractDpu<eu.unifiedviews.plugins.JsonToXmlConf
         }
 
         ContextUtils.sendShortInfo(ctx, "JsonToXml.stats.processedentries", totalNumberOfCorrectlyProcessedFiles, totalNumberOfFiles);
-
 
 
 //        String str = "{\"menu\": {\n" +
@@ -120,8 +139,7 @@ public class JsonToXml extends AbstractDpu<eu.unifiedviews.plugins.JsonToXmlConf
 //        return xml;
 //    }
 
-    public static String readFile(String filepath) throws FileNotFoundException, IOException
-    {
+    public static String readFile(String filepath) throws FileNotFoundException, IOException {
 
         StringBuilder sb = new StringBuilder();
         InputStream in = new FileInputStream(filepath);
@@ -143,8 +161,7 @@ public class JsonToXml extends AbstractDpu<eu.unifiedviews.plugins.JsonToXmlConf
         return sb.toString();
     }
 
-    public static void writeFile(String filepath, String output) throws FileNotFoundException, IOException
-    {
+    public static void writeFile(String filepath, String output) throws FileNotFoundException, IOException {
         FileWriter ofstream = new FileWriter(filepath);
         try (BufferedWriter out = new BufferedWriter(ofstream)) {
             out.write(output);
