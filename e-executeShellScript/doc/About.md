@@ -15,7 +15,7 @@ Executes shell script with provided configuration
 * Configuration is textfile with script arguments
 * List of script input files provided as the second argument is a plain text document with an absolute file path per line.
 * all output files have to be placed into output directory
-* Script to run must be placed in directory configured in frontend.properties and backend.properties under key shell.scripts.path
+* Script to run must be placed in directory configured in runtime properties (UnifiedViews UI -> Settings -> Runtime Properties) under the key shell.scripts.path
 
 
 ### Inputs and outputs
