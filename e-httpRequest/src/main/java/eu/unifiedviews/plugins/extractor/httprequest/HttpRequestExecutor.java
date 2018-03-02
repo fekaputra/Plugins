@@ -485,13 +485,8 @@ public class HttpRequestExecutor {
                 responseAsString.append(h.toString()).append('\n');
             }
             String errorMsg = String.format("HTTP request was not successful. Received HTTP status and headers:\n%s", responseAsString);
-            LOG.error(errorMsg);
-            try {
-                LOG.error("Response content: {}", EntityUtils.toString(response.getEntity()));
-            } catch (Exception err) {
-                // ignore
-            }
-            throw new Exception(errorMsg);
+            LOG.error(errorMsg + "\nResponse content: {}", EntityUtils.toString(response.getEntity()));
+            throw new DPUException(errorMsg);
         }
     }
 
