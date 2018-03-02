@@ -1,6 +1,11 @@
 E-HttpRequest
 ----------
 
+v2.1.1
+---
+* Fixed checking of return codes from the calls
+
+
 v2.1.0
 ---
 * Support for HTTP PUT/DELETE added
