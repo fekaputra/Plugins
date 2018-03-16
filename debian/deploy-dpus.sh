@@ -1,8 +1,8 @@
 #!/bin/bash
 
 URL="http://127.0.0.1:28080/master/api/1/import/dpu/jar"
-MASTER_USER=master
-MASTER_PASS=commander
+MASTER_USER=admin
+MASTER_PASS=test
 
 echo "---------------------------------------------------------------------"
 echo "Installing DPUs.."
