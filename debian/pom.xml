@@ -14,7 +14,7 @@
 
     <properties>
         <plugins.uv.groupid>eu.unifiedviews.plugins</plugins.uv.groupid>
-        <debian-package-version>3.0.2-SNAPSHOT</debian-package-version>
+        <debian-package-version>3.2.0-SNAPSHOT</debian-package-version>
         <debian-package-name>${project.build.directory}/${project.artifactId}-${debian-package-version}_all.deb</debian-package-name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
