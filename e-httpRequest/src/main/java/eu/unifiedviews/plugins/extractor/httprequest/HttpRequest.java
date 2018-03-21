@@ -3,6 +3,7 @@ package eu.unifiedviews.plugins.extractor.httprequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
@@ -85,15 +86,52 @@ public class HttpRequest extends AbstractDpu<HttpRequestConfig_V1> {
         this.client = HttpClients.custom().disableContentCompression().build();
 
         //initialize the request executor
+        //if (this.config.getRequestURL().contains("{{")) { this.config.setRequestURL(); }
+        //config.setRequestURL(URLEncoder.encode(config.getRequestURL()));
+        String getUrl = this.config.getRequestURL();
+
+        boolean macro = false;
+        if (this.config.getRequestURL().contains("{{")) {
+            String replacedUrl = getUrl.replace("{{", "").replace("}}", "");
+            this.config.setRequestURL(replacedUrl);
+            macro = true;
+        }
         requestExecutor.initialize(config);
 
         try {
             switch (this.config.getRequestType()) {
                 case GET:
                     LOG.info("Going to send HTTP GET request to URL {}", this.config.getRequestURL());
-                    httpResponse = this.requestExecutor.sendGetRequest(this.config, this.client);
-                    checkResponseAndCreateFile(httpResponse, this.config.getFileName());
-                    break;
+
+                    if (macro) {
+
+                        httpResponse = this.requestExecutor.sendGetRequest(this.config, this.client);
+                        int total = Integer.parseInt(httpResponse.getHeaders("X-Total")[0].getValue());
+                        int perPage = Integer.parseInt(httpResponse.getHeaders("X-Per-Page")[0].getValue());
+
+                        int nrOfPaginations = total / perPage + 1;
+                        int counter = 1;
+
+                        for (int i=1; i<=nrOfPaginations; i++) {
+
+                            String origUrl = this.config.getRequestURL();
+                            String newUrl = this.config.getRequestURL() + "&page="+ i;
+                            this.config.setRequestURL(newUrl);
+                            httpResponse = this.requestExecutor.sendGetRequest(this.config, this.client);
+                            this.config.setRequestURL(origUrl);
+
+                            String targetFileName = String.format("%03d", counter++) + "_" + this.config.getFileName();
+                            checkResponseAndCreateFile(httpResponse, targetFileName);
+                        }
+                        break;
+
+                    }
+                    else {
+                        httpResponse = this.requestExecutor.sendGetRequest(this.config, this.client);
+                        checkResponseAndCreateFile(httpResponse, this.config.getFileName());
+                        break;
+                    }
+
                 case DELETE:
                     LOG.info("Going to send HTTP DELETE request to URL {}", this.config.getRequestURL());
                     httpResponse = this.requestExecutor.sendDeleteRequest(this.config, this.client);

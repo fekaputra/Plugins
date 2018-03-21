@@ -478,7 +478,7 @@ public class HttpRequestExecutor {
     private static void checkHttpResponseStatus(CloseableHttpResponse response) throws Exception {
         int statusCode = response.getStatusLine().getStatusCode();
         LOG.info("HTTP Response code {}", statusCode);
-        if (statusCode >= 200 && statusCode < 300) {
+        if (statusCode > 200 && statusCode < 300) {
             StringBuilder responseAsString = new StringBuilder();
             responseAsString.append(response.getStatusLine().toString()).append('\n');
             for (Header h : response.getAllHeaders()) {
